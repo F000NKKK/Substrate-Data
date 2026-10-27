@@ -2,7 +2,7 @@
 
 use substrate_data::{Schema, Value, from_text};
 
-use crate::base::{Base, Grown, base, grown};
+use crate::base::{Doc, Grown, base, grown};
 use crate::verdict::Group::Enums;
 use crate::verdict::{Row, row};
 
@@ -171,7 +171,7 @@ fn tagged_variant_gains_field() -> Row {
 #[derive(Schema, Debug, PartialEq)]
 #[data(tag = "type")]
 enum Holds {
-    Rec(Base),
+    Rec(Doc),
     N,
 }
 

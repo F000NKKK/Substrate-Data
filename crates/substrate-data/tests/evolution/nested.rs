@@ -4,7 +4,7 @@ use std::fmt::Debug;
 
 use substrate_data::{Schema, Stream};
 
-use crate::base::{Base, Grown, In, base, grown};
+use crate::base::{Doc, Grown, In, base, grown};
 use crate::verdict::Group::Nested;
 use crate::verdict::{Row, row};
 
@@ -25,10 +25,10 @@ impl<T: Schema + PartialEq> PartialEq for Items<T> {
     }
 }
 
-/// `Base` grown to `Grown`, held by `wrap_old` and `wrap_new`, with a field after.
+/// `Doc` grown to `Grown`, held by `wrap_old` and `wrap_new`, with a field after.
 fn grows<O, N>(
     change: &'static str,
-    wrap_old: impl Fn(Base) -> O,
+    wrap_old: impl Fn(Doc) -> O,
     wrap_new: impl Fn(Grown) -> N,
 ) -> Row
 where

@@ -4,7 +4,7 @@ use substrate_data::diagnostic::{Code, Problem};
 use substrate_data::frame::{read_frame, read_shaped, to_frame};
 use substrate_data::{Schema, Stream, Value, from_text, read_bytes, to_bytes, to_text};
 
-use crate::base::{Base, Grown, In, base, grown};
+use crate::base::{Doc, Grown, In, base, grown};
 
 fn problems(refusal: &[substrate_data::Diagnostic]) -> Vec<Problem> {
     refusal
@@ -26,7 +26,7 @@ fn frames_skip_appended_fields_and_default_missing_ones() {
         v: grown(&["a"]),
         after: 5,
     };
-    assert_eq!(read_frame::<In<Base>>(&to_frame(&newer)), Some(older));
+    assert_eq!(read_frame::<In<Doc>>(&to_frame(&newer)), Some(older));
     let filled = read_frame::<In<Grown>>(&to_frame(&In {
         v: base(),
         after: 5,
@@ -44,10 +44,10 @@ fn frames_skip_appended_fields_and_default_missing_ones() {
 fn named_forms_refuse_a_field_the_reader_does_not_know() {
     let newer = grown(&["a"]);
     assert_eq!(
-        problems(&read_bytes::<Base>(&to_bytes(&newer)).unwrap_err()),
+        problems(&read_bytes::<Doc>(&to_bytes(&newer)).unwrap_err()),
         [Problem::UnknownField]
     );
-    let text = from_text::<Base>(&to_text(&newer)).unwrap_err();
+    let text = from_text::<Doc>(&to_text(&newer)).unwrap_err();
     assert_eq!(text.0[0].code, Some(Code::Data(Problem::UnknownField)));
 }
 
@@ -128,7 +128,7 @@ fn a_stream_checks_its_items_only_when_they_are_read() {
     let newer = Items {
         items: Stream::from(vec![grown(&["a"])]),
     };
-    let older = read_bytes::<Items<Base>>(&to_bytes(&newer)).unwrap();
+    let older = read_bytes::<Items<Doc>>(&to_bytes(&newer)).unwrap();
     assert_eq!(older.items.len(), 1);
     assert!(
         older.items.to_vec().is_empty(),

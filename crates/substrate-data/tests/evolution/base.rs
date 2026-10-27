@@ -4,12 +4,12 @@ use substrate_data::Schema;
 
 /// The first version.
 #[derive(Schema, Debug, PartialEq)]
-pub(crate) struct Base {
+pub(crate) struct Doc {
     pub(crate) name: String,
     pub(crate) n: u32,
 }
 
-/// `Base` with a field appended (`default`).
+/// `Doc` with a field appended (`default`).
 #[derive(Schema, Debug, PartialEq)]
 pub(crate) struct Grown {
     pub(crate) name: String,
@@ -25,8 +25,8 @@ pub(crate) struct In<T: Schema> {
     pub(crate) after: u8,
 }
 
-pub(crate) fn base() -> Base {
-    Base {
+pub(crate) fn base() -> Doc {
+    Doc {
         name: "x".into(),
         n: 7,
     }

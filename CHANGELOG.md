@@ -16,6 +16,9 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Changed
 
+- `kind!` takes a kind's name as a string literal, a path to a `&'static str`
+  constant (`Mesh = ids::MESH`) or a `{ block }`; the name is checked where
+  the kind is declared, not where it is first used.
 - Dependencies: `base64` 0.23, `toml` 1, `syn` 3, `criterion` 0.8.
 - `docs/format.md` names the public constants and the `Result` keys.
 

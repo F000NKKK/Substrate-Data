@@ -1,6 +1,6 @@
 //! [`Stream`]: a list kept in the binary form — its items written as they
-//! come (no `Vec` of them on the way) and read back one at a time, when
-//! asked. For the big ones: a table's rows, a picture's pixels, a log.
+//! come (no `Vec` of them on the way), checked when the stream is decoded
+//! and read back one at a time, when asked. For the big ones: a table's rows, a picture's pixels, a log.
 //!
 //! ```
 //! use substrate_data::{Schema, Stream};
@@ -57,7 +57,8 @@ impl<T: Schema> Stream<T> {
         self.len == 0
     }
 
-    /// The items, read as they're asked for; it stops at one it can't read.
+    /// The items, read as they're asked for. A stream that was decoded has had
+    /// every item checked, so none is unreadable.
     pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
         let mut d = Decoder::body(&self.items);
         (0..self.len).map_while(move |_| T::decode(&mut d))
@@ -179,8 +180,17 @@ impl<T: Schema> Schema for Stream<T> {
     fn decode(d: &mut Decoder<'_>) -> Option<Self> {
         let mut body = Decoder::body(d.stream()?);
         let len = body.stream_count()?;
-        Some(Stream {
-            items: body.rest().to_vec(),
+        // Every item is read once now, so a stream that decodes is one whose
+        // items all read: an item this `T` cannot read (a newer item type,
+        // a corrupt byte) fails the stream, as it does in the text form and
+        // in a frame, and the slow path names its index.
+        let items = body.rest();
+        let mut check = Decoder::body(items);
+        for _ in 0..len {
+            T::decode(&mut check)?;
+        }
+        check.at_end().then(|| Stream {
+            items: items.to_vec(),
             len,
             item: PhantomData,
         })

@@ -346,8 +346,9 @@ reused, the string index inside the call is not.
 
 ## Streams
 
-`Stream<T>` is a list kept in the binary form: items written as they come
-and read back one at a time when asked, with its own string table, so it
+`Stream<T>` is a list kept in the binary form: items written as they come,
+checked when the stream is decoded (an item that cannot be read rejects it,
+naming its index) and read back one at a time when asked, with its own string table, so it
 can be cut out of a document whole. For the big ones: a table's rows, a
 picture's pixels, a recording, a log.
 

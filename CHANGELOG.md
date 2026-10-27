@@ -9,6 +9,21 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ## [Unreleased]
 
+### Fixed
+
+- Binary form: a `Stream<T>` whose items `T` cannot read (an older reader
+  given a newer item type, or a corrupt item) was accepted with its length
+  and no readable items: `to_vec()` was empty and `iter()` stopped at the
+  first item it could not read. Decoding now reads each item once and
+  rejects the stream, as the text form and frames already did;
+  `read_bytes` names the first item that fails (`items[0]`). A stream body
+  with bytes left after its counted items is rejected too. The wire format
+  is unchanged. Migration: a reader that relied on getting an empty stream
+  from a newer writer now gets an error; read such data with the newer item
+  type (see [docs/evolution.md](docs/evolution.md)). `Stream::iter` and
+  `to_vec` are unchanged in signature, and cannot fail on a decoded stream.
+  Decoding a stream now costs one pass over its items.
+
 ### Added
 
 - Benchmarks for every public path (one criterion group per area), a shared

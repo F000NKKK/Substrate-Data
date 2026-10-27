@@ -97,3 +97,41 @@ fn a_cut_stream_is_an_error_not_a_panic() {
         );
     }
 }
+
+#[derive(Schema, Debug, PartialEq)]
+struct Words {
+    items: Stream<String>,
+}
+
+#[derive(Schema, Debug, PartialEq)]
+struct Numbers {
+    items: Stream<u8>,
+}
+
+#[test]
+fn a_stream_with_an_unreadable_item_is_rejected_naming_its_index() {
+    // Strings read as `u8`: the first item fails, the error says which.
+    let words = Words {
+        items: ["a", "b", "c"].into_iter().map(String::from).collect(),
+    };
+    let errors = read_bytes::<Numbers>(&to_bytes(&words)).unwrap_err();
+    assert!(
+        errors.iter().any(|e| e.to_string().contains("items[0]")),
+        "{errors:?}"
+    );
+}
+
+#[test]
+fn a_stream_whose_bytes_outrun_its_count_is_rejected() {
+    let mut w = Stream::<u8>::writer();
+    for i in 0..3u8 {
+        w.push(&i);
+    }
+    let three = Numbers { items: w.finish() };
+    let mut bytes = to_bytes(&three);
+    // The count sits just before the three items; claim fewer than there are.
+    let count = bytes.len() - 4;
+    assert_eq!(bytes[count], 3);
+    bytes[count] = 2;
+    assert!(read_bytes::<Numbers>(&bytes).is_err());
+}

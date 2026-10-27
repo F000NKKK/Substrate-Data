@@ -58,11 +58,11 @@ rewrites the matrix after a deliberate change).
   skipped.
 - **`frame::read_shaped`** over an older frame leaves the absent trailing
   fields out of the map; it does not default them.
-- **A `Stream<T>`** keeps its items as bytes and checks them when they are
-  read, not when the stream is: a stream of a newer item type read as the
-  older one has its length and *no readable items* (`to_vec()` is empty;
-  `iter()` stops at the first it cannot read). Text and frames read the
-  items at once and reject.
+- **A `Stream<T>`** keeps its items as bytes but reads each one once when
+  the stream is decoded, so a stream of a newer item type read as the older
+  one is rejected, naming the first item that cannot be read (`items[0]`),
+  as text and frames do. Before this, the binary form kept the length and
+  gave no readable items.
 - **`u64` above `i64::MAX`** is carried as its bits (`format.md`), so
   an `i64` and a `u64` read each other's values by the same bits: a negative
   `i64` read as `u64` is a huge number, not an error.
@@ -147,7 +147,7 @@ the cases to avoid, since nothing flags them.
 | records in an array | reads / reads | reads / rejects |
 | records in a `Vec` | reads / reads | reads / rejects |
 | a record in a tuple | reads / reads | rejects / rejects |
-| records in a `Stream` | reads / reads | reads / binary **garbage**, text rejects |
+| records in a `Stream` | reads / reads | reads / rejects |
 
 <!-- matrix:end -->
 

@@ -38,7 +38,7 @@ The format specification: [docs/format.md](docs/format.md). Language-neutral tes
 ```toml
 # Cargo.toml
 [dependencies]
-substrate-data = "0.1"
+substrate-data = "0.2"
 ```
 
 Features of `substrate-data`: `json` (JSON ⇄ the model), `toml` (TOML read into the model with spans).

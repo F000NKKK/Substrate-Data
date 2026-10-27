@@ -249,12 +249,12 @@ fn a_repeated_key_is_refused_in_a_big_map_too() {
             .contains("k33")
     );
     // The same keys without the repeat read.
-    let mut w = Writer::new();
-    w.map(keys.len());
+    let mut plain = Writer::new();
+    plain.map(keys.len());
     for key in &keys {
-        w.key(key).int(1);
+        plain.key(key).int(1);
     }
-    let Value::Map(map) = decode(&w.finish()).unwrap() else {
+    let Value::Map(map) = decode(&plain.finish()).unwrap() else {
         panic!("a map")
     };
     assert_eq!(map.len(), 40);

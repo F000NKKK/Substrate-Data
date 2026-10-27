@@ -161,12 +161,12 @@ Value trees, text and binary:
 
 | sample | text parse | text write | binary encode | binary decode |
 |---|---:|---:|---:|---:|
-| config_large | 29.0 | 12.7 | 11.9 | 22.8 |
-| records_large | 24.0 | 12.5 | 11.0 | 19.1 |
-| numbers_large | 21.6 | 18.1 | 3.3 | 5.4 |
-| strings_large | 6.2 | 3.6 | 2.8 | 2.3 |
-| deep_large | 35.7 | 16.3 | 11.4 | 27.4 |
-| refs_large | 22.2 | 13.8 | 16.4 | 25.7 |
+| config_large | 29.0 | 12.7 | 13.0 | 20.1 |
+| records_large | 24.0 | 12.5 | 6.2 | 11.3 |
+| numbers_large | 21.6 | 18.1 | 1.9 | 2.1 |
+| strings_large | 6.2 | 3.6 | 2.1 | 2.3 |
+| deep_large | 35.7 | 16.3 | 12.6 | 18.9 |
+| refs_large | 22.2 | 13.8 | 10.9 | 21.6 |
 | blobs_large | 1.7 | 3.4 | 0.4 | 0.4 |
 
 (Text parse and write before the text work, same samples: 51.2 / 16.2,
@@ -189,8 +189,8 @@ Typed documents through every form (`docs_large`, `numbers_large`; millions):
 
 | form | docs encode | docs decode | numbers encode | numbers decode |
 |---|---:|---:|---:|---:|
-| sd_frame | 5.0 | 6.6 | 0.64 | 0.58 |
-| sd_binary | 8.9 | 9.9 | 1.25 | 1.82 |
+| sd_frame | 4.6 | 6.6 | 0.70 | 0.58 |
+| sd_binary | 4.6 | 9.2 | 1.25 | 1.83 |
 | postcard | 1.6 | 6.7 | 1.82 | 1.38 |
 | bincode 2 | 1.7 | 7.4 | 1.68 | 1.81 |
 | msgpack (compact) | 3.1 | 7.8 | 2.73 | 3.37 |
@@ -217,9 +217,9 @@ Typed documents (`sd_text` here is the pretty form `to_text` writes):
 
 | document | sd_binary | sd_frame | sd_text | json | cbor | msgpack | postcard | bincode |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| users_large | 252167 | 210067 | 904110 | 565705 | 433423 | 293303 | 281557 | 285184 |
-| docs_large | 199200 | 150422 | 791829 | 501200 | 386016 | 226203 | 211456 | 219602 |
-| files_large | 224721 | 189611 | 661135 | 451126 | 367068 | 257109 | 245119 | 252068 |
+| users_large | 201322 | 210067 | 904110 | 565705 | 433423 | 293303 | 281557 | 285184 |
+| docs_large | 165014 | 150422 | 791829 | 501200 | 386016 | 226203 | 211456 | 219602 |
+| files_large | 196927 | 189611 | 661135 | 451126 | 367068 | 257109 | 245119 | 252068 |
 | numbers_large | 185815 | 165018 | 759402 | 422634 | 217925 | 214466 | 181997 | 190757 |
 | texts_large | 493996 | 494813 | 516394 | 497185 | 490833 | 490827 | 487734 | 487961 |
 | blob_large | 375035 | 375020 | 500050 | 1339385 | 375029 | 375018 | 375015 | 375017 |
@@ -228,7 +228,7 @@ Typed documents (`sd_text` here is the pretty form `to_text` writes):
 
 Per row: `sd_frame` is the smallest format on the repeated-string data (docs 29 %
 smaller than postcard, users 25 %), `sd_binary` is smaller than postcard and
-bincode on those too (docs_large 199200 against 211456 and 219602) but
+bincode on those too (docs_large 165014 against 211456 and 219602) but
 larger on numbers (185815 against 181997) and on very small documents
 (150 bytes against 68: the 5 byte header and the first-use string literals
 are a fixed cost). Binary and frames are within 1 % of every other format on
@@ -239,136 +239,85 @@ Value trees (the route through `binary::encode(&Value)`):
 
 | document | sd_text | sd_binary | json | cbor | msgpack | sd_binary / json |
 |---|---:|---:|---:|---:|---:|---:|
-| config_large | 503956 | 186015 | 503956 | 377434 | 405634 | 37 % |
-| records_large | 501200 | 199200 | 501200 | 386016 | 388608 | 40 % |
-| numbers_large | 509365 | 275815 | 509365 | 217925 | 254502 | 54 % |
-| deep_large | 502201 | 144385 | 502201 | 344523 | 338763 | 29 % |
-| refs_large | 504615 | 122991 | 504615 | 418217 | 412817 | 24 % |
+| config_large | 503956 | 153160 | 503956 | 377434 | 405634 | 30 % |
+| records_large | 501200 | 159215 | 501200 | 386016 | 388608 | 32 % |
+| numbers_large | 509365 | 185815 | 509365 | 217925 | 254502 | 36 % |
+| deep_large | 502201 | 64470 | 502201 | 344523 | 338763 | 13 % |
+| refs_large | 504615 | 89750 | 504615 | 418217 | 412817 | 18 % |
 | blobs_large | 500040 | 375035 | 500040 | 500036 | 500036 | 75 % |
 
 Compact text equals compact JSON in length for the same value; the pretty form
 is 1.5 to 10 times longer (`deep_large`: 5.1 MB pretty for 502 KB compact).
 
 Where the bytes of the binary form go, `Value` route, large samples (percent
-of the document):
+of the document, version 2):
 
-| document | tags | counts | key refs | string literals | string refs | ints | floats and blobs |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| config_large | 18 | 6 | 13 | 0 (35 key literals) | 8 | 0 | 20 |
-| records_large | 17 | 3 | 13 | 35 | 5 | 15 | 12 |
-| numbers_large | 18 | 0 | 0 | 0 | 0 | 24 | 58 |
-| deep_large | 35 | 15 | 30 | 0 | 10 | 10 | 0 |
-| refs_large | 22 | 4 | 18 | 22 | 34 | 0 | 0 |
+| document | tags | counts | key literals | key refs | string literals | string refs | ints | floats and blobs |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| config_large | 22 | 7 | 42 | 0 | 0 | 17 | 0 | 12 |
+| records_large | 19 | 2 | 0 | 0 | 44 | 3 | 19 | 13 |
+| numbers_large | 0 | 0 | 0 | 0 | 0 | 0 | 35 | 65 |
+| deep_large | 67 | 33 | 0 | 0 | 0 | 0 | 0 | 0 |
+| refs_large | 24 | 0 | 0 | 0 | 31 | 45 | 0 | 0 |
 
-### Criterion ballparks (wall-clock)
+(Key references are gone: a shape names its keys once. Tags include the
+inline ints and string indices, which carry their value in the tag.)
 
-One x86-64 machine, AVX-512, quiet, `--all-features`, default `quick()`
-settings. Noise 10 %. Order of magnitude only.
+### SDAT version 2: before and after
 
-| path | ballpark |
-|---|---|
-| text parse, `parse_value` | records 89 MiB/s, config 74, numbers 157, strings 737, refs 104 |
-| text write, `to_string` | records 367 MiB/s, config 338, numbers 120, strings about 1 GiB/s |
-| binary encode (`records_large`) | 138 MiB/s |
-| binary decode (`records_large`) | 81 MiB/s; `decode_ref` with a reused arena 184 MiB/s |
-| typed `docs_large` encode | sd_frame 570 us, sd_binary 908 us, json 677 us, msgpack 280 us, postcard 133 us |
-| typed `docs_large` decode | postcard 0.89 ms, sd_frame 0.95 ms, sd_binary 1.09 ms, json 1.93 ms, cbor 2.66 ms, sd_text 12.6 ms |
-| frame views | `docs_read_view` about 100 ns (lazy: nothing is decoded until read) |
-| lanes, 16K elements | AVX-512 7 to 11 Gelem/s, AVX2 5 to 8, portable about 4 (per width and group count: the lanes table below) |
-| UTF-8, 500 KB ASCII | std 13.9 us, simdutf8 5.1 us |
-| UTF-8, 500 KB mixed | std 495 us, simdutf8 39 us (about 12x); `source::text` 410 us without `simd-utf8`, 49 us with |
-| `Map` get | 4 keys 8 ns, 16 keys 19 ns (linear), 256 and 4096 keys 19 to 24 ns (hash index) |
-| `Map` insert at 4096 keys | about 183 ns per key |
-| `Atom::new` | known 25 ns, new 830 ns |
-| read with a resolver | about 4x the cost of a read with none (0.69 Melem/s against 2.9); `Expand` 1.2 Melem/s against 5.9 |
+Version 1 baselines are the `v1` iai baseline (main at 22ee5fc, same
+machine, `--cache-sim=no`); the size tables above are version 2. Millions of
+instructions on the large samples, and bytes:
 
-Pick the instruction-count tables for a regression, and these only to say
-roughly how fast something is.
+| | v1 | v2 | change |
+|---|---:|---:|---:|
+| `binary::encode(&Value)` records_large | 11.0 | 6.2 | -44 % |
+| `binary::encode(&Value)` numbers_large | 3.3 | 1.9 | -43 % |
+| `binary::encode(&Value)` refs_large | 16.4 | 10.9 | -34 % |
+| `binary::encode(&Value)` config_large | 11.9 | 13.0 | +9 % |
+| `binary::encode(&Value)` deep_large | 11.4 | 12.6 | +11 % |
+| `binary::decode` records_large | 19.1 | 11.3 | -41 % |
+| `binary::decode` numbers_large | 5.4 | 2.1 | -62 % |
+| `binary::decode` deep_large | 27.4 | 18.9 | -31 % |
+| `binary::decode` config_large | 22.8 | 20.1 | -12 % |
+| `binary::decode` refs_large | 25.7 | 21.6 | -16 % |
+| typed `to_bytes` docs_large | 9.0 | 4.6 | -49 % |
+| typed `read_bytes` docs_large | 9.8 | 9.1 | -7 % |
+| typed `to_frame` docs_large | 5.1 | 4.6 | -10 % |
+| typed `to_frame` numbers_large | 0.56 | 0.62 | +11 % |
+| sd_binary size, users_large | 252167 | 201322 | -20 % |
+| sd_binary size, docs_large | 199200 | 165014 | -17 % |
+| sd_binary size, files_large | 224721 | 196927 | -12 % |
+| `Value` size, config_large | 186015 | 153160 | -18 % |
+| `Value` size, records_large | 199200 | 159215 | -20 % |
+| `Value` size, numbers_large | 275815 | 185815 | -33 % |
+| `Value` size, deep_large | 144385 | 64470 | -55 % |
+| `Value` size, refs_large | 122991 | 89750 | -27 % |
 
-### Lanes: AVX-512 against AVX2, per width and group count
+What did it: keys of a map named by a shape (written once, then a number),
+lists of same-keyed maps as one record list with no per-map key or tag, ints
+in -16..=111 and the first 32 strings as one byte, lists of numbers packed
+and `f32`-exact floats in four bytes in the `Value` route, a hash index with
+the hashes in its slots, and a derive that names a struct's shape by the
+address of its keys and a bit per present field (no hashing).
 
-`Backend::for_pack` and `for_unpack` (in `lanes/backend.rs`) choose, for each
-call, between the 512-bit kernels (two groups per call) and the 256-bit ones.
-The table is what was measured, and what the code does:
-
-| operation | width | groups left | backend | AVX-512 time / AVX2 time |
-|---|---|---|---|---|
-| pack, unpack | 1 to 31 | 2 or more | AVX-512 | 0.45 to 0.92, mostly 0.5 to 0.75 |
-| pack, unpack | any | 1 | AVX2 (the 512-bit kernel takes two) | not run |
-| pack | 32 | any | AVX2 | 1.2 to 1.6 (about 1.0 at 2 to 3 groups) |
-| unpack | 32 | 2 to 24 | AVX-512 | 0.43 to 0.63 |
-| unpack | 32 | more than 24 | AVX2 | 0.66 to 1.35, by how the buffers fall |
-
-At 64 groups (16 K numbers) a width-16 pack takes 2.9 us on AVX2 and 1.8 us on
-AVX-512 (5.6 against 9.1 Gelem/s), and a width-16 unpack 2.9 and 1.8 us. A list
-that is not a multiple of two groups runs its last group on AVX2; the two-group
-and three-group runs still keep most of the gain (0.5 to 0.85).
-
-Width 32 is a copy, and the gain of AVX-512 is the wrong one to chase there:
-packing needs the two rows shuffled into one register and out again, which a
-256-bit load and store does not. Unpacking is 2x faster on AVX-512 while the
-groups fit the first-level cache (24 groups in and 24 out is 48 KiB, the
-constant `COPY_AVX512_GROUPS`); beyond that the loop is bound by memory and the
-winner changed from run to run with the addresses of the buffers (five runs of
-the same 64-group unpack gave 0.66, 0.67, 0.90, 1.34 and 1.35), so AVX2, never
-much worse, keeps it. A plain copy of the bytes for width 32 would beat both
-(118 ns against 163 and 268 for 16 groups packed, 118 against 574 and 304
-unpacked, on the same machine, in a quick experiment that was not kept); it is
-not done here because it changes the portable path too.
-
-How this was measured, and what it is not:
-
-- **Not instruction counts.** Valgrind 3.22 does not decode AVX-512 (`vex
-  amd64->IR: unhandled instruction bytes: 0x62 ...`, "Unrecognised
-  instruction" on a single `vpxord zmm0`), so `iai-callgrind` cannot run the
-  512-bit kernels, and a count of the AVX2 kernels alone says nothing about
-  which is faster: they execute fewer instructions on AVX-512 and the point is
-  how long each takes. The numbers above are wall-clock.
-- **Wall-clock, made steadier.** Xeon at 2.1 GHz with `avx512f/bw/vl/vbmi2/
-  bitalg/fp16` (Sapphire Rapids class), 4 vCPUs, one process pinned with
-  `taskset -c 2`. For every width and group count, AVX2 and AVX-512 were run
-  alternately, many iterations per sample, the minimum of 8 to 60 samples
-  taken, and the whole repeated with six different positions of the buffers in
-  the heap (the ratio in the table is the mean of the six; their spread was mostly
-  under 10 % (up to 25 % in a few cells) except at width 32 beyond the first-level cache, as said above).
-  Two full runs (60 samples) of every width at 1, 2, 3, 4, 8 and 64 groups
-  differed by 1.3 % at the median and 7.8 % at the 90th percentile.
-- **Still a virtual machine.** The clock and the neighbours are not under
-  control, and AVX-512 heavy code may clock down on other processors (this
-  one shows no such effect in these runs); the ratios, not the nanoseconds,
-  are what carries over. Reproduce with
-  `LANES_GROUPS=3 LANES_WIDTHS=all taskset -c 2 cargo bench -p substrate-data
-  --bench lanes -- 'lanes/(un)?pack/(AVX2|AVX-512)'` (a bench that runs the
-  backends through `Backend::pack_groups`, so it measures the dispatch as it
-  ships; `LANES_GROUPS` is the group count, 64 by default).
-- Every backend still writes the same bytes: `tests/lane_backends.rs` compares
-  each with the portable code at 1, 2, 3, 23 to 27 and 58 groups, at widths 1,
-  17, 31 and 32, the counts around each cut-off above.
-
-## Notes on how the comparison is made
-
-- The serde formats are measured on the same typed documents the crate reads
-  and writes, so the work compared is the same: encode a struct, decode it
-  back and compare it with `==`. JSON is the exception to the comparison:
-  serde_json without `float_roundtrip` is not bit-exact on `f64`, so the
-  check on its decode skips equality (it is the default configuration a user
-  has, and that is what is measured).
-- bincode is version 2 (`std` + `serde`), whose configuration is
-  `standard()` (varints). bincode 3 is not used.
-- msgpack is measured twice: compact (positional fields) and named (a map per
-  struct); the named one is what a self-describing consumer gets.
-- JSON throughput in `compare` is per byte of the JSON document, so two
-  formats' MiB/s are comparable per document but not across documents.
-- The `Value` route (`binary::encode(&Value)`) writes no packed int and float
-  lists and no `f32` narrowing; only a schema `to_bytes` does. So
-  `numbers_large` is 275815 bytes as a value and 185815 as a typed document.
+What got worse, and why: the `Value` route pays per map for the shape (one
+string lookup per key as before, plus a shape lookup); maps whose keys are
+nearly all different (config, deep) gain no sharing, so `config_large` and
+`deep_large` encode 9 to 11 % slower while being 18 and 55 % smaller. The
+frame pack of a list of numbers is 11 % up from codegen (`put_f64s` copies
+through `memcpy` now) and is 60 K instructions. The rest moved less than 3 %.
 
 ## Hotspots, ranked
 
 From `callgrind_annotate` on the large samples, most to least worth the work.
 Percentages are of the instructions of that benchmark.
 
-1. **Binary encode: the interner.** `Interner::find` is 42 to 45 % of
+1. **Binary encode: the interner** (reworked in version 2: pointer-keyed
+   guesses, a hash index with hashes in its slots, shapes that need one
+   lookup per key; typed `to_bytes` -49 %; what remains is the lookup per
+   key of a `Value` map, 30 to 40 % of `config` and `deep` encode).
+   Before: `Interner::find` is 42 to 45 % of
    `binary_encode` (records, typed docs) and 33 % of the frame pack, plus 8 %
    in `memcmp`, with `Writer::string` another 14 to 17 %. Every string is
    hashed and compared against the table; a first-byte or length bucket, or a
@@ -416,6 +365,8 @@ Percentages are of the instructions of that benchmark.
 
 ### Size overheads, ranked
 
+0. **Done in version 2:** shapes, records, inline ints, string tags and
+   packed lists in `encode(&Value)` (items 1, 2 and 6 below, measured above).
 1. **Tags are 17 to 35 % of every value-tree document** (35 % on `deep`,
    22 % on `refs`, 17 % on records): one byte per value. Fixed-shape
    containers (a list of maps of the same keys) can drop it; the typed frame

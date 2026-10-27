@@ -52,6 +52,54 @@ only grow: a tag is never renumbered and a frame field is never reordered.
   (hash-flooding is still not predictable: the seed is random per table);
   keys of a parsed `Value` are shared between maps.
 
+### Changed (SDAT version 2)
+
+Breaking: the binary form is now version 2, and the Rust API gains a version
+rule. Measured on the large corpus samples (iai-callgrind instruction counts,
+millions, `v1` baseline against this change; bytes from
+`cargo run --example sizes`); see [docs/performance.md](docs/performance.md).
+
+- **Writing is always version 2; reading accepts versions 1 and 2.** There is
+  no version 1 writer and no mode that keeps a document's version: reading a
+  version 1 document and writing it upgrades it, and `binary::upgrade(bytes)`
+  does exactly that. Every version 1 value has a version 2 form (property
+  test over every value type, plus every conformance vector); an unknown
+  version byte is `bad_version`, and a tag the version doesn't have is
+  `unknown_tag`. Migration: nothing to convert; old files and messages still
+  read, anything written now is version 2 and version 1 readers (the
+  published 0.2 crate, ports before this change) cannot read it, so upgrade
+  readers first.
+- New tags (the version 1 tags 0 to 14 are unchanged): 15 a map of a shape
+  (its keys listed once, then named by number), 16 a list of maps of one
+  shape (the keys once, no tag between maps), 32 to 63 a string already in the
+  table (no payload), 128 to 255 an int from -16 to 111 (no payload).
+- `encode(&Value)` writes lists of ints (tag 10) and floats (tags 13 and 14),
+  floats that are `f32` exactly in four bytes, and records; the form is chosen
+  from the value alone, so ports write the same bytes.
+- Bytes (large samples): `Value` trees config 186015 to 153160 (-18 %),
+  records 199200 to 159215 (-20 %), numbers 275815 to 185815 (-33 %), deep
+  144385 to 64470 (-55 %), refs 122991 to 89750 (-27 %); typed `to_bytes`
+  users 252167 to 201322 (-20 %), docs 199200 to 165014 (-17 %), files 224721
+  to 196927 (-12 %).
+- Instructions (millions): `encode(&Value)` records 11.0 to 6.2, numbers 3.3 to
+  1.9, refs 16.4 to 10.9, but config 11.9 to 13.0 and deep 11.4 to 12.6 (+9 and
+  +11 %: a shape lookup per map where nearly every map has other keys);
+  `decode` records 19.1 to 11.3, numbers 5.4 to 2.1, deep 27.4 to 18.9, config
+  22.8 to 20.1, refs 25.7 to 21.6; typed `to_bytes` docs 9.0 to 4.6, `to_frame`
+  docs 5.1 to 4.6 (numbers 0.56 to 0.62, +11 %).
+- Frames keep their layout (no version byte; fields only appended). A tagged
+  value inside a frame is a version 2 body now; frames written before still
+  read, and the conformance suite keeps them as read vectors (`frames/`) beside
+  the version 2 ones (`frames_v2/`). Re-packing upgrades the bodies.
+- `binary::Writer::record` / `record_masked` (a map by its keys) are new;
+  `DecodeError` has the class `bad_shape_index`; `Map::keys` is `Clone`.
+- Conformance: the version 1 vectors are kept as read vectors, new
+  `binary_v2*`, `binary_upgrades` and frame `bytes_v2*` fields and the
+  `binary_v2` and `frames_v2` directories; the `binary_version_2` error vector
+  is replaced by `binary_version_3` (version 2 is a version now). The
+  TypeScript and Java ports read version 1, write version 2 and pass every
+  vector.
+
 ### Changed
 
 - Lanes: the AVX-512 against AVX2 choice is now made per operation and width

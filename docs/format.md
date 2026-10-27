@@ -202,8 +202,31 @@ struct generates a zero-copy view (`frame::View`) over a frame's bytes.
 for a tool that has no code for the message (an editor's message
 inspector).
 
-`io::write_frame` / `read_frame` put frames on a byte stream (a socket, a
-pipe): each message a little-endian `u32` length, then the frame.
+`io::write_frame` / `read_frame` put messages on a byte stream (a socket, a
+pipe): each a little-endian `u32` length (at most `io::MAX_FRAME`), then the
+message's named binary form (`SDAT`, `to_bytes`). A stream ends cleanly only
+between frames; one cut inside a length or a body is `UnexpectedEof`.
+
+`io::FrameWriter` and `io::FrameReader` do the same from buffers they keep,
+so a stream of messages allocates nothing per message once the buffers have
+grown to the biggest one. A send writes the length and the body in one
+`write_all`, then flushes; a frame over `MAX_FRAME` is refused
+(`InvalidInput`) before anything is written.
+
+- `FrameWriter::send_packed` writes the packed frame layout above (the
+  length, then the frame): the zero-allocation path. The frame is packed
+  in the writer's `Packer`, then copied once after the length.
+- `FrameWriter::send` writes the named `SDAT` form, the same bytes
+  `write_frame` writes, from a reused writer. It allocates nothing either
+  once warm, except for a field written through a `Stream` (its body is
+  built apart).
+- `FrameReader::read_bytes` returns the frame's bytes, valid until the next
+  read (the buffer grows as bytes arrive, not by the length a peer
+  claims); `read::<T>()` decodes a named frame.
+
+`binary::encode_into` and `to_bytes_into` append a whole document to a
+caller's `Vec<u8>` (what `encode` and `to_bytes` build on); the buffer is
+reused, the string index inside the call is not.
 
 ---
 

@@ -11,6 +11,11 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Added
 
+- `io::FrameWriter` (`send` for the named form, `send_packed` for the frame
+  layout) and `io::FrameReader`: frames sent and read from reusable buffers,
+  one `write_all` per frame, no allocation per message once warm.
+- `binary::encode_into` and `to_bytes_into`: append the binary form to a
+  caller's buffer.
 - Reference expansion: `Resolve::expand` (a reference replaced by a value;
   default keeps it), `with::Expand<W>` (a field written as a value or as a
   reference), `Reader::expand_ref`, `Expansion`, `MAX_EXPANSION_DEPTH`, and
@@ -41,6 +46,8 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Fixed
 
+- `frame::Packer` no longer allocates to write the length of a record or
+  list over 127 bytes.
 - A stream cut inside a frame's length is an error, not a clean end
   (`io::read_frame_bytes`).
 - The benches no longer carry a `missing_docs` expectation that

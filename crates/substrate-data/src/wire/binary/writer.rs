@@ -43,6 +43,32 @@ impl Writer {
         }
     }
 
+    /// A writer that appends a whole document (header first) to `out`,
+    /// which it takes: [`Writer::finish`] gives it back.
+    pub(crate) fn appending(mut out: Vec<u8>) -> Self {
+        out.extend_from_slice(MAGIC);
+        out.push(VERSION);
+        Writer {
+            out,
+            strings: Interner::new(),
+        }
+    }
+
+    /// Starts a new document after `prefix` zeroed bytes, keeping every
+    /// buffer it has grown: a message written without allocating.
+    pub(crate) fn restart(&mut self, prefix: usize) {
+        self.out.clear();
+        self.out.resize(prefix, 0);
+        self.out.extend_from_slice(MAGIC);
+        self.out.push(VERSION);
+        self.strings.clear();
+    }
+
+    /// What is written so far, to patch or send.
+    pub(crate) fn buffer_mut(&mut self) -> &mut Vec<u8> {
+        &mut self.out
+    }
+
     /// Null.
     pub fn null(&mut self) -> &mut Self {
         self.out.push(tag::NULL);

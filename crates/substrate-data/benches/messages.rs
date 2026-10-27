@@ -1,7 +1,8 @@
 //! The path for typed messages: a struct written to the binary
 //! form (`write` + `binary::encode`) and read back (`read_bytes`), for a
 //! small, a medium and a large message — against a hand-written byte
-//! layout of the same data, the ceiling for any encoding.
+//! layout of the same data, the ceiling for any encoding. And sending one
+//! as a frame: `write_frame` against the reusable `FrameWriter`.
 
 #![expect(
     clippy::unwrap_used,
@@ -265,6 +266,43 @@ fn case<T: Schema + PartialEq + std::fmt::Debug>(
     g.finish();
 }
 
+/// A writer that keeps nothing: what a send costs, not what a socket does.
+struct Discard;
+
+impl std::io::Write for Discard {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        Ok(black_box(buf).len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+/// One message sent as a frame three ways.
+fn send_case<T: Schema>(c: &mut Criterion, name: &str, v: &T) {
+    use substrate_data::io::{FrameWriter, write_frame};
+    let mut g = c.benchmark_group(format!("send/{name}"));
+    g.throughput(Throughput::Bytes(encode(v).len() as u64));
+    g.bench_function("write_frame", |b| {
+        b.iter(|| write_frame(&mut Discard, black_box(v)).unwrap());
+    });
+    let mut sender = FrameWriter::new();
+    g.bench_function("FrameWriter::send", |b| {
+        b.iter(|| sender.send(&mut Discard, black_box(v)).unwrap());
+    });
+    g.bench_function("FrameWriter::send_packed", |b| {
+        b.iter(|| sender.send_packed(&mut Discard, black_box(v)).unwrap());
+    });
+    g.finish();
+}
+
+fn bench_send(c: &mut Criterion) {
+    send_case(c, "small_user_info", &user());
+    send_case(c, "medium_cart", &cart());
+    send_case(c, "large_grid_32", &grid());
+}
+
 fn bench(c: &mut Criterion) {
     case(c, "user_info", &user(), Some(raw::user));
     case(c, "cart", &cart(), None);
@@ -316,5 +354,5 @@ fn bench(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, bench);
+criterion_group!(benches, bench, bench_send);
 criterion_main!(benches);

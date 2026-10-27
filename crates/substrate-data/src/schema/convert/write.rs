@@ -11,6 +11,14 @@ pub fn to_bytes<T: Schema>(v: &T) -> Vec<u8> {
     w.finish()
 }
 
+/// `v` in the binary form, appended to `out` (a whole document, header
+/// first): a buffer that is kept and reused grows once.
+pub fn to_bytes_into<T: Schema>(v: &T, out: &mut Vec<u8>) {
+    let mut w = Writer::appending(std::mem::take(out));
+    v.encode(&mut w);
+    *out = w.finish();
+}
+
 /// `value` as text, indented.
 pub fn to_text<T: Schema>(value: &T) -> String {
     text::to_string_pretty(&value.write())

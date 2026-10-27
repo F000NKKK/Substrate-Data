@@ -1,6 +1,6 @@
 //! [`Packer`]: writes a frame.
 
-use super::sizes::{LENGTH_RESERVED, ONE_BYTE_MAX};
+use super::sizes::{LENGTH_RESERVED, ONE_BYTE_MAX, VARINT_MAX_BYTES};
 use super::{floats, lanes};
 use crate::binary::interner::Interner;
 use crate::binary::writer::START_BYTES;
@@ -144,9 +144,15 @@ impl Packer {
             self.out[at] = byte;
             return;
         }
-        let mut length = Vec::new();
-        varint(&mut length, len as u64);
-        self.out.splice(at..=at, length);
+        // The varint written at the end, then moved into place from the
+        // stack: a long record's length costs no allocation.
+        let end = self.out.len();
+        varint(&mut self.out, len as u64);
+        let mut length = [0; VARINT_MAX_BYTES];
+        let used = self.out.len() - end;
+        length[..used].copy_from_slice(&self.out[end..]);
+        self.out.truncate(end);
+        self.out.splice(at..=at, length[..used].iter().copied());
     }
 
     /// The frame: its body, its strings, their length backwards.

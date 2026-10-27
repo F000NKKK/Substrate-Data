@@ -17,10 +17,11 @@
   --all-features --all-targets -- -D warnings`, `cargo test --workspace
   --all-features`, `cargo bench --no-run`.
 
-## Rust code follows Craftbook
+## Engineering standard
 
-Rust code follows Craftbook (https://github.com/F000NKKK/craftbook); read
-README.md and rust/*.md before writing code. The key limits are in
-`.claude/rules/craftbook.md`; this file keeps only this repository's own
-rules. CI runs `craftcheck` against `.craftcheck-baseline` (findings only
-shrink) and clippy with the Craftbook workspace lint set.
+Rust code here follows **Craftbook**, our engineering standard:
+https://github.com/F000NKKK/craftbook. Read its `README.md` and the relevant
+`rust/` chapter before writing or reviewing code; the short version is in
+[`.claude/rules/craftbook.md`](.claude/rules/craftbook.md). Where this
+repository's docs disagree with Craftbook, Craftbook wins and the local doc
+is fixed in the same change.

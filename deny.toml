@@ -32,6 +32,9 @@ ignore = true
 [bans]
 multiple-versions = "warn"
 wildcards = "deny"
+# A path dependency between workspace crates carries no version (the derive's
+# dev-dependency on its own host; see crates/substrate-data-derive/Cargo.toml).
+allow-wildcard-paths = true
 
 [sources]
 unknown-registry = "deny"

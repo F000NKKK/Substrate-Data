@@ -6,8 +6,8 @@ use super::sizes::{F32_BYTES, F64_BYTES};
 use super::strings::Strings;
 use super::{floats, lanes};
 use crate::binary::{
-    Decoder, MAX_DEPTH, VARINT_BITS, VARINT_MAX_SHIFT, VARINT_MORE, VARINT_SHIFT, read_varint,
-    unzigzag,
+    Decoder, MAX_DEPTH, VARINT_BITS, VARINT_LAST_SHIFT, VARINT_MAX_SHIFT, VARINT_MORE,
+    VARINT_SHIFT, read_varint, unzigzag,
 };
 use crate::schema::{Schema, read_ref_value};
 use crate::sync::Arc;
@@ -282,7 +282,11 @@ fn read_varint_back(bytes: &[u8]) -> Option<(usize, usize)> {
         if shift >= VARINT_MAX_SHIFT {
             return None;
         }
-        n |= (u64::from(*b) & VARINT_BITS) << shift;
+        let bits = u64::from(*b) & VARINT_BITS;
+        if shift == VARINT_LAST_SHIFT && bits > 1 {
+            return None;
+        }
+        n |= bits << shift;
         if b & VARINT_MORE == 0 {
             return Some((usize::try_from(n).ok()?, taken + 1));
         }

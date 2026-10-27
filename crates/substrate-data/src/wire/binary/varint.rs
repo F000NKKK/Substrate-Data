@@ -22,6 +22,9 @@ fn low_byte(n: u64) -> u8 {
 /// The bits a varint can hold.
 pub(crate) const VARINT_MAX_SHIFT: u32 = 64;
 
+/// The shift of a varint's tenth byte: the one bit left of 64.
+pub(crate) const VARINT_LAST_SHIFT: u32 = 63;
+
 /// The varint at `*i` in `b`, `*i` moved past it; `None` cut short or longer than 64 bits.
 pub(crate) fn read_varint(b: &[u8], i: &mut usize) -> Option<u64> {
     let mut n = 0u64;
@@ -29,7 +32,12 @@ pub(crate) fn read_varint(b: &[u8], i: &mut usize) -> Option<u64> {
     while shift < VARINT_MAX_SHIFT {
         let byte = *b.get(*i)?;
         *i += 1;
-        n |= (u64::from(byte) & VARINT_BITS) << shift;
+        let bits = u64::from(byte) & VARINT_BITS;
+        // The last byte has room for one bit: more would be lost, not read.
+        if shift == VARINT_LAST_SHIFT && bits > 1 {
+            return None;
+        }
+        n |= bits << shift;
         if byte & VARINT_MORE == 0 {
             return Some(n);
         }

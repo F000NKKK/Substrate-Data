@@ -32,6 +32,8 @@ mod expand;
 mod fields;
 mod marker;
 mod struct_schema;
+#[cfg(test)]
+mod tests;
 mod view;
 
 use proc_macro::TokenStream;

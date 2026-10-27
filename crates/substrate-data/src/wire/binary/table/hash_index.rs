@@ -116,11 +116,11 @@ impl HashIndex {
         let mut at = hash as usize & mask;
         loop {
             let slot = self.table[at];
-            let entry = (slot & u64::from(u32::MAX)) as usize;
+            let entry = usize::try_from(slot & u64::from(u32::MAX)).ok()?;
             if entry == 0 {
                 return None;
             }
-            if (slot >> 32) as u32 == hash && is(entry - 1) {
+            if u32::try_from(slot >> 32).ok() == Some(hash) && is(entry - 1) {
                 return Some(entry - 1);
             }
             at = (at + 1) & mask;

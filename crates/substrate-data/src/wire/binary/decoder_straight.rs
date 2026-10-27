@@ -6,7 +6,7 @@ use bumpalo::Bump;
 
 use super::decoder::{F32_BYTES, F64_BYTES, MAP_ENTRY_MIN};
 use super::decoder_value::inline_int;
-use super::shapes::ShapeFrame;
+use super::shape::Walk;
 use super::{Decoder, tag, unzigzag};
 use crate::model::number::int_to_f64;
 
@@ -157,7 +157,7 @@ impl<'b> Decoder<'b> {
                 let shape = self.shape_spec().ok()?;
                 let n = self.shape_width(shape).ok()?;
                 self.deeper().ok()?;
-                self.frames.push(ShapeFrame {
+                self.frames.push(Walk {
                     depth: self.depth,
                     shape,
                     next: 0,

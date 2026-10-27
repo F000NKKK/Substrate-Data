@@ -3,7 +3,7 @@
 //! reading itself (`decoder_straight`). This file holds what they share: the
 //! header, the numbers, the string table.
 
-use super::shapes::{ShapeFrame, Shapes};
+use super::shape::{Shapes, Walk};
 use super::{
     DecodeError, LEGACY_VERSION, MAGIC, MAX_DEPTH, NEW_STRING, STR_INDEX_COUNT, STREAM_LEN_BYTES,
     VERSION, read_varint, tag,
@@ -39,7 +39,7 @@ pub struct Decoder<'b> {
     /// The map shapes defined so far (version 2).
     pub(super) shapes: Shapes,
     /// The shaped maps being read step by step, innermost last.
-    pub(super) frames: Vec<ShapeFrame>,
+    pub(super) frames: Vec<Walk>,
 }
 
 impl<'b> Decoder<'b> {

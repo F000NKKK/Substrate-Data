@@ -3,8 +3,8 @@
 //! integers, floats, bytes. It follows the format in `docs/format.md`, not
 //! the crate's decoder, and fails if it does not consume the input exactly.
 
-use substrate_data::binary::{MAGIC, NEW_STRING, STREAM_LEN_BYTES, tag};
 use substrate_data::binary::tag::{INT_INLINE, STR_INDEX};
+use substrate_data::binary::{MAGIC, NEW_STRING, STREAM_LEN_BYTES, tag};
 
 /// Bytes spent on each kind of thing.
 #[derive(Debug, Default, Clone, Copy)]
@@ -119,7 +119,7 @@ impl Walk<'_> {
         self.i += 1;
         self.spent.tags += 1;
         match t {
-            tag::NULL | tag::FALSE | tag::TRUE => Some(()),
+            tag::NULL | tag::FALSE | tag::TRUE | STR_INDEX..=0x3f | INT_INLINE..=0xff => Some(()),
             tag::INT => {
                 let (_, width) = self.varint()?;
                 self.spent.ints += width;
@@ -149,7 +149,6 @@ impl Walk<'_> {
                 let width = self.shape()?;
                 self.values(n.checked_mul(width)?)
             }
-            STR_INDEX..=0x3f | INT_INLINE..=0xff => Some(()),
             _ => None,
         }
     }

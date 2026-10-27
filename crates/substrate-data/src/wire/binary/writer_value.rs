@@ -2,7 +2,7 @@
 //! from the value alone, so every writer (this one, a port's) writes the
 //! same bytes for it — `docs/format.md`, "Binary", says how.
 
-use super::writer::narrows;
+use super::layout::narrows;
 use super::{Writer, tag, varint};
 use crate::model::value::{Map, Value};
 

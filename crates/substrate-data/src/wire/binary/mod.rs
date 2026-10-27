@@ -18,17 +18,15 @@ mod decoder;
 mod decoder_ref;
 mod decoder_straight;
 mod decoder_value;
-mod hash_index;
-pub(crate) mod interner;
 mod layout;
-mod seen_keys;
-mod shape_table;
-mod shapes;
+mod shape;
+pub(crate) mod table;
 pub mod tag;
 #[cfg(test)]
 mod tests;
 mod varint;
 pub(crate) mod writer;
+mod writer_record;
 mod writer_value;
 
 pub use codec::{decode, decode_ref, encode, encode_into, upgrade};

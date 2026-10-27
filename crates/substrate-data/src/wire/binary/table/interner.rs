@@ -22,7 +22,7 @@ struct Recent {
 
 /// The strings written so far, by where their bytes are in the buffer the
 /// owner writes them to.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub(crate) struct Interner {
     /// Each string: where its bytes start, and how long.
     spans: Vec<(usize, usize)>,
@@ -33,16 +33,6 @@ pub(crate) struct Interner {
     /// map's keys one allocation each). A guess the bytes are compared to.
     /// Filled in once there are many strings (a small document pays nothing).
     recent: Vec<Recent>,
-}
-
-impl Default for Interner {
-    fn default() -> Self {
-        Interner {
-            spans: Vec::new(),
-            index: HashIndex::default(),
-            recent: Vec::new(),
-        }
-    }
 }
 
 impl Interner {

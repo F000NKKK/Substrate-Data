@@ -15,6 +15,7 @@ mod case;
 mod check;
 mod containers;
 mod evolution;
+mod fault;
 mod faults_binary;
 mod faults_frame;
 mod faults_text;

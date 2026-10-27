@@ -2,7 +2,7 @@
 
 use super::sizes::{LENGTH_RESERVED, ONE_BYTE_MAX, VARINT_MAX_BYTES};
 use super::{floats, lanes};
-use crate::binary::interner::Interner;
+use crate::binary::table::interner::Interner;
 use crate::binary::writer::START_BYTES;
 use crate::binary::{Writer, varint, zigzag};
 use crate::schema::Schema;

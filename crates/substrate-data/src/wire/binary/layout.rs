@@ -27,3 +27,19 @@ pub const STREAM_LEN_BYTES: usize = 4;
 /// A string's varint: a new one's (odd, its length) or a reference to the
 /// table (even, its index).
 pub const NEW_STRING: u64 = 1;
+
+/// Whether `f` is an `f32` exactly, bit for bit: what a float of four
+/// bytes holds. A NaN never is (its payload is not worth the question).
+#[must_use]
+pub(crate) fn narrows(f: f64) -> bool {
+    !f.is_nan() && f64::from(narrow(f)).to_bits() == f.to_bits()
+}
+
+/// `f` as an `f32`: only when [`narrows`] says it loses nothing.
+#[expect(
+    clippy::cast_possible_truncation,
+    reason = "called to check, or once `narrows` said it is exact"
+)]
+pub(crate) fn narrow(f: f64) -> f32 {
+    f as f32
+}

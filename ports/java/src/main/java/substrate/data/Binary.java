@@ -1,15 +1,17 @@
 package substrate.data;
 
 /**
- * The binary form, SDAT version 1: {@code "SDAT" version:u8 value}. Strings are
+ * The binary form, SDAT version 2 (version 1 is still read, never written): {@code "SDAT" version:u8 value}. Strings are
  * interned on the way, nothing is aligned, and decoding checks every count and
  * length against the bytes left and nesting against {@link #MAX_DEPTH}.
  */
 public final class Binary {
     /** What a binary document starts with. */
     static final byte[] MAGIC = {'S', 'D', 'A', 'T'};
-    /** The version byte after the magic. */
-    public static final int VERSION = 1;
+    /** The version byte after the magic: what is written. */
+    public static final int VERSION = 2;
+    /** The older version that is still read. */
+    public static final int LEGACY_VERSION = 1;
     /** Nested deeper than this is malformed. */
     public static final int MAX_DEPTH = 256;
     /** A stream's length: fixed width, little-endian. */
@@ -38,7 +40,7 @@ public final class Binary {
         return BinaryDecoder.body(bytes);
     }
 
-    /** {@code value} as a whole document. */
+    /** {@code value} as a whole document, version 2: reading a version 1 document and writing it upgrades it. */
     public static byte[] encode(Value value) {
         return BinaryEncoder.document(value);
     }

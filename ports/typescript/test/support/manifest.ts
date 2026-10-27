@@ -29,6 +29,8 @@ export interface FrameJson {
   value: ModelJson;
   bytes?: string;
   bytes_file?: string;
+  bytes_v2?: string;
+  bytes_v2_file?: string;
   also_read_by?: { schema: string; shape: string; value: ModelJson }[];
 }
 
@@ -66,6 +68,10 @@ export interface Case {
   binary?: string;
   binary_file?: string;
   binary_is_encoded?: boolean;
+  binary_v2?: string;
+  binary_v2_file?: string;
+  binary_v2_is_encoded?: boolean;
+  binary_upgrades?: boolean;
   frame?: FrameJson;
   io?: IoJson;
   error?: ErrorJson;

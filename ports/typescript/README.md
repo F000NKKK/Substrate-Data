@@ -1,7 +1,7 @@
 # Substrate Data for TypeScript
 
 A TypeScript port of [Substrate Data](../../README.md): the value model, the
-text form, the binary form (`SDAT` version 1), frames read by their shape, and
+text form, the binary form (`SDAT` version 2, version 1 still read), frames read by their shape, and
 length-prefixed frame streams. It has no runtime dependencies, is strict
 TypeScript (ESM, Node 22 or later) and is checked against the language-neutral
 [conformance vectors](../../conformance/README.md): the exact bytes the Rust

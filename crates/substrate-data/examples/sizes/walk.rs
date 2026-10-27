@@ -4,6 +4,7 @@
 //! the crate's decoder, and fails if it does not consume the input exactly.
 
 use substrate_data::binary::{MAGIC, NEW_STRING, STREAM_LEN_BYTES, tag};
+use substrate_data::binary::tag::{INT_INLINE, STR_INDEX};
 
 /// Bytes spent on each kind of thing.
 #[derive(Debug, Default, Clone, Copy)]
@@ -40,6 +41,8 @@ struct Walk<'a> {
     b: &'a [u8],
     i: usize,
     strings: usize,
+    /// How many keys each shape has, by its number.
+    shapes: Vec<usize>,
     spent: Spent,
 }
 
@@ -49,6 +52,7 @@ pub(crate) fn spent(bytes: &[u8]) -> Option<Spent> {
         b: bytes,
         i: 0,
         strings: 0,
+        shapes: Vec::new(),
         spent: Spent::default(),
     };
     w.header()?;
@@ -136,8 +140,40 @@ impl Walk<'_> {
             tag::FLOATS => self.packed_floats(8),
             tag::FLOATS32 => self.packed_floats(4),
             tag::STREAM => self.stream(),
+            tag::MAP_SHAPE => {
+                let width = self.shape()?;
+                self.values(width)
+            }
+            tag::RECORDS => {
+                let n = self.count()?;
+                let width = self.shape()?;
+                self.values(n.checked_mul(width)?)
+            }
+            STR_INDEX..=0x3f | INT_INLINE..=0xff => Some(()),
             _ => None,
         }
+    }
+
+    /// A shape: its number, or its keys the first time: how many keys it has.
+    fn shape(&mut self) -> Option<usize> {
+        let (v, width) = self.varint()?;
+        self.spent.counts += width;
+        let n = usize::try_from(v >> 1).ok()?;
+        if v & NEW_STRING == 0 {
+            return self.shapes.get(n).copied();
+        }
+        for _ in 0..n {
+            self.string(true)?;
+        }
+        self.shapes.push(n);
+        Some(n)
+    }
+
+    fn values(&mut self, n: usize) -> Option<()> {
+        for _ in 0..n {
+            self.value()?;
+        }
+        Some(())
     }
 
     fn fixed(&mut self, n: usize) -> Option<()> {

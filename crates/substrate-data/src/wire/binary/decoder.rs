@@ -2,6 +2,7 @@
 //! [`ValueRef`] (`decoder_ref`), or step by step by a schema reading itself
 //! (`decoder_straight`).
 
+use super::seen_keys::SeenKeys;
 use super::{
     DecodeError, MAGIC, MAX_DEPTH, NEW_STRING, STREAM_LEN_BYTES, VERSION, read_varint, tag,
     unzigzag,
@@ -198,15 +199,14 @@ impl<'b> Decoder<'b> {
         Ok(self.strings.len() - 1)
     }
 
-    /// A map key: shared with every other map that has it.
-    pub(super) fn shared_key(&mut self) -> Result<Arc<str>, DecodeError> {
-        let i = self.string_index()?;
+    /// The key at table index `i`: shared with every other map that has it.
+    fn shared_key_at(&mut self, i: usize) -> Arc<str> {
         if self.keys.len() <= i {
             self.keys.resize(i + 1, None);
         }
-        Ok(self.keys[i]
+        self.keys[i]
             .get_or_insert_with(|| self.strings[i].into())
-            .clone())
+            .clone()
     }
 
     /// A reference's kind and id, each checked: a malformed one is an error.
@@ -290,8 +290,14 @@ impl<'b> Decoder<'b> {
         let n = self.count(MAP_ENTRY_MIN)?;
         self.deeper()?;
         let mut map = Map::with_capacity(n);
+        let mut seen = SeenKeys::default();
         for _ in 0..n {
-            let k = self.shared_key()?;
+            let at = self.i;
+            let i = self.string_index()?;
+            if !seen.insert(self.strings[i]) {
+                return Err(DecodeError::duplicate_key(self.strings[i], at));
+            }
+            let k = self.shared_key_at(i);
             map.push_unchecked(k, self.value()?);
         }
         self.depth -= 1;

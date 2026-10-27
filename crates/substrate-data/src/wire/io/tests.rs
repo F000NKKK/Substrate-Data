@@ -35,3 +35,36 @@ fn a_stream_cut_inside_the_length_is_an_error_not_a_clean_end() {
     }
     assert!(read_frame_bytes(&mut [].as_slice()).unwrap().is_none());
 }
+
+/// Fails each `read` with the next error of its script, then reads from `rest`.
+struct Scripted<'a> {
+    errors: Vec<std::io::ErrorKind>,
+    rest: &'a [u8],
+}
+
+impl std::io::Read for Scripted<'_> {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        match self.errors.pop() {
+            Some(kind) => Err(kind.into()),
+            None => self.rest.read(buf),
+        }
+    }
+}
+
+#[test]
+fn an_interrupted_read_of_the_length_is_retried_and_other_errors_surface() {
+    let mut bytes = Vec::new();
+    write_frame(&mut bytes, &7_u32).unwrap();
+    let mut retried = Scripted {
+        errors: vec![std::io::ErrorKind::Interrupted],
+        rest: &bytes,
+    };
+    assert_eq!(read_frame::<u32>(&mut retried).unwrap(), Some(7));
+
+    let mut broken = Scripted {
+        errors: vec![std::io::ErrorKind::BrokenPipe],
+        rest: &bytes,
+    };
+    let err = read_frame::<u32>(&mut broken).unwrap_err();
+    assert_eq!(err.kind(), std::io::ErrorKind::BrokenPipe);
+}

@@ -12,7 +12,7 @@ use super::{
 /// What a writer reserves to start with: most messages fit.
 pub(crate) const START_BYTES: usize = 256;
 
-/// Writes the binary form piece by piece, from data that isn't a [`Value`]
+/// Writes the binary form piece by piece, from data that isn't a [`Value`](crate::Value)
 /// — nothing is built or copied on the way. A map or list is given its
 /// length, then that many entries (`key` then a value) or values.
 ///
@@ -121,7 +121,7 @@ impl Writer {
         self
     }
 
-    /// A float: four bytes when it is an `f32` exactly ([`narrows`], what a
+    /// A float: four bytes when it is an `f32` exactly (`layout::narrows`, what a
     /// reader gives back bit for bit), else eight.
     pub fn float(&mut self, f: f64) -> &mut Self {
         if narrows(f) {

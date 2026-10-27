@@ -5,6 +5,11 @@ all-features = true
 [advisories]
 version = 2
 yanked = "deny"
+# Dev-dependencies of the benchmarks only; none is in the shipped crates.
+ignore = [
+    { id = "RUSTSEC-2025-0141", reason = "bincode is unmaintained; it is a dev-dependency of the benches (the format compared against, and a dependency of iai-callgrind)" },
+    { id = "RUSTSEC-2026-0173", reason = "proc-macro-error2 is unmaintained; it comes with iai-callgrind, a dev-dependency of the benches" },
+]
 
 [licenses]
 version = 2

@@ -75,4 +75,5 @@ macro_rules! simd_kernels {
     };
 }
 
-pub(super) use {by_width, simd_kernels};
+pub(super) use by_width;
+pub(super) use simd_kernels;

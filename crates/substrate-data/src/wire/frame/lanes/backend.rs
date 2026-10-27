@@ -86,7 +86,7 @@ impl Backend {
         let numbers = src.as_flattened();
         let mut group = 0;
         while group < src.len() {
-            let backend = self.for_groups(src.len() - group);
+            let backend = self.for_groups(width, src.len() - group);
             backend.pack_unchecked(&numbers[group * GROUP..], width, &mut out[group * size..]);
             group += backend.groups_per_call();
         }
@@ -106,7 +106,7 @@ impl Backend {
         let numbers = out.as_flattened_mut();
         let mut group = 0;
         while group < count {
-            let backend = self.for_groups(count - group);
+            let backend = self.for_groups(width, count - group);
             backend.unpack_unchecked(&src[group * size..], width, &mut numbers[group * GROUP..]);
             group += backend.groups_per_call();
         }
@@ -120,16 +120,15 @@ impl Backend {
         }
     }
 
-    /// The backend to use for the next call when `left` groups remain: this
-    /// one, or the narrower one that takes a single group.
-    fn for_groups(self, left: usize) -> Self {
-        if left >= self.groups_per_call() {
-            self
-        } else {
-            match self {
-                Self::Avx512 => Self::Avx2,
-                other => other,
-            }
+    /// The backend to use for the next call of `width`-bit groups when `left`
+    /// groups remain: this one, or a narrower one where it is faster. The
+    /// 512-bit kernels take two groups at a time, so a single group left goes
+    /// to AVX2; and at 32 bits a group is a copy, which AVX2 does faster than
+    /// shuffling two rows into one register and out again (measured).
+    fn for_groups(self, width: u32, left: usize) -> Self {
+        match self {
+            Self::Avx512 if left < self.groups_per_call() || width == u32::BITS => Self::Avx2,
+            other => other,
         }
     }
 

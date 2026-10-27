@@ -103,3 +103,13 @@ fn a_backend_names_itself() {
     .collect();
     assert_eq!(names, ["portable", "SSE4.2", "AVX2", "AVX-512", "NEON"]);
 }
+
+#[test]
+fn the_backends_this_machine_ran() {
+    let ran: Vec<String> = Backend::available().map(|b| b.to_string()).collect();
+    eprintln!(
+        "lane backends: {} (active: {})",
+        ran.join(", "),
+        Backend::active()
+    );
+}

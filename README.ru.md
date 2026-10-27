@@ -41,7 +41,7 @@
 substrate-data = "0.2"
 ```
 
-Признаки `substrate-data`: `json` (JSON ⇄ модель), `toml` (чтение TOML в модель с позициями).
+Признаки `substrate-data`: `json` (JSON ⇄ модель), `toml` (чтение TOML в модель с позициями), `tokio` (кадры поверх асинхронных потоков, `io::asynchronous`).
 
 ```rust
 use substrate_data::{Id, Schema};

@@ -2,8 +2,7 @@
 
 use std::io::{self, Read};
 
-use super::MAX_FRAME;
-use super::framing::{decode_frame, read_len};
+use super::framing::{body_len, decode_frame, read_len};
 use crate::Schema;
 
 /// Reads frames into a buffer it keeps, so a stream of messages costs no
@@ -43,15 +42,12 @@ impl FrameReader {
     ///
     /// The reader's I/O error; [`io::ErrorKind::UnexpectedEof`] when the
     /// stream ends inside a length or a frame; [`io::ErrorKind::InvalidData`]
-    /// for a length over [`MAX_FRAME`].
+    /// for a length over [`super::MAX_FRAME`].
     pub fn read_bytes(&mut self, r: &mut impl Read) -> io::Result<Option<&[u8]>> {
         let Some(len) = read_len(r)? else {
             return Ok(None);
         };
-        let len = len as usize;
-        if len > MAX_FRAME {
-            return Err(io::Error::new(io::ErrorKind::InvalidData, "frame too long"));
-        }
+        let len = body_len(len)?;
         self.buf.clear();
         r.take(len as u64).read_to_end(&mut self.buf)?;
         if self.buf.len() < len {

@@ -44,10 +44,7 @@ pub fn read_frame_bytes(r: &mut impl Read) -> io::Result<Option<Vec<u8>>> {
     let Some(len) = read_len(r)? else {
         return Ok(None);
     };
-    let len = len as usize;
-    if len > MAX_FRAME {
-        return Err(io::Error::new(io::ErrorKind::InvalidData, "frame too long"));
-    }
+    let len = body_len(len)?;
     let mut bytes = vec![0; len];
     r.read_exact(&mut bytes)?;
     Ok(Some(bytes))
@@ -63,6 +60,16 @@ pub fn read_frame<T: Schema>(r: &mut impl Read) -> io::Result<Option<T>> {
         return Ok(None);
     };
     decode_frame(&bytes).map(Some)
+}
+
+/// A length read off the wire as a body length; [`io::ErrorKind::InvalidData`]
+/// over [`MAX_FRAME`], before anything is allocated for it.
+pub(super) fn body_len(len: Len) -> io::Result<usize> {
+    let len = len as usize;
+    if len > MAX_FRAME {
+        return Err(io::Error::new(io::ErrorKind::InvalidData, "frame too long"));
+    }
+    Ok(len)
 }
 
 /// A frame body's length as written; [`io::ErrorKind::InvalidInput`] over [`MAX_FRAME`].

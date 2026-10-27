@@ -41,7 +41,7 @@ The format specification: [docs/format.md](docs/format.md). Language-neutral tes
 substrate-data = "0.2"
 ```
 
-Features of `substrate-data`: `json` (JSON ⇄ the model), `toml` (TOML read into the model with spans).
+Features of `substrate-data`: `json` (JSON ⇄ the model), `toml` (TOML read into the model with spans), `tokio` (frames over async streams, `io::asynchronous`).
 
 ```rust
 use substrate_data::{Id, Schema};

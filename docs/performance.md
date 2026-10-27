@@ -59,6 +59,7 @@ cargo bench -p substrate-data --bench <name> --all-features -- --test   # run ea
 | `binary` | `benches/binary.rs` | binary encode and decode, steps, scalars, packed lists |
 | `frame` | `benches/frame.rs` | frame pack and unpack, views, steps, float kernels |
 | `io` | `benches/io.rs` | frames and binary over `Read`/`Write`, streams |
+| `io_async` | `benches/io_async.rs` | the same frames over `AsyncRead`/`AsyncWrite` (feature `tokio`) |
 | `schema` | `benches/schema.rs` | every form of every derived type, resolve, expand, dictionary |
 | `reader` | `benches/reader.rs` | the `Reader` API, named types, shape descriptions, `Dictionary` |
 | `model` | `benches/model.rs` | `Map`, `Value`, paths, positions, borrowed values |
@@ -134,6 +135,7 @@ with no row below is a gap.
 | `frame::pack`/`unpack`, `Packer`, `Unpacker`, views, `List`, float kernels | `frame: frame/*`, `iai: docs_to_frame`, `docs_read_frame` |
 | `lanes` (`pack_groups`, `unpack_groups`, `group_bytes`, every `Backend`, `is_available`, `available`) | `lanes: lanes/pack`, `lanes/unpack`, `lanes/whole`, `lanes/small`, `lanes/is_available_all` |
 | `FrameWriter`, `FrameReader`, `write_frame`, `read_frame`, streams (`Stream`, `StreamWriter`) | `io: io/*`, `io/stream_1000`, `schema: stream/*` |
+| `io::asynchronous::{FrameWriter, FrameReader, read_frame, read_frame_bytes, write_frame, write_frame_bytes}` (feature `tokio`) | `io_async: io_async/*`, `io_async/stream_1000` |
 | `Schema`: `write`, `read_value`, `from_value(_with)`, `to_bytes(_into)`, `read_bytes`, `from_bytes_with`, `to_text`, `from_text`, `from_doc(_with)`, `read_ref_value` | `schema: schema/forms/*`, `iai: typed_forms` |
 | `Resolve`, `Unresolved`, `Expand`, `Dictionary` read paths | `schema: schema/resolve/*`, `schema/expand/*` |
 | `Dictionary::{insert, declare, holds, get, kinds, entries}` | `schema` (insert, get), `reader: reader/dictionary/*` |
@@ -391,3 +393,21 @@ Percentages are of the instructions of that benchmark.
 7. **Text** is 1.5 times the binary on records and 3.4 times on `numbers`
    pretty; pretty `deep` is 10 times its compact form. That is the form's
    purpose (people read it); no change is proposed.
+
+## Async frames (feature `tokio`)
+
+`io_async` drives `io::asynchronous` on a current-thread runtime, reading
+from memory and writing to `tokio::io::sink()`, so a stream that is always
+ready shows what `.await` adds and nothing a socket does. Wall-clock, one
+machine (criterion `--quick`; ballparks only):
+
+| path | blocking (`io`) | async (`io_async`) |
+|---|---|---|
+| 1000 small frames sent on one stream | 228 us | 240 us |
+| 1000 small frames read from one stream | 485 us | 510 us |
+| one small frame sent | 275 ns | 436 ns |
+| one small frame read, decoded | 619 ns | 948 ns |
+
+On a long stream the state machine costs about 5 %. A single call measured
+alone also pays `Runtime::block_on` (about 150 ns), which is the bench's,
+not the reader's.

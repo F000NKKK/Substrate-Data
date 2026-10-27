@@ -6,7 +6,7 @@
 
   <groupId>io.github.f000nkkk</groupId>
   <artifactId>substrate-data</artifactId>
-  <version>0.2.1</version>
+  <version>0.3.0</version>
   <packaging>jar</packaging>
 
   <name>Substrate Data (Java port)</name>

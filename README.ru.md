@@ -38,7 +38,7 @@
 ```toml
 # Cargo.toml
 [dependencies]
-substrate-data = "0.2"
+substrate-data = "0.3"
 ```
 
 Признаки `substrate-data`: `json` (JSON ⇄ модель), `toml` (чтение TOML в модель с позициями), `tokio` (кадры поверх асинхронных потоков, `io::asynchronous`).

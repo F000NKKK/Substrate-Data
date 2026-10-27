@@ -9,6 +9,38 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-27
+
+0.3 is the performance and compactness release. The headline changes:
+
+- **SDAT version 2** (breaking, binary form): readers accept versions 1 and 2,
+  writers always write 2. Documents are 12 to 55 % smaller and decode up to
+  2.5x faster; every version 1 document converts without loss
+  (`binary::upgrade`).
+- **Text form** parses in about half the instructions and writes up to 2.4x
+  faster; typed `to_text`/`from_text` no longer build a `Value`.
+- **Benchmarks** for every public path, a comparison with serde_json,
+  ciborium, rmp-serde, postcard and bincode, and instruction-count baselines.
+- **Ports** to TypeScript and Java (`ports/`), kept in step by the
+  conformance vectors.
+- **Async frame io** (feature `tokio`), **schema-evolution** documentation
+  proven by tests, and AVX-512/AVX2 dispatch tuned from measurements.
+
+Migration from 0.2.x, in one place:
+
+1. Anything you write is now SDAT version 2. Upgrade every reader of that data
+   to 0.3 (or to a port from this release) before you write version 2 with it;
+   0.2 readers cannot read it. Old files still read; `binary::upgrade(bytes)`
+   rewrites one as version 2.
+2. A binary `Stream<T>` whose items cannot be read is now an error at decode
+   instead of an empty stream.
+3. `Schema` and `With` gain the provided method `write_text`; nothing to do
+   unless you implement both by hand and want the fast path.
+4. The error vector `binary_version_2` of the conformance suite is now
+   `binary_version_3` (ports and other readers of the vectors).
+
+Details, with measured numbers, follow.
+
 ### Fixed
 
 - Binary form: a `Stream<T>` whose items `T` cannot read (an older reader
@@ -57,9 +89,8 @@ only grow: a tag is never renumbered and a frame field is never reordered.
   between versions, per form, as a matrix written from the
   `tests/evolution` rows (the test fails when the page is stale).
   Documents, with tests, that frames skip appended fields but do not detect
-  a reorder or a retype, that the named forms refuse unknown fields, that
-  records inside tagged enums and tuples are not skipped by length, and that
-  a `Stream`'s items are checked only when read.
+  a reorder or a retype, that the named forms refuse unknown fields, and that
+  records inside tagged enums and tuples are not skipped by length.
 
 ### Added (text form)
 

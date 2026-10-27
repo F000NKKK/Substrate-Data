@@ -48,3 +48,6 @@ pub use schema::{
     placed, read_bytes, read_ref_value, read_value, to_bytes, to_text,
 };
 pub use substrate_data_derive::Schema;
+
+#[cfg(doctest)]
+mod readme;

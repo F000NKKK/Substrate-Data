@@ -6,6 +6,8 @@ rust-version = { workspace = true }
 authors = { workspace = true }
 license = { workspace = true }
 repository = { workspace = true }
+readme = "../../README.md"
+documentation = "https://docs.rs/substrate-data"
 description = "One data model, text syntax, binary form, packed frames and schema system — for any program's files, saves and wire messages."
 keywords = ["serialization", "schema", "binary", "json5", "format"]
 categories = ["encoding", "parser-implementations"]

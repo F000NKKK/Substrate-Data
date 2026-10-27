@@ -35,3 +35,8 @@ codes = ["A501"]
 path = "crates/substrate-data-derive/src/lib.rs"
 reason = "a proc-macro crate's derive entry point must be a function at its root; it only forwards to expand::derive"
 codes = ["C103"]
+
+[[exempt]]
+path = "crates/substrate-data/tests/io_no_alloc.rs"
+reason = "a test's counting global allocator: the allocator is process-wide by definition; the count is per thread so parallel tests don't see each other's"
+codes = ["A501"]

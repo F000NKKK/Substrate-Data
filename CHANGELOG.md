@@ -23,6 +23,9 @@ only grow: a tag is never renumbered and a frame field is never reordered.
   forms don't expand: a frame has no resolver, its fields hold values.
 - `schema::Dictionary`: values by kind and id, a `Schema` and a `Resolve`
   that checks and expands the references of the kinds it holds.
+- `conformance/`: language-neutral golden vectors (a JSON manifest and the
+  raw bytes) for ports in other languages, and a test that fails when the
+  implementation drifts from them (`CONFORMANCE_BLESS=1` regenerates).
 - `simd-utf8` feature: SIMD UTF-8 validation (`simdutf8`) for source files,
   the binary form and frames; results and errors are identical to the
   standard library's.

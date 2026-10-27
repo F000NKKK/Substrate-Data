@@ -15,6 +15,9 @@ service is one value throughout.
 The crate is `substrate-data`; `#[derive(Schema)]` comes from
 `substrate-data-derive`, re-exported as `substrate_data::Schema`.
 
+Golden test vectors for ports in other languages — exact bytes of every
+tag, frame and malformed input — are in [`conformance/`](../conformance/README.md).
+
 ---
 
 ## Model

@@ -27,6 +27,7 @@
 use std::collections::{BTreeMap, HashMap};
 use std::marker::PhantomData;
 
+pub use super::expand::Expand;
 use crate::binary::{Decoder, Writer};
 use crate::frame::{Packer, Unpacker};
 use crate::model::borrowed::ValueRef;

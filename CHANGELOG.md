@@ -11,6 +11,13 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Added
 
+- Reference expansion: `Resolve::expand` (a reference replaced by a value;
+  default keeps it), `with::Expand<W>` (a field written as a value or as a
+  reference), `Reader::expand_ref`, `Expansion`, `MAX_EXPANSION_DEPTH`, and
+  `from_bytes_with` (the binary form read through a resolver). The frame
+  forms don't expand: a frame has no resolver, its fields hold values.
+- `schema::Dictionary`: values by kind and id, a `Schema` and a `Resolve`
+  that checks and expands the references of the kinds it holds.
 - `binary::NEW_STRING`, `binary::STREAM_LEN_BYTES`, `schema::RESULT_OK` and
   `schema::RESULT_ERR` are public, for readers in other languages.
 

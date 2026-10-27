@@ -1,0 +1,19 @@
+[package]
+name = "substrate-data-derive"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+authors = { workspace = true }
+license = { workspace = true }
+repository = { workspace = true }
+description = "#[derive(Schema)] for substrate-data."
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { workspace = true }
+quote = { workspace = true }
+proc-macro2 = { workspace = true }
+# Where `substrate_data` is for the crate deriving (its own dependency, or a re-export).
+proc-macro-crate = { workspace = true }

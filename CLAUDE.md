@@ -16,3 +16,11 @@
 - Before pushing: `cargo fmt --all`, `cargo clippy --workspace
   --all-features --all-targets -- -D warnings`, `cargo test --workspace
   --all-features`, `cargo bench --no-run`.
+
+## Rust code follows Craftbook
+
+Rust code follows Craftbook (https://github.com/F000NKKK/craftbook); read
+README.md and rust/*.md before writing code. The key limits are in
+`.claude/rules/craftbook.md`; this file keeps only this repository's own
+rules. CI runs `craftcheck` against `.craftcheck-baseline` (findings only
+shrink) and clippy with the Craftbook workspace lint set.

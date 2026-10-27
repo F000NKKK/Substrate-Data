@@ -131,7 +131,22 @@ impl RefKey {
     /// Whether `id` may be a reference's id.
     #[must_use]
     pub fn is_valid(id: &str) -> bool {
-        !id.is_empty() && !id.chars().any(|c| c.is_whitespace() || c.is_control())
+        if id.is_empty() {
+            return false;
+        }
+        // ASCII is checked byte by byte: whitespace and controls are the
+        // bytes up to the space, and DEL.
+        let mut ascii = true;
+        for &c in id.as_bytes() {
+            if !c.is_ascii() {
+                ascii = false;
+                break;
+            }
+            if c <= b' ' || c == 0x7f {
+                return false;
+            }
+        }
+        ascii || !id.chars().any(|c| c.is_whitespace() || c.is_control())
     }
 
     /// A typed id's spelling, as is: it's checked when it's read back.
@@ -224,5 +239,53 @@ impl PartialEq<RefKey> for String {
 impl PartialEq<RefKey> for str {
     fn eq(&self, other: &RefKey) -> bool {
         self == &*other.0
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn an_id_is_anything_but_empty_whitespace_or_controls() {
+        for ok in [
+            "a",
+            "images/logo.png",
+            "~!@#$%^&*()_+-=[]{};:'\",.<>?/|\\`",
+            "héllo",
+            "日本",
+        ] {
+            assert!(RefKey::is_valid(ok), "{ok:?}");
+        }
+        for bad in [
+            "",
+            " ",
+            "a b",
+            "a\tb",
+            "a\nb",
+            "a\rb",
+            "a\x0bb",
+            "a\x0cb",
+            "a\0b",
+            "a\x1fb",
+            "a\x7fb",
+            "é b",
+            "é\u{85}",
+            "é\u{a0}",
+            "é\u{2003}",
+            "日本\u{9f}",
+            "a\u{200a}",
+        ] {
+            assert!(!RefKey::is_valid(bad), "{bad:?}");
+        }
+    }
+
+    #[test]
+    fn the_ascii_path_agrees_with_the_character_rule() {
+        for byte in 0..=0x7f_u8 {
+            let id = format!("a{}b", char::from(byte));
+            let by_chars = !id.chars().any(|c| c.is_whitespace() || c.is_control());
+            assert_eq!(RefKey::is_valid(&id), by_chars, "{id:?}");
+        }
     }
 }

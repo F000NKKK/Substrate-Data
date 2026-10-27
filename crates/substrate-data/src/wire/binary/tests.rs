@@ -167,3 +167,95 @@ fn deep_nesting_and_bad_references_are_errors() {
     let arena = Bump::new();
     assert!(decode_ref(b"SDAT\x01\x08\x09File\x03x", &arena).is_err());
 }
+
+#[test]
+fn a_kind_is_reused_from_its_string_and_a_bad_second_one_is_refused() {
+    // Two references: the kind `file` written, then named by its index.
+    let two = b"SDAT\x01\x06\x02\x08\x09file\x03x\x08\x00\x03y";
+    let want = Value::List(vec![
+        Value::Ref(Ref::parse("file", "x").unwrap()),
+        Value::Ref(Ref::parse("file", "y").unwrap()),
+    ]);
+    assert_eq!(decode(two).unwrap(), want);
+    let arena = Bump::new();
+    assert!(decode_ref(two, &arena).is_ok());
+    // The second reference's kind is a new, bad string.
+    let bad = b"SDAT\x01\x06\x02\x08\x09file\x03x\x08\x07Bad\x03y";
+    let err = decode(bad).unwrap_err();
+    assert!(err.message.contains("isn't a kind"), "{err}");
+    assert_eq!(err.offset, 16);
+}
+
+#[test]
+fn a_shape_is_found_again_however_many_others_came_between() {
+    let map = |keys: &[&str]| {
+        let mut m = Map::new();
+        for key in keys {
+            m.insert(*key, Value::Int(1));
+        }
+        Value::Map(m)
+    };
+    let sets: [&[&str]; 9] = [
+        &["alpha", "beta"],
+        &["gamma"],
+        &["delta"],
+        &["epsilon"],
+        &["zeta"],
+        &["eta"],
+        &["alpha", "beta"],
+        &["beta", "alpha"],
+        &["alpha", "beta"],
+    ];
+    let value = Value::List(sets.iter().map(|keys| map(keys)).collect());
+    let bytes = encode(&value);
+    let decoded = decode(&bytes).unwrap();
+    assert_eq!(decoded, value);
+    let Value::List(items) = decoded else {
+        panic!("a list")
+    };
+    let order = |v: &Value| -> Vec<String> {
+        let Value::Map(m) = v else { panic!("a map") };
+        m.keys().map(str::to_owned).collect()
+    };
+    assert_eq!(order(&items[7]), ["beta", "alpha"]);
+    // Each key is written once, in the first shape that has it.
+    for key in ["alpha", "beta", "gamma"] {
+        assert_eq!(
+            bytes
+                .windows(key.len())
+                .filter(|w| *w == key.as_bytes())
+                .count(),
+            1
+        );
+    }
+}
+
+#[test]
+fn a_repeated_key_is_refused_in_a_big_map_too() {
+    let keys: Vec<String> = (0..40).map(|i| format!("k{i}")).collect();
+    let mut w = Writer::new();
+    w.map(keys.len() + 1);
+    for key in keys.iter().chain([&keys[33]]) {
+        w.key(key).int(1);
+    }
+    let bytes = w.finish();
+    let err = decode(&bytes).unwrap_err();
+    assert!(err.message.contains("k33"), "{err}");
+    let arena = Bump::new();
+    assert!(
+        decode_ref(&bytes, &arena)
+            .unwrap_err()
+            .message
+            .contains("k33")
+    );
+    // The same keys without the repeat read.
+    let mut plain = Writer::new();
+    plain.map(keys.len());
+    for key in &keys {
+        plain.key(key).int(1);
+    }
+    let Value::Map(map) = decode(&plain.finish()).unwrap() else {
+        panic!("a map")
+    };
+    assert_eq!(map.len(), 40);
+}

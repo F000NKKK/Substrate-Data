@@ -163,12 +163,12 @@ Value trees, text and binary:
 
 | sample | text parse | text write | binary encode | binary decode |
 |---|---:|---:|---:|---:|
-| config_large | 29.0 | 12.7 | 13.0 | 20.1 |
-| records_large | 24.0 | 12.5 | 6.2 | 11.3 |
-| numbers_large | 21.6 | 18.1 | 1.9 | 2.1 |
+| config_large | 29.0 | 12.7 | 9.2 | 17.6 |
+| records_large | 24.0 | 12.5 | 6.2 | 11.2 |
+| numbers_large | 21.6 | 18.1 | 1.9 | 1.9 |
 | strings_large | 6.2 | 3.6 | 2.1 | 2.3 |
-| deep_large | 35.7 | 16.3 | 12.6 | 18.9 |
-| refs_large | 22.2 | 13.8 | 10.9 | 21.6 |
+| deep_large | 35.7 | 16.3 | 9.1 | 18.8 |
+| refs_large | 22.2 | 13.8 | 10.9 | 15.8 |
 | blobs_large | 1.7 | 3.4 | 0.4 | 0.4 |
 
 (Text parse and write before the text work, same samples: 51.2 / 16.2,
@@ -191,8 +191,8 @@ Typed documents through every form (`docs_large`, `numbers_large`; millions):
 
 | form | docs encode | docs decode | numbers encode | numbers decode |
 |---|---:|---:|---:|---:|
-| sd_frame | 4.6 | 6.6 | 0.70 | 0.58 |
-| sd_binary | 4.6 | 9.2 | 1.25 | 1.83 |
+| sd_frame | 4.6 | 6.6 | 0.49 | 0.58 |
+| sd_binary | 4.5 | 8.9 | 1.04 | 1.66 |
 | postcard | 1.6 | 6.7 | 1.82 | 1.38 |
 | bincode 2 | 1.7 | 7.4 | 1.68 | 1.81 |
 | msgpack (compact) | 3.1 | 7.8 | 2.73 | 3.37 |
@@ -201,9 +201,9 @@ Typed documents through every form (`docs_large`, `numbers_large`; millions):
 | json | 7.8 | 19.3 | 6.4 | 13.8 |
 | sd_text | 13.8 | 31.1 | 18.6 | 27.3 |
 
-Other typed paths, `docs_large` (millions): `write` to a `Value` 25.2,
-`read_value` 13.7, `to_text` 13.9, `from_text` 30.8, `to_frame` 5.1,
-`read_frame` 6.5. (`to_text` was 54.6 and `from_text` 82.1 before they
+Other typed paths, `docs_large` (millions): `write` to a `Value` 24.4,
+`read_value` 13.6, `to_text` 13.9, `from_text` 30.8, `to_frame` 4.6,
+`read_frame` 6.6. (`to_text` was 54.6 and `from_text` 82.1 before they
 stopped going through the `Value` tree.)
 
 Read it as: the frame is the cheapest of the crate's own forms on both sizes
@@ -303,12 +303,80 @@ and `f32`-exact floats in four bytes in the `Value` route, a hash index with
 the hashes in its slots, and a derive that names a struct's shape by the
 address of its keys and a bit per present field (no hashing).
 
-What got worse, and why: the `Value` route pays per map for the shape (one
+What got worse, and why: the `Value` route paid per map for the shape (one
 string lookup per key as before, plus a shape lookup); maps whose keys are
-nearly all different (config, deep) gain no sharing, so `config_large` and
-`deep_large` encode 9 to 11 % slower while being 18 and 55 % smaller. The
-frame pack of a list of numbers is 11 % up from codegen (`put_f64s` copies
-through `memcpy` now) and is 60 K instructions. The rest moved less than 3 %.
+nearly all different (config, deep) gained no sharing, so `config_large` and
+`deep_large` encoded 9 to 11 % slower while being 18 and 55 % smaller, and the
+frame pack of a list of numbers was 11 % up from `put_f64s` zeroing its
+output first. Both are fixed below.
+
+### Tuning after version 2
+
+Same machine, same flags, `v2` being main at 2550613 and `tuned` this change
+(millions of instructions on the large samples; the other benchmarks of the
+suite moved by 1 % or less, apart from the text parse and `source` ones,
+where no code changed and the counts fell by 1 to 7 % from layout alone). No byte of any form changed: the shape rule,
+the tags and the conformance vectors are as they were, so the ports need
+nothing.
+
+| | v2 | tuned | change | against v1 |
+|---|---:|---:|---:|---:|
+| `binary::encode(&Value)` config_large | 12.94 | 9.25 | -28 % | -22 % |
+| `binary::encode(&Value)` deep_large | 12.44 | 9.14 | -27 % | -20 % |
+| `binary::encode(&Value)` records_large | 6.13 | 6.20 | +1 % | -44 % |
+| `binary::encode(&Value)` numbers_large | 1.90 | 1.87 | -2 % | |
+| `binary::decode` refs_large | 21.94 | 15.76 | -28 % | -39 % |
+| `binary::decode` config_large | 20.15 | 17.57 | -13 % | -23 % |
+| `binary::decode` numbers_large | 2.06 | 1.90 | -8 % | |
+| `binary::decode` deep_large, records_large | 18.93, 11.33 | 18.81, 11.24 | -1 % | |
+| typed `to_bytes` numbers_large | 1.25 | 1.04 | -17 % | |
+| typed `read_bytes` numbers_large | 1.83 | 1.66 | -9 % | |
+| typed `read_bytes` docs_large | 9.20 | 8.90 | -3 % | |
+| typed `to_frame` numbers_large | 0.70 | 0.49 | -30 % | -13 % |
+| `patch::format` config_medium | 1.065 | 0.220 | -79 % | |
+| `patch::format` deep_medium | 2.192 | 0.376 | -83 % | |
+| `patch::format` records_medium | 1.210 | 0.274 | -77 % | |
+| `patch::format` refs_medium | 1.326 | 0.399 | -70 % | |
+| `patch::format` numbers_medium | 1.269 | 0.608 | -52 % | |
+| `patch::edit` refs_medium | 2.148 | 1.381 | -36 % | |
+
+What did it:
+
+- **Shape lookup without a string lookup.** A writer keeps the last four
+  shapes it used and compares a map's keys with their text before looking
+  anything up. A map with the keys of a recent shape (every map of `deep`,
+  the users of `config`) costs one comparison per key instead of a string
+  lookup per key plus a hash of their numbers; a shape not among the four
+  is found as before, in one pass (the old fast path for up to eight keys
+  looked every key up twice when the shape was new). The form is still a
+  function of the value alone: the shape's number and the order of
+  definitions are what they were. A list of one item no longer compares its
+  first item with itself to decide whether it is a record list.
+- **Packed floats are written without zeroing.** `put_wide` and `put_f32s`
+  extend the buffer from the bytes of each float instead of `resize` with
+  zeros and a second pass over it. (callgrind counts the `rep stos` of a
+  large `memset` by the byte, so a pass over a big buffer is visible in the
+  count; on a processor it is cheap, so read this one as a smaller win than
+  it looks.)
+- **Decoding.** A reference's kind is checked and made an atom once for each
+  string of the table instead of once per reference; `RefKey::is_valid`
+  looks at ASCII bytes without decoding characters; the atom table hashes
+  with the crate's seeded multiply-rotate hasher instead of SipHash; the
+  duplicate-key check of a decoded map asks the map's own index instead of
+  copying every key into a `HashSet<String>` (it was 14 % of config
+  decode); a varint of one byte is read inline.
+- **`patch::format`** writes into one `String`, trying the one-line form in
+  place and cutting back if it doesn't fit, instead of building a `String`
+  per node and joining. It is now 1.4 times `text::to_string` on the same
+  sample (it was 8 times). The output is byte-identical (hashed over every
+  corpus sample at three sizes before and after).
+
+What did not move, and why. The malloc share of a frame unpack (30 to 40 %
+of `read_frame` on `docs_large`) is the owned `String` of every string field:
+the unpacker itself allocates nothing but its string-table spill, so the
+allocations only go away for a type that borrows (`&str` views) or shares
+(`Arc<str>` through `shared_str`). `binary::decode` of `deep` and `records`
+is dominated by the same per-string and per-map allocations.
 
 ## Hotspots, ranked
 
@@ -318,7 +386,9 @@ Percentages are of the instructions of that benchmark.
 1. **Binary encode: the interner** (reworked in version 2: pointer-keyed
    guesses, a hash index with hashes in its slots, shapes that need one
    lookup per key; typed `to_bytes` -49 %; what remains is the lookup per
-   key of a `Value` map, 30 to 40 % of `config` and `deep` encode).
+   key of a `Value` map, 30 to 40 % of `config` and `deep` encode; since
+   tuned: a map with the keys of one of the last four shapes is found by
+   comparing its keys, with no lookup at all).
    Before: `Interner::find` is 42 to 45 % of
    `binary_encode` (records, typed docs) and 33 % of the frame pack, plus 8 %
    in `memcmp`, with `Writer::string` another 14 to 17 %. Every string is
@@ -348,17 +418,15 @@ Percentages are of the instructions of that benchmark.
    one), which are rewritten to `fmt`'s rounding. `numbers_large` text write
    44.1 M to 18.1 M; output is byte-identical to `{:?}` (checked on 100 M
    generated values).
-6. **Binary decode of refs.** `RefKey::is_valid` is 10 % and
-   `atom::local::intern` with std SipHash `hash_one` about 11 % of the refs
-   decode; `SeenKeys::insert` is 9 % on records. A faster hasher (FxHash or
-   a plain length-and-bytes hash) for the intern tables and for the `Map`
-   index (`HashMap<Arc<str>, usize>` with SipHash from 32 keys) is a small
-   change with a measurable effect on every Map lookup above 16 keys.
-7. **Varint reads.** 7 to 15 % of binary decode and `string_index` 7 to 13 %:
-   a fast path for one-byte varints in the decoder loop.
-8. **`patch::format`.** 1.2 M instructions on the medium sample against 156 K
-   for `text::to_string`, about 8x: it builds with `format!`, `fmt` and
-   intermediate `String`s.
+6. **Binary decode of refs** (done). The kind is checked once per string of
+   the table, `RefKey::is_valid` has an ASCII path, `atom::local` uses the
+   crate's hasher, and a decoded map checks its keys against its own index:
+   refs decode 21.9 M to 15.8 M, config 20.1 M to 17.6 M. What is left is
+   `malloc` (19 to 23 %) and the per-key `Arc<str>` clone of
+   `shared_key_at`.
+7. **Varint reads** (done for the one-byte case, which is inline now).
+8. **`patch::format`** (done): one `String`, no `format!`; 1.4 times
+   `text::to_string` instead of 8 times.
 9. **Resolver overhead.** A read with a resolver is about 4x a read with none
    and `Expand` 5x: every reference builds a `Path` and calls through
    `dyn Resolve`. Keeping the path as steps until the resolver asks for it is

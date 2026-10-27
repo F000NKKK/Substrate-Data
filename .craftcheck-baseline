@@ -6,7 +6,6 @@ crates/substrate-data/src/diagnostic.rs	C108	Code	1
 crates/substrate-data/src/diagnostic.rs	C108	Errors	1
 crates/substrate-data/src/diagnostic.rs	C108	Problem	1
 crates/substrate-data/src/diagnostic.rs	C108	Severity	1
-crates/substrate-data/src/forms/patch/format.rs	S701		2
 crates/substrate-data/src/forms/patch/rewrite.rs	S701		1
 crates/substrate-data/src/forms/text/parser.rs	C101		1
 crates/substrate-data/src/model/borrowed.rs	C108	MapRef	1
@@ -39,7 +38,7 @@ crates/substrate-data/src/schema/with.rs	C108	RefTo	1
 crates/substrate-data/src/schema/with.rs	C108	Spelled	1
 crates/substrate-data/src/schema/with.rs	C108	Values	1
 crates/substrate-data/src/sync.rs	C108	RwLock	1
-crates/substrate-data/src/wire/binary/decoder.rs	C101		1
+crates/substrate-data/src/wire/binary/decode/decoder.rs	C101		1
 crates/substrate-data/src/wire/frame/unpacker.rs	C101		1
 crates/substrate-data/src/wire/frame/view.rs	C101		1
 crates/substrate-data/src/wire/frame/view.rs	C108	Floats	1

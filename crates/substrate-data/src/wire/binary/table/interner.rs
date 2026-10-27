@@ -95,8 +95,8 @@ impl Interner {
             .ok_or(Some(hash))
     }
 
-    /// Whether string `i` is `s`.
-    fn is(&self, buf: &[u8], i: usize, s: &str) -> bool {
+    /// Whether string `i` (of `buf`) is `s`.
+    pub(crate) fn is(&self, buf: &[u8], i: usize, s: &str) -> bool {
         let (at, len) = self.spans[i];
         len == s.len() && same_bytes(&buf[at..at + len], s.as_bytes())
     }

@@ -1,13 +1,13 @@
 //! Writing the binary form: one buffer, strings written where first used.
 
-use super::layout::{narrow, narrows};
-use super::table::interner::Interner;
-use super::table::shape_table::ShapeTable;
-use super::writer_record::{STATIC_SHAPES, StaticShape};
-use super::{
+use super::shape_cache::ShapeCache;
+use crate::binary::{
     INLINE_INT_MAX, INLINE_INT_MIN, MAGIC, NEW_STRING, STR_INDEX_COUNT, VERSION, tag, varint,
     zigzag,
 };
+use crate::wire::binary::layout::{narrow, narrows};
+use crate::wire::binary::table::interner::Interner;
+use crate::wire::binary::table::shape_table::ShapeTable;
 
 /// What a writer reserves to start with: most messages fit.
 pub(crate) const START_BYTES: usize = 256;
@@ -24,18 +24,13 @@ pub(crate) const START_BYTES: usize = 256;
 /// ```
 #[derive(Debug)]
 pub struct Writer {
-    pub(super) out: Vec<u8>,
+    pub(in crate::wire::binary) out: Vec<u8>,
     /// The strings written, by where they are in `out`.
-    pub(super) strings: Interner,
+    pub(in crate::wire::binary) strings: Interner,
     /// The map shapes written, by their keys.
-    pub(super) shapes: ShapeTable,
-    /// What looking up a shape's keys found, and their numbers: kept to be reused.
-    pub(super) found: Vec<Result<usize, Option<u32>>>,
-    pub(super) numbers: Vec<usize>,
-    /// The shapes of keys that are `'static` slices, by where the slice is and which of its keys.
-    pub(super) known: [StaticShape; STATIC_SHAPES],
-    /// The keys of such a shape, picked: kept to be reused.
-    pub(super) picked: Vec<&'static str>,
+    pub(in crate::wire::binary) shapes: ShapeTable,
+    /// How shapes are found again quickly, and the buffers that takes.
+    pub(in crate::wire::binary) cache: ShapeCache,
 }
 
 impl Default for Writer {
@@ -51,14 +46,16 @@ impl Writer {
         let mut out = Vec::with_capacity(START_BYTES);
         out.extend_from_slice(MAGIC);
         out.push(VERSION);
+        Self::over(out)
+    }
+
+    /// A writer that writes after what `out` holds.
+    fn over(out: Vec<u8>) -> Self {
         Writer {
             out,
             strings: Interner::new(),
             shapes: ShapeTable::default(),
-            found: Vec::new(),
-            numbers: Vec::new(),
-            known: [StaticShape::default(); STATIC_SHAPES],
-            picked: Vec::new(),
+            cache: ShapeCache::default(),
         }
     }
 
@@ -67,15 +64,7 @@ impl Writer {
     pub(crate) fn appending(mut out: Vec<u8>) -> Self {
         out.extend_from_slice(MAGIC);
         out.push(VERSION);
-        Writer {
-            out,
-            strings: Interner::new(),
-            shapes: ShapeTable::default(),
-            found: Vec::new(),
-            numbers: Vec::new(),
-            known: [StaticShape::default(); STATIC_SHAPES],
-            picked: Vec::new(),
-        }
+        Self::over(out)
     }
 
     /// Starts a new document after `prefix` zeroed bytes, keeping every
@@ -87,7 +76,7 @@ impl Writer {
         self.out.push(VERSION);
         self.strings.clear();
         self.shapes.clear();
-        self.known = [StaticShape::default(); STATIC_SHAPES];
+        self.cache.clear();
     }
 
     /// What is written so far, to patch or send.
@@ -108,6 +97,7 @@ impl Writer {
     }
 
     /// An integer: one byte for -16 to 111, else a tag and a varint.
+    #[inline]
     pub fn int(&mut self, n: i64) -> &mut Self {
         let inline = u8::try_from(n.wrapping_sub(INLINE_INT_MIN))
             .ok()
@@ -136,29 +126,6 @@ impl Writer {
     pub fn float32(&mut self, f: f32) -> &mut Self {
         self.out.push(tag::FLOAT32);
         self.out.extend_from_slice(&f.to_le_bytes());
-        self
-    }
-
-    /// A list of floats, packed, no tag each: four bytes each when every
-    /// one is an `f32` exactly ([`tag::FLOATS32`]), else eight.
-    pub fn floats(&mut self, items: &[f64]) -> &mut Self {
-        let narrow = crate::frame::floats::fits_f32(items);
-        self.out
-            .push(if narrow { tag::FLOATS32 } else { tag::FLOATS });
-        varint(&mut self.out, items.len() as u64);
-        if narrow {
-            crate::frame::floats::put_narrow(&mut self.out, items);
-        } else {
-            crate::frame::floats::put_wide(&mut self.out, items);
-        }
-        self
-    }
-
-    /// A list of 32-bit floats, packed: four bytes each, no tag.
-    pub fn floats32(&mut self, items: &[f32]) -> &mut Self {
-        self.out.push(tag::FLOATS32);
-        varint(&mut self.out, items.len() as u64);
-        crate::frame::floats::put_f32s(&mut self.out, items);
         self
     }
 
@@ -193,16 +160,6 @@ impl Writer {
         self
     }
 
-    /// A list of ints, packed (no tag each).
-    pub fn ints(&mut self, items: impl ExactSizeIterator<Item = i64>) -> &mut Self {
-        self.out.push(tag::INTS);
-        varint(&mut self.out, items.len() as u64);
-        for n in items {
-            varint(&mut self.out, zigzag(n));
-        }
-        self
-    }
-
     /// A stream ([`crate::Stream`]): `len` items, already written apart.
     pub(crate) fn stream_body(&mut self, len: usize, items: &[u8]) -> &mut Self {
         let mut count = Vec::new();
@@ -217,15 +174,7 @@ impl Writer {
 
     /// A writer of a stream's body alone (no header).
     pub(crate) fn body() -> Self {
-        Writer {
-            out: Vec::with_capacity(START_BYTES),
-            strings: Interner::new(),
-            shapes: ShapeTable::default(),
-            found: Vec::new(),
-            numbers: Vec::new(),
-            known: [StaticShape::default(); STATIC_SHAPES],
-            picked: Vec::new(),
-        }
+        Self::over(Vec::with_capacity(START_BYTES))
     }
 
     /// A map of `len` entries, each a [`Writer::key`] and a value: its
@@ -250,13 +199,18 @@ impl Writer {
     }
 
     /// `s`: a reference if it was written before, else itself: its number in the table.
-    pub(super) fn string(&mut self, s: &str) -> usize {
+    pub(in crate::wire::binary) fn string(&mut self, s: &str) -> usize {
         let found = self.strings.find(&self.out, s);
         self.put_string(s, found)
     }
 
     /// `s` as a string of the table, where [`Interner::find`] said `found`.
-    pub(super) fn put_string(&mut self, s: &str, found: Result<usize, Option<u32>>) -> usize {
+    #[inline]
+    pub(in crate::wire::binary) fn put_string(
+        &mut self,
+        s: &str,
+        found: Result<usize, Option<u32>>,
+    ) -> usize {
         match found {
             Ok(i) => {
                 varint(&mut self.out, (i as u64) << 1);

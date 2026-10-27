@@ -106,7 +106,8 @@ millions, `v1` baseline against this change; bytes from
   to 196927 (-12 %).
 - Instructions (millions): `encode(&Value)` records 11.0 to 6.2, numbers 3.3 to
   1.9, refs 16.4 to 10.9, but config 11.9 to 13.0 and deep 11.4 to 12.6 (+9 and
-  +11 %: a shape lookup per map where nearly every map has other keys);
+  +11 %: a shape lookup per map where nearly every map has other keys, fixed
+  below);
   `decode` records 19.1 to 11.3, numbers 5.4 to 2.1, deep 27.4 to 18.9, config
   22.8 to 20.1, refs 25.7 to 21.6; typed `to_bytes` docs 9.0 to 4.6, `to_frame`
   docs 5.1 to 4.6 (numbers 0.56 to 0.62, +11 %).
@@ -122,6 +123,35 @@ millions, `v1` baseline against this change; bytes from
   is replaced by `binary_version_3` (version 2 is a version now). The
   TypeScript and Java ports read version 1, write version 2 and pass every
   vector.
+
+### Changed (performance after SDAT version 2)
+
+Same bytes in every form (the encoded corpus is identical byte for byte, the
+conformance vectors are untouched, so the TypeScript and Java ports need
+nothing). Instruction counts, millions, large samples (`patch::format` on the
+medium ones), iai-callgrind `--cache-sim=no`, main at 2550613 against this
+change; see [docs/performance.md](docs/performance.md), "Tuning after version
+2".
+
+- `binary::encode(&Value)` config 12.94 to 9.25 (-28 %) and deep 12.44 to 9.14
+  (-27 %), which were 9 and 11 % above version 1 and are now 22 and 20 % below
+  it: a writer compares a map's keys with those of the last four shapes it
+  used before looking anything up, and a shape that is new is found in one
+  pass instead of two. records and refs are unchanged (+1 % and 0 %).
+- Typed `to_frame` numbers 0.70 to 0.49 (-30 %, version 1 0.56) and typed
+  `to_bytes` numbers 1.25 to 1.04 (-17 %): packed floats are written without
+  zeroing the buffer first.
+- `binary::decode` refs 21.94 to 15.76 (-28 %), config 20.15 to 17.57 (-13 %),
+  numbers 2.06 to 1.90 (-8 %); typed `read_bytes` numbers 1.83 to 1.66, docs
+  9.20 to 8.90: a reference's kind is checked once per string of the table,
+  `RefKey::is_valid` has an ASCII path, `atom::local` hashes with the crate's
+  seeded multiply-rotate hasher, a decoded map checks duplicate keys against
+  its own index (no `HashSet<String>`), and a one-byte varint is read inline.
+- `patch::format` 1.06 to 0.22 (config), 2.19 to 0.38 (deep), 1.21 to 0.27
+  (records), 1.33 to 0.40 (refs), 1.27 to 0.61 (numbers): one `String` instead
+  of one per node (byte-identical output); `patch::edit` refs 2.15 to 1.38.
+- Frame unpack is unchanged: its `malloc` share is the owned `String` of each
+  string field, not the unpacker.
 
 ### Changed
 

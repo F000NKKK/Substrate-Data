@@ -7,7 +7,7 @@ use bumpalo::Bump;
 use super::decoder::{F32_BYTES, F64_BYTES, MAP_ENTRY_MIN};
 use super::decoder_value::inline_int;
 use super::shape::Walk;
-use super::{Decoder, tag, unzigzag};
+use crate::binary::{Decoder, tag, unzigzag};
 use crate::model::number::int_to_f64;
 
 impl<'b> Decoder<'b> {

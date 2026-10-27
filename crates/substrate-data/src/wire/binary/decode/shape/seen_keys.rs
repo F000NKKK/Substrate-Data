@@ -2,6 +2,8 @@
 
 use std::collections::HashSet;
 
+use crate::model::quick_hash::QuickBuild;
+
 /// Maps up to this many keys are checked by scanning.
 const SCAN_MAX: usize = 16;
 
@@ -10,7 +12,7 @@ const SCAN_MAX: usize = 16;
 #[derive(Debug, Default)]
 pub(super) struct SeenKeys<'a> {
     list: Vec<&'a str>,
-    set: Option<HashSet<&'a str>>,
+    set: Option<HashSet<&'a str, QuickBuild>>,
 }
 
 impl<'a> SeenKeys<'a> {

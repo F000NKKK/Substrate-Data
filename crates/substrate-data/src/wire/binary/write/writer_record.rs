@@ -1,24 +1,9 @@
 //! [`Writer`] writing a map by its keys: a shape, written once and named
 //! after.
 
-use super::{NEW_STRING, Writer, tag, varint};
-
-/// Slots of the cache of shapes of static keys (a power of two).
-pub(super) const STATIC_SHAPES: usize = 16;
-
-/// A shape found for a static slice of keys and a choice of them.
-#[derive(Debug, Clone, Copy, Default)]
-pub(super) struct StaticShape {
-    /// Where the slice is.
-    pub(super) keys: usize,
-    /// Which of the slice's keys the shape has.
-    pub(super) present: u64,
-    /// The shape's number + 1; 0 for a free slot.
-    pub(super) shape: u32,
-}
-
-/// Up to this many keys, a map's shape is looked up without a buffer.
-const FEW_KEYS: usize = 8;
+use super::Writer;
+use super::static_shape::{STATIC_SHAPES, StaticShape};
+use crate::binary::{NEW_STRING, tag, varint};
 
 impl Writer {
     /// A map of these `keys` (none repeated): the keys are written the
@@ -45,12 +30,12 @@ impl Writer {
         self.out.push(tag::MAP_SHAPE);
         let mixed = ((keys.as_ptr() as usize >> 4) as u64) ^ present;
         let slot = usize::try_from(mixed % STATIC_SHAPES as u64).unwrap_or(0);
-        let known = self.known[slot];
+        let known = self.cache.known[slot];
         if known.shape != 0 && known.keys == keys.as_ptr() as usize && known.present == present {
             varint(&mut self.out, u64::from(known.shape - 1) << 1);
             return self;
         }
-        let mut picked = std::mem::take(&mut self.picked);
+        let mut picked = std::mem::take(&mut self.cache.picked);
         picked.clear();
         picked.extend(
             keys.iter()
@@ -60,8 +45,8 @@ impl Writer {
                 .map(|(_, &key)| key),
         );
         let shape = self.shape(picked.iter().copied());
-        self.picked = picked;
-        self.known[slot] = StaticShape {
+        self.cache.picked = picked;
+        self.cache.known[slot] = StaticShape {
             keys: keys.as_ptr() as usize,
             present,
             shape: u32::try_from(shape + 1).unwrap_or(0),
@@ -71,17 +56,44 @@ impl Writer {
 
     /// The shape of `keys`: written (a marker with their count, then them)
     /// the first time, else its number. The shape's number.
-    pub(super) fn shape<'k>(
+    pub(in crate::wire::binary) fn shape<'k>(
         &mut self,
         keys: impl ExactSizeIterator<Item = &'k str> + Clone,
     ) -> usize {
+        let shape = match self.recent_shape(&keys) {
+            Some(shape) => {
+                varint(&mut self.out, (shape as u64) << 1);
+                shape
+            }
+            None => self.found_shape(keys),
+        };
+        self.cache.note(shape);
+        shape
+    }
+
+    /// The recent shape whose keys are `keys`, compared with their text:
+    /// found without looking any string up.
+    fn recent_shape<'k>(
+        &mut self,
+        keys: &(impl ExactSizeIterator<Item = &'k str> + Clone),
+    ) -> Option<usize> {
+        let (strings, shapes, out) = (&self.strings, &self.shapes, &self.out);
+        self.cache.find_recent(|shape| {
+            let numbers = shapes.keys_of(shape);
+            numbers.len() == keys.len()
+                && keys
+                    .clone()
+                    .zip(numbers)
+                    .all(|(key, &number)| strings.is(out, number, key))
+        })
+    }
+
+    /// The shape of `keys`, looked up by their strings: written when new.
+    #[inline(never)]
+    fn found_shape<'k>(&mut self, keys: impl ExactSizeIterator<Item = &'k str> + Clone) -> usize {
         let n = keys.len();
-        if let Some(shape) = self.known_shape(keys.clone()) {
-            varint(&mut self.out, (shape as u64) << 1);
-            return shape;
-        }
-        let mut found = std::mem::take(&mut self.found);
-        let mut numbers = std::mem::take(&mut self.numbers);
+        let mut found = std::mem::take(&mut self.cache.found);
+        let mut numbers = std::mem::take(&mut self.cache.numbers);
         found.clear();
         numbers.clear();
         for key in keys.clone() {
@@ -107,20 +119,8 @@ impl Writer {
             }
             self.shapes.seal()
         };
-        self.found = found;
-        self.numbers = numbers;
+        self.cache.found = found;
+        self.cache.numbers = numbers;
         shape
-    }
-
-    /// The number of the shape of `keys` when it was written before and
-    /// there are few of them: found without a pass to collect them.
-    fn known_shape<'k>(&mut self, keys: impl Iterator<Item = &'k str>) -> Option<usize> {
-        let mut numbers = [0usize; FEW_KEYS];
-        let mut n = 0;
-        for key in keys {
-            *numbers.get_mut(n)? = self.strings.find(&self.out, key).ok()?;
-            n += 1;
-        }
-        self.shapes.find(&numbers[..n])
     }
 }

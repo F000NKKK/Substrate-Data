@@ -197,3 +197,37 @@ impl fmt::Display for Backend {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_512_bit_kernels_hand_a_lone_group_to_avx2() {
+        assert_eq!(Backend::Avx512.for_pack(7, 1), Backend::Avx2);
+        assert_eq!(Backend::Avx512.for_unpack(7, 1), Backend::Avx2);
+        assert_eq!(Backend::Avx512.for_pack(7, 2), Backend::Avx512);
+        assert_eq!(Backend::Avx512.for_unpack(7, 2), Backend::Avx512);
+    }
+
+    #[test]
+    fn a_full_width_copy_is_packed_by_avx2_and_unpacked_by_avx512_while_it_fits_l1() {
+        assert_eq!(Backend::Avx512.for_pack(32, 8), Backend::Avx2);
+        assert_eq!(
+            Backend::Avx512.for_unpack(32, COPY_AVX512_GROUPS),
+            Backend::Avx512
+        );
+        assert_eq!(
+            Backend::Avx512.for_unpack(32, COPY_AVX512_GROUPS + 1),
+            Backend::Avx2
+        );
+    }
+
+    #[test]
+    fn narrower_backends_are_never_redirected() {
+        for backend in [Backend::Portable, Backend::Avx2] {
+            assert_eq!(backend.for_pack(32, 1), backend);
+            assert_eq!(backend.for_unpack(32, 100), backend);
+        }
+    }
+}

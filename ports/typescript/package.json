@@ -1,6 +1,6 @@
 {
   "name": "substrate-data",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Substrate Data in TypeScript: the model, the text and binary forms, frames and frame streams, checked against the language-neutral conformance vectors.",
   "license": "MIT OR Apache-2.0",
   "type": "module",

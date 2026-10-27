@@ -36,7 +36,7 @@ than 256 are only in their file (the manifest gives `..._len` and
   "binary_is_encoded": true,         // the old (version 1) writer wrote exactly these bytes for `value`
   "binary": "5344415401038001", "binary_len": 8, "binary_file": "binary/int_64.sdat",  // version 1: READ ONLY
   "binary_v2_is_encoded": true,      // the reference writes exactly these bytes for `value`
-  "binary_v2": "5344415402c0", "binary_v2_len": 6, "binary_v2_file": "binary_v2/int_64.sdat",
+  "binary_v2": "5344415402d0", "binary_v2_len": 6, "binary_v2_file": "binary_v2/int_64.sdat",
   "binary_upgrades": true,           // reading `binary` and writing gives exactly `binary_v2`
   "frame": {...}, "io": {...}, "error": {...}  // see below; any subset
 }
@@ -201,9 +201,9 @@ break**, and needs a new binary version, not a new vector. Removing a case
 is a format break too. Version 2 added fields beside the version 1 ones
 (`binary_v2*`, `binary_upgrades`, `bytes_v2*`) and left every version 1
 file as it was. The one case that left is `binary_version_2` (a document of
-version 2 read as an error): version 2 is a version now, so that input is
-`binary_version_3`'s sibling no more; the manifest has `binary_version_3`
-in its place, and this is the version change itself.
+version 2 read as an error): version 2 is a version the readers read now, so that
+input is no longer an error. `binary_version_3` (an unknown version) stands
+in its place; this is the version change itself.
 
 ## Regenerating
 

@@ -31,7 +31,8 @@ pub(crate) struct Interner {
     /// The last string found at each slot, by where its `&str` points (a
     /// struct's keys are the same `&'static str` every time, a decoded
     /// map's keys one allocation each). A guess the bytes are compared to.
-    recent: [Recent; RECENT],
+    /// Filled in once there are many strings (a small document pays nothing).
+    recent: Vec<Recent>,
 }
 
 impl Default for Interner {
@@ -39,7 +40,7 @@ impl Default for Interner {
         Interner {
             spans: Vec::new(),
             index: HashIndex::default(),
-            recent: [Recent::default(); RECENT],
+            recent: Vec::new(),
         }
     }
 }
@@ -53,7 +54,7 @@ impl Interner {
     pub(crate) fn clear(&mut self) {
         self.spans.clear();
         self.index.clear();
-        self.recent = [Recent::default(); RECENT];
+        self.recent.clear();
     }
 
     /// [`Interner::lookup`] for a string that is likely to be looked up
@@ -61,9 +62,12 @@ impl Interner {
     /// where `s` points is tried first.
     #[inline]
     pub(crate) fn find(&mut self, buf: &[u8], s: &str) -> Result<usize, Option<u32>> {
+        if self.spans.len() <= LINEAR_STRINGS {
+            return self.lookup(buf, s);
+        }
         let at = s.as_ptr() as usize;
         let slot = ((at >> ADDRESS_SHIFT) ^ s.len()) & (RECENT - 1);
-        let guess = self.recent[slot];
+        let guess = self.recent.get(slot).copied().unwrap_or_default();
         if guess.at == at
             && guess.number > 0
             && guess.len as usize == s.len()
@@ -72,6 +76,9 @@ impl Interner {
             return Ok(guess.number as usize - 1);
         }
         let found = self.lookup(buf, s)?;
+        if self.recent.is_empty() {
+            self.recent.resize(RECENT, Recent::default());
+        }
         self.recent[slot] = Recent {
             at,
             len: u32::try_from(s.len()).unwrap_or(0),

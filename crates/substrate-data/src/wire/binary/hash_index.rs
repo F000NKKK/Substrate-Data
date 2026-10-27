@@ -85,9 +85,11 @@ pub(crate) fn fold(h: u64) -> u32 {
 #[derive(Debug, Default)]
 pub(crate) struct HashIndex {
     hashes: Vec<u32>,
-    /// Entry number + 1 by hash (linear probing), 0 for a free slot; empty
-    /// while the entries are few.
-    table: Vec<u32>,
+    /// By hash (linear probing): the entry's hash in the high half and its
+    /// number + 1 in the low, 0 for a free slot; empty while the entries
+    /// are few. The hash is in the slot so a probe that misses reads no
+    /// other memory.
+    table: Vec<u64>,
     /// How many entries the table holds.
     placed: usize,
 }
@@ -113,9 +115,13 @@ impl HashIndex {
         let mask = self.table.len() - 1;
         let mut at = hash as usize & mask;
         loop {
-            let entry = (self.table[at] as usize).checked_sub(1)?;
-            if self.hashes[entry] == hash && is(entry) {
-                return Some(entry);
+            let slot = self.table[at];
+            let entry = (slot & u64::from(u32::MAX)) as usize;
+            if entry == 0 {
+                return None;
+            }
+            if (slot >> 32) as u32 == hash && is(entry - 1) {
+                return Some(entry - 1);
             }
             at = (at + 1) & mask;
         }
@@ -151,7 +157,7 @@ impl HashIndex {
         while self.table[at] != 0 {
             at = (at + 1) & mask;
         }
-        self.table[at] = slot;
+        self.table[at] = u64::from(hash) << 32 | u64::from(slot);
         self.placed += 1;
     }
 

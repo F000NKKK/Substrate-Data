@@ -1,13 +1,14 @@
-//! [`Decoder`]: reads the binary form — as a [`Value`] here, borrowed as a
-//! [`ValueRef`] (`decoder_ref`), or step by step by a schema reading itself
-//! (`decoder_straight`).
+//! [`Decoder`]: reads the binary form — as a [`Value`] (`decoder_value`),
+//! borrowed as a [`ValueRef`] (`decoder_ref`), or step by step by a schema
+//! reading itself (`decoder_straight`). This file holds what they share: the
+//! header, the numbers, the string table.
 
-use super::seen_keys::SeenKeys;
+use super::shape::{Shapes, Walk};
 use super::{
-    DecodeError, MAGIC, MAX_DEPTH, NEW_STRING, STREAM_LEN_BYTES, VERSION, read_varint, tag,
-    unzigzag,
+    DecodeError, LEGACY_VERSION, MAGIC, MAX_DEPTH, NEW_STRING, STR_INDEX_COUNT, STREAM_LEN_BYTES,
+    VERSION, read_varint, tag,
 };
-use crate::model::value::{KindName, Map, Ref, RefKey, Value};
+use crate::model::value::{KindName, RefKey, Value};
 use crate::sync::Arc;
 
 /// Strings a decoder makes room for at once: a message's keys and values.
@@ -32,36 +33,44 @@ pub struct Decoder<'b> {
     /// Map keys made so far, by table index: each key is allocated once.
     pub(super) keys: Vec<Option<Arc<str>>>,
     pub(super) depth: usize,
+    /// Whether the tags of version 2 are accepted (a version 1 document is
+    /// read with only the tags it was written with).
+    pub(super) v2: bool,
+    /// The map shapes defined so far (version 2).
+    pub(super) shapes: Shapes,
+    /// The shaped maps being read step by step, innermost last.
+    pub(super) frames: Vec<Walk>,
 }
 
 impl<'b> Decoder<'b> {
-    /// After the header: the root value next.
+    /// After the header: the root value next. Versions 1 and 2 are read;
+    /// a version 1 document may use only the tags it was written with.
     ///
     /// # Errors
     ///
-    /// [`DecodeError`] when the header isn't `SDAT` and this version.
+    /// [`DecodeError`] when the header isn't `SDAT` and a version this reads.
     pub fn open(bytes: &'b [u8]) -> Result<Self, DecodeError> {
-        let mut d = Decoder {
-            b: bytes,
-            i: 0,
-            strings: Vec::with_capacity(STRINGS_START),
-            keys: Vec::new(),
-            depth: 0,
-        };
+        let mut d = Decoder::body(bytes);
+        d.v2 = false;
         if !bytes.starts_with(MAGIC) {
             return Err(d.error("not Substrate Data (no `SDAT` header)"));
         }
         d.i = MAGIC.len();
         let version = d.byte()?;
-        if version != VERSION {
-            return Err(d.error(format!(
-                "Substrate Data version {version}, this reads version {VERSION}"
-            )));
+        match version {
+            VERSION => d.v2 = true,
+            LEGACY_VERSION => {}
+            _ => {
+                return Err(d.error(format!(
+                    "Substrate Data version {version}, this reads versions {LEGACY_VERSION} and {VERSION}"
+                )));
+            }
         }
         Ok(d)
     }
 
-    /// A stream's body ([`crate::Stream`]): its count and values, its strings its own.
+    /// A body with no header ([`crate::Stream`]'s, a frame's tagged value):
+    /// its strings and shapes its own, every tag of version 2 read.
     pub(crate) fn body(bytes: &'b [u8]) -> Self {
         Decoder {
             b: bytes,
@@ -69,7 +78,18 @@ impl<'b> Decoder<'b> {
             strings: Vec::with_capacity(STRINGS_START),
             keys: Vec::new(),
             depth: 0,
+            v2: true,
+            shapes: Shapes::default(),
+            frames: Vec::new(),
         }
+    }
+
+    /// A body inside this one: the same version, its tables its own.
+    pub(super) fn inner(&self, bytes: &'b [u8]) -> Self {
+        let mut d = Decoder::body(bytes);
+        d.v2 = self.v2;
+        d.depth = self.depth;
+        d
     }
 
     /// A stream's body: its bytes, read past.
@@ -80,8 +100,8 @@ impl<'b> Decoder<'b> {
 
     /// A stream's values, decoded as a list.
     pub(super) fn stream_values(&mut self) -> Result<Vec<Value>, DecodeError> {
-        let mut d = Decoder::body(self.stream_body()?);
-        d.depth = self.depth;
+        let body = self.stream_body()?;
+        let mut d = self.inner(body);
         let n = d.count(1)?;
         let mut items = Vec::with_capacity(n);
         for _ in 0..n {
@@ -179,6 +199,25 @@ impl<'b> Decoder<'b> {
         Ok(self.strings[i])
     }
 
+    /// The string a tag of its own names (`tag - STR_INDEX` in the table).
+    pub(super) fn indexed(&self, t: u8) -> Result<&'b str, DecodeError> {
+        let i = usize::from(t - tag::STR_INDEX);
+        self.strings
+            .get(i)
+            .copied()
+            .ok_or_else(|| self.error(format!("string {i} isn't in the table")))
+    }
+
+    /// Whether `t` is a tag that names a table string by itself.
+    pub(super) fn is_indexed(&self, t: u8) -> bool {
+        self.v2 && t.wrapping_sub(tag::STR_INDEX) < STR_INDEX_COUNT
+    }
+
+    /// Whether `t` is a tag that is an int by itself.
+    pub(super) fn is_inline_int(&self, t: u8) -> bool {
+        self.v2 && t >= tag::INT_INLINE
+    }
+
     pub(super) fn string_index(&mut self) -> Result<usize, DecodeError> {
         let v = self.varint()?;
         if v & NEW_STRING == 0 {
@@ -200,7 +239,7 @@ impl<'b> Decoder<'b> {
     }
 
     /// The key at table index `i`: shared with every other map that has it.
-    fn shared_key_at(&mut self, i: usize) -> Arc<str> {
+    pub(super) fn shared_key_at(&mut self, i: usize) -> Arc<str> {
         if self.keys.len() <= i {
             self.keys.resize(i + 1, None);
         }
@@ -233,83 +272,5 @@ impl<'b> Decoder<'b> {
             return Err(self.error(format!("nested deeper than {MAX_DEPTH} levels")));
         }
         Ok(())
-    }
-
-    /// The next value, owned.
-    ///
-    /// # Errors
-    ///
-    /// [`DecodeError`] when the bytes aren't a value.
-    pub fn value(&mut self) -> Result<Value, DecodeError> {
-        Ok(match self.byte()? {
-            tag::NULL => Value::Null,
-            tag::FALSE => Value::Bool(false),
-            tag::TRUE => Value::Bool(true),
-            tag::INT => Value::Int(unzigzag(self.varint()?)),
-            tag::FLOAT => Value::Float(f64::from_le_bytes(self.fixed()?)),
-            tag::FLOAT32 => Value::Float(f64::from(f32::from_le_bytes(self.fixed()?))),
-            tag::FLOATS => Value::List(
-                self.packed_floats::<F64_BYTES>()?
-                    .map(|f| Value::Float(f64::from_le_bytes(*f)))
-                    .collect(),
-            ),
-            tag::FLOATS32 => Value::List(
-                self.packed_floats::<F32_BYTES>()?
-                    .map(|f| Value::Float(f64::from(f32::from_le_bytes(*f))))
-                    .collect(),
-            ),
-            tag::STR => Value::Str(self.string()?.to_owned()),
-            tag::LIST => self.list_value()?,
-            tag::MAP => self.map_value()?,
-            tag::REF => {
-                let (kind, id) = self.reference()?;
-                Value::Ref(Ref::new(kind, RefKey::spelled(id)))
-            }
-            tag::BYTES => Value::Bytes(self.length_bytes()?.to_vec()),
-            tag::INTS => self.ints_value()?,
-            tag::STREAM => Value::List(self.stream_values()?),
-            t => {
-                self.i -= 1;
-                return Err(self.error(format!("unknown tag {t}")));
-            }
-        })
-    }
-
-    fn list_value(&mut self) -> Result<Value, DecodeError> {
-        let n = self.count(1)?;
-        self.deeper()?;
-        let mut items = Vec::with_capacity(n);
-        for _ in 0..n {
-            items.push(self.value()?);
-        }
-        self.depth -= 1;
-        Ok(Value::List(items))
-    }
-
-    fn map_value(&mut self) -> Result<Value, DecodeError> {
-        let n = self.count(MAP_ENTRY_MIN)?;
-        self.deeper()?;
-        let mut map = Map::with_capacity(n);
-        let mut seen = SeenKeys::default();
-        for _ in 0..n {
-            let at = self.i;
-            let i = self.string_index()?;
-            if !seen.insert(self.strings[i]) {
-                return Err(DecodeError::duplicate_key(self.strings[i], at));
-            }
-            let k = self.shared_key_at(i);
-            map.push_unchecked(k, self.value()?);
-        }
-        self.depth -= 1;
-        Ok(Value::Map(map))
-    }
-
-    fn ints_value(&mut self) -> Result<Value, DecodeError> {
-        let n = self.count(1)?;
-        let mut items = Vec::with_capacity(n);
-        for _ in 0..n {
-            items.push(Value::Int(unzigzag(self.varint()?)));
-        }
-        Ok(Value::List(items))
     }
 }

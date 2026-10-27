@@ -1,13 +1,18 @@
 //! Writing the binary form: one buffer, strings written where first used.
 
-use super::interner::Interner;
-use super::{MAGIC, NEW_STRING, VERSION, tag, varint, zigzag};
-use crate::model::value::Value;
+use super::layout::{narrow, narrows};
+use super::table::interner::Interner;
+use super::table::shape_table::ShapeTable;
+use super::writer_record::{STATIC_SHAPES, StaticShape};
+use super::{
+    INLINE_INT_MAX, INLINE_INT_MIN, MAGIC, NEW_STRING, STR_INDEX_COUNT, VERSION, tag, varint,
+    zigzag,
+};
 
 /// What a writer reserves to start with: most messages fit.
 pub(crate) const START_BYTES: usize = 256;
 
-/// Writes the binary form piece by piece, from data that isn't a [`Value`]
+/// Writes the binary form piece by piece, from data that isn't a [`Value`](crate::Value)
 /// — nothing is built or copied on the way. A map or list is given its
 /// length, then that many entries (`key` then a value) or values.
 ///
@@ -19,9 +24,18 @@ pub(crate) const START_BYTES: usize = 256;
 /// ```
 #[derive(Debug)]
 pub struct Writer {
-    out: Vec<u8>,
+    pub(super) out: Vec<u8>,
     /// The strings written, by where they are in `out`.
-    strings: Interner,
+    pub(super) strings: Interner,
+    /// The map shapes written, by their keys.
+    pub(super) shapes: ShapeTable,
+    /// What looking up a shape's keys found, and their numbers: kept to be reused.
+    pub(super) found: Vec<Result<usize, Option<u32>>>,
+    pub(super) numbers: Vec<usize>,
+    /// The shapes of keys that are `'static` slices, by where the slice is and which of its keys.
+    pub(super) known: [StaticShape; STATIC_SHAPES],
+    /// The keys of such a shape, picked: kept to be reused.
+    pub(super) picked: Vec<&'static str>,
 }
 
 impl Default for Writer {
@@ -40,6 +54,11 @@ impl Writer {
         Writer {
             out,
             strings: Interner::new(),
+            shapes: ShapeTable::default(),
+            found: Vec::new(),
+            numbers: Vec::new(),
+            known: [StaticShape::default(); STATIC_SHAPES],
+            picked: Vec::new(),
         }
     }
 
@@ -51,6 +70,11 @@ impl Writer {
         Writer {
             out,
             strings: Interner::new(),
+            shapes: ShapeTable::default(),
+            found: Vec::new(),
+            numbers: Vec::new(),
+            known: [StaticShape::default(); STATIC_SHAPES],
+            picked: Vec::new(),
         }
     }
 
@@ -62,6 +86,8 @@ impl Writer {
         self.out.extend_from_slice(MAGIC);
         self.out.push(VERSION);
         self.strings.clear();
+        self.shapes.clear();
+        self.known = [StaticShape::default(); STATIC_SHAPES];
     }
 
     /// What is written so far, to patch or send.
@@ -81,15 +107,26 @@ impl Writer {
         self
     }
 
-    /// An integer.
+    /// An integer: one byte for -16 to 111, else a tag and a varint.
     pub fn int(&mut self, n: i64) -> &mut Self {
+        let inline = u8::try_from(n.wrapping_sub(INLINE_INT_MIN))
+            .ok()
+            .filter(|&at| i64::from(at) <= INLINE_INT_MAX - INLINE_INT_MIN);
+        if let Some(at) = inline {
+            self.out.push(tag::INT_INLINE + at);
+            return self;
+        }
         self.out.push(tag::INT);
         varint(&mut self.out, zigzag(n));
         self
     }
 
-    /// A float, eight bytes ([`Writer::float32`] writes four).
+    /// A float: four bytes when it is an `f32` exactly (`layout::narrows`, what a
+    /// reader gives back bit for bit), else eight.
     pub fn float(&mut self, f: f64) -> &mut Self {
+        if narrows(f) {
+            return self.float32(narrow(f));
+        }
         self.out.push(tag::FLOAT);
         self.out.extend_from_slice(&f.to_le_bytes());
         self
@@ -125,10 +162,19 @@ impl Writer {
         self
     }
 
-    /// A string: its bytes the first time, its index after.
+    /// A string: its bytes the first time, its index after (in the tag
+    /// itself for the first 32 strings of the document).
     pub fn str(&mut self, s: &str) -> &mut Self {
+        let found = self.strings.lookup(&self.out, s);
+        if let Ok(i) = found
+            && let Ok(at) = u8::try_from(i)
+            && at < STR_INDEX_COUNT
+        {
+            self.out.push(tag::STR_INDEX + at);
+            return self;
+        }
         self.out.push(tag::STR);
-        self.string(s);
+        self.put_string(s, found);
         self
     }
 
@@ -174,10 +220,17 @@ impl Writer {
         Writer {
             out: Vec::with_capacity(START_BYTES),
             strings: Interner::new(),
+            shapes: ShapeTable::default(),
+            found: Vec::new(),
+            numbers: Vec::new(),
+            known: [StaticShape::default(); STATIC_SHAPES],
+            picked: Vec::new(),
         }
     }
 
-    /// A map of `len` entries, each a [`Writer::key`] and a value.
+    /// A map of `len` entries, each a [`Writer::key`] and a value: its
+    /// keys written one by one, and again in every map that has them.
+    /// [`Writer::record`] writes a map's keys once for all maps with them.
     pub fn map(&mut self, len: usize) -> &mut Self {
         self.out.push(tag::MAP);
         varint(&mut self.out, len as u64);
@@ -190,54 +243,31 @@ impl Writer {
         self
     }
 
-    /// A whole value.
-    pub fn value(&mut self, v: &Value) -> &mut Self {
-        match v {
-            Value::Null => self.null(),
-            Value::Bool(b) => self.bool(*b),
-            Value::Int(n) => self.int(*n),
-            Value::Float(f) => self.float(*f),
-            Value::Str(s) => self.str(s),
-            Value::List(items) => {
-                self.list(items.len());
-                for item in items {
-                    self.value(item);
-                }
-                self
-            }
-            Value::Map(map) => {
-                self.map(map.len());
-                for (key, item) in map.iter() {
-                    self.string(key);
-                    self.value(item);
-                }
-                self
-            }
-            Value::Ref(r) => {
-                self.out.push(tag::REF);
-                self.string(r.kind.as_str());
-                self.string(r.id.as_str());
-                self
-            }
-            Value::Bytes(b) => self.bytes(b),
-        }
-    }
-
     /// The bytes.
     #[must_use]
     pub fn finish(self) -> Vec<u8> {
         self.out
     }
 
-    /// `s`: a reference if it was written before, else itself.
-    fn string(&mut self, s: &str) {
-        if let Some(i) = self.strings.find(&self.out, s) {
-            varint(&mut self.out, (i as u64) << 1);
-            return;
+    /// `s`: a reference if it was written before, else itself: its number in the table.
+    pub(super) fn string(&mut self, s: &str) -> usize {
+        let found = self.strings.find(&self.out, s);
+        self.put_string(s, found)
+    }
+
+    /// `s` as a string of the table, where [`Interner::find`] said `found`.
+    pub(super) fn put_string(&mut self, s: &str, found: Result<usize, Option<u32>>) -> usize {
+        match found {
+            Ok(i) => {
+                varint(&mut self.out, (i as u64) << 1);
+                i
+            }
+            Err(hash) => {
+                varint(&mut self.out, ((s.len() as u64) << 1) | NEW_STRING);
+                let at = self.out.len();
+                self.out.extend_from_slice(s.as_bytes());
+                self.strings.add(&self.out, s, at, hash)
+            }
         }
-        varint(&mut self.out, ((s.len() as u64) << 1) | NEW_STRING);
-        let at = self.out.len();
-        self.out.extend_from_slice(s.as_bytes());
-        self.strings.add(&self.out, s, at);
     }
 }

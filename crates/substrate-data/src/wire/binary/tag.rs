@@ -40,4 +40,18 @@ tags! {
     FLOATS = 13;
     /// Lists of `f32`s without a tag each.
     FLOATS32 = 14;
+    /// Version 2: a map whose keys are a shape (listed once, then named by
+    /// number): the shape, then one value per key.
+    MAP_SHAPE = 15;
+    /// Version 2: a list of maps that all have one shape: a count, the
+    /// shape, then each map's values with no tag of their own.
+    RECORDS = 16;
 }
+
+/// Version 2: the first of 128 tags that are an int by themselves,
+/// `tag - INT_INLINE + INLINE_INT_MIN` (-16 to 111): no payload.
+pub const INT_INLINE: u8 = 128;
+
+/// Version 2: the first of 32 tags that are a string already in the table,
+/// by its index `tag - STR_INDEX` (0 to 31): no payload.
+pub const STR_INDEX: u8 = 32;

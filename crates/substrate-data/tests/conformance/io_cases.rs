@@ -4,6 +4,7 @@ use substrate_data::io::write_frame_bytes;
 use substrate_data::{Map, Value, binary};
 
 use crate::case::{Case, Io};
+use crate::v1;
 
 /// The stream of `messages` as the reference writer writes it.
 pub(crate) fn stream(messages: &[Vec<u8>]) -> Vec<u8> {
@@ -14,17 +15,22 @@ pub(crate) fn stream(messages: &[Vec<u8>]) -> Vec<u8> {
     out
 }
 
-fn message(op: &str, n: i64) -> Vec<u8> {
+fn message_value(op: &str, n: i64) -> Value {
     let mut m = Map::new();
     m.insert("op", Value::from(op));
     m.insert("n", Value::Int(n));
-    binary::encode(&Value::Map(m))
+    Value::Map(m)
+}
+
+/// A message as a version 1 document (these streams were made before version 2).
+fn message(op: &str, n: i64) -> Vec<u8> {
+    v1::encode(&message_value(op, n))
 }
 
 /// Every case of this module.
 pub(crate) fn cases() -> Vec<Case> {
     let two = vec![message("ping", 1), message("pong", 1)];
-    let long = vec![binary::encode(&Value::Bytes(vec![7; 300]))];
+    let long = vec![v1::encode(&Value::Bytes(vec![7; 300]))];
     let empty_frame = vec![Vec::new()];
     let make = |name: &str, why: &str, messages: Vec<Vec<u8>>| {
         Case::new(name, why).io(Io {
@@ -37,6 +43,14 @@ pub(crate) fn cases() -> Vec<Case> {
             "io_two_messages",
             "Each message is a little-endian u32 length, then that many bytes (here a binary document). The stream ends cleanly after a whole frame, where a read of the next length finds no byte.",
             two,
+        ),
+        make(
+            "io_two_messages_v2",
+            "The same two messages as version 2 documents: the stream layer does not care which version a message is.",
+            vec![
+                binary::encode(&message_value("ping", 1)),
+                binary::encode(&message_value("pong", 1)),
+            ],
         ),
         make(
             "io_no_messages",

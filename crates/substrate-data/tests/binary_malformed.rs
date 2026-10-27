@@ -36,7 +36,7 @@ fn the_header_is_checked() {
     let err = Decoder::open(b"SDAT\x09").unwrap_err();
     assert_eq!(
         err.to_string(),
-        "byte 5: Substrate Data version 9, this reads version 1"
+        "byte 5: Substrate Data version 9, this reads versions 1 and 2"
     );
     assert!(decode(b"SDAT").is_err());
     let arena = Bump::new();
@@ -68,7 +68,7 @@ fn rejects(body: &[u8], want: &str) {
 #[test]
 fn malformed_bytes_are_errors_that_say_what_is_wrong() {
     rejects(&[], "unexpected end");
-    rejects(&[200], "unknown tag 200");
+    rejects(&[20], "unknown tag 20");
     rejects(&[tag::INT], "a varint cut short");
     rejects(&[tag::INT, 0x80], "a varint cut short");
     rejects(&[tag::FLOAT, 0, 0], "unexpected end");

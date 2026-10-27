@@ -14,6 +14,7 @@ use crate::hex::{from_hex, to_hex};
 use crate::render::{same, value_of};
 use crate::schemas::{read_text, shape_of, shape_text};
 use crate::store::{manifest, raw};
+use crate::v1;
 
 /// Checks every case of the manifest.
 pub(crate) fn run() {
@@ -87,31 +88,99 @@ fn bytes_of(name: &str, section: &Json, key: &str) -> Vec<u8> {
 }
 
 fn check_binary(name: &str, case: &Json, value: Option<&Value>) {
-    let bytes = bytes_of(name, case, "binary");
-    let decoded = binary::decode(&bytes).unwrap_or_else(|e| panic!("{name}: binary: {e}"));
+    let old = case
+        .get("binary_file")
+        .map(|_| check_version_1(name, case, value));
+    let new = case
+        .get("binary_v2_file")
+        .map(|_| check_version_2(name, case, value));
+    if let (Some(old), Some(new)) = (old, new) {
+        check_upgrade(name, case, &old, &new, value);
+    }
+}
+
+/// Both decoders read `bytes` as the same value: that value.
+fn decoded_both_ways(name: &str, bytes: &[u8]) -> Value {
+    let decoded = binary::decode(bytes).unwrap_or_else(|e| panic!("{name}: binary: {e}"));
     let arena = Bump::new();
-    let borrowed = binary::decode_ref(&bytes, &arena).unwrap_or_else(|e| panic!("{name}: {e}"));
+    let borrowed = binary::decode_ref(bytes, &arena).unwrap_or_else(|e| panic!("{name}: {e}"));
     assert!(
         same(&borrowed.to_value(), &decoded),
         "{name}: decode and decode_ref agree"
     );
+    decoded
+}
+
+/// The version 1 document: read, and (when the case says so) what the old writer wrote.
+fn check_version_1(name: &str, case: &Json, value: Option<&Value>) -> Vec<u8> {
+    let bytes = bytes_of(name, case, "binary");
+    assert_eq!(bytes.get(4), Some(&1), "{name}: a version 1 document");
+    let decoded = decoded_both_ways(name, &bytes);
+    if let Some(value) = value {
+        assert!(
+            same(&decoded, value),
+            "{name}: binary reads as {decoded:?}, not {value:?}"
+        );
+        if case["binary_is_encoded"].as_bool() == Some(true) {
+            assert_eq!(
+                v1::encode(value),
+                bytes,
+                "{name}: the bytes the version 1 writer wrote"
+            );
+        }
+    }
+    bytes
+}
+
+/// The version 2 document: read, and (when the case says so) what the reference writes.
+fn check_version_2(name: &str, case: &Json, value: Option<&Value>) -> Vec<u8> {
+    let bytes = bytes_of(name, case, "binary_v2");
+    assert_eq!(bytes.get(4), Some(&2), "{name}: a version 2 document");
+    let decoded = decoded_both_ways(name, &bytes);
     let Some(value) = value else {
         assert_eq!(
             binary::encode(&decoded),
             bytes,
-            "{name}: re-encoding what has no value"
+            "{name}: writing what has no value"
         );
-        return;
+        return bytes;
     };
     assert!(
         same(&decoded, value),
-        "{name}: binary reads as {decoded:?}, not {value:?}"
+        "{name}: binary_v2 reads as {decoded:?}, not {value:?}"
     );
-    if case["binary_is_encoded"].as_bool() == Some(true) {
+    if case["binary_v2_is_encoded"].as_bool() == Some(true) {
         assert_eq!(
             binary::encode(value),
             bytes,
             "{name}: the bytes the reference writes"
+        );
+    }
+    bytes
+}
+
+/// Reading version 1 and writing gives version 2 without losing the value.
+fn check_upgrade(name: &str, case: &Json, old: &[u8], new: &[u8], value: Option<&Value>) {
+    let upgraded = binary::upgrade(old).unwrap_or_else(|e| panic!("{name}: upgrade: {e}"));
+    let read = binary::decode(&upgraded).unwrap_or_else(|e| panic!("{name}: upgraded: {e}"));
+    let before = binary::decode(old).unwrap_or_else(|e| panic!("{name}: {e}"));
+    assert!(
+        same(&read, &before),
+        "{name}: the upgrade changed the value"
+    );
+    if let Some(value) = value {
+        assert!(same(&read, value), "{name}: the upgrade reads as {read:?}");
+    }
+    let exact = case["binary_upgrades"].as_bool().expect("binary_upgrades");
+    assert_eq!(
+        upgraded == new,
+        exact,
+        "{name}: binary_upgrades says what upgrading writes"
+    );
+    if value.is_none() || case["binary_v2_is_encoded"].as_bool() == Some(true) {
+        assert!(
+            exact,
+            "{name}: version 2 is what the value writes, so upgrading writes it"
         );
     }
 }
@@ -134,15 +203,20 @@ fn check_reading(name: &str, bytes: &[u8], reading: &Json) {
 }
 
 fn check_frame(name: &str, frame: &Json) {
-    let bytes = bytes_of(name, frame, "bytes");
-    check_reading(name, &bytes, frame);
-    for also in frame
-        .get("also_read_by")
-        .and_then(Json::as_array)
-        .into_iter()
-        .flatten()
-    {
-        check_reading(name, &bytes, also);
+    let mut all = vec![bytes_of(name, frame, "bytes")];
+    if frame.get("bytes_v2_file").is_some() {
+        all.push(bytes_of(name, frame, "bytes_v2"));
+    }
+    for bytes in all {
+        check_reading(name, &bytes, frame);
+        for also in frame
+            .get("also_read_by")
+            .and_then(Json::as_array)
+            .into_iter()
+            .flatten()
+        {
+            check_reading(name, &bytes, also);
+        }
     }
 }
 

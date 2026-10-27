@@ -50,17 +50,32 @@ pub(crate) fn typed_frame_case<T: Schema + PartialEq + Debug>(
         "{name}: binary"
     );
     let value = binary::decode(&bytes).expect("the writer's own bytes");
-    Case::new(name, description)
+    let writer = Reading {
+        schema,
+        value: shaped,
+    };
+    let frame = Frame::new(name, writer, frame, vec![]);
+    for old in std::iter::once(&frame.bytes).chain(&frame.v2) {
+        assert_eq!(
+            read_frame::<T>(old).as_ref(),
+            Some(x),
+            "{name}: a frame of either version"
+        );
+    }
+    let case = Case::new(name, description)
         .value(value)
-        .binary(bytes)
-        .frame(Frame {
-            writer: Reading {
-                schema,
-                value: shaped,
-            },
-            bytes: frame,
-            also: vec![],
-        })
+        .binary_v2(bytes)
+        .legacy_binary()
+        .frame(frame);
+    if let Some(old) = &case.binary {
+        let read = substrate_data::read_bytes::<T>(old);
+        assert_eq!(
+            read.as_ref().ok(),
+            Some(x),
+            "{name}: the version 1 bytes still read"
+        );
+    }
+    case
 }
 
 /// Text longer than this stays out of the manifest.

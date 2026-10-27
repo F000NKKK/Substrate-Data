@@ -34,6 +34,19 @@ pub fn decode(bytes: &[u8]) -> Result<Value, DecodeError> {
     Ok(v)
 }
 
+/// A document of version 1 or 2 as a version 2 one: what reading an old
+/// file and saving it again does. Nothing is lost: the value read is the
+/// value written, and every value version 1 holds has a version 2 form (a
+/// [`crate::Stream`] is the list of its items, as it is read anywhere
+/// without a schema).
+///
+/// # Errors
+///
+/// [`DecodeError`] when the bytes aren't the binary form; nothing is written then.
+pub fn upgrade(bytes: &[u8]) -> Result<Vec<u8>, DecodeError> {
+    decode(bytes).map(|value| encode(&value))
+}
+
 /// Reads the binary form borrowed: every string points into `bytes`,
 /// lists and maps go in `arena` — nothing is copied.
 ///

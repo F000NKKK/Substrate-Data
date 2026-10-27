@@ -4,11 +4,11 @@ package substrate.data;
 public enum DecodeErrorKind {
     /** No {@code SDAT} header. */
     BAD_MAGIC,
-    /** A version byte other than 1. */
+    /** A version byte other than 1 or 2. */
     BAD_VERSION,
     /** Input ends where a byte is needed. */
     UNEXPECTED_END,
-    /** A tag byte not in 0..=14. */
+    /** A tag byte this version does not use (1: 0..=14; 2: 0..=16, 32..=63 and 128..=255). */
     UNKNOWN_TAG,
     /** A varint cut short, longer than 10 bytes, or with a 10th byte above 1. */
     BAD_VARINT,
@@ -18,6 +18,8 @@ public enum DecodeErrorKind {
     BAD_UTF8,
     /** A string index not yet in the table. */
     BAD_STRING_INDEX,
+    /** A shape number not yet defined. */
+    BAD_SHAPE_INDEX,
     /** A reference whose kind or id is not valid. */
     BAD_REFERENCE,
     /** A map key that repeats. */

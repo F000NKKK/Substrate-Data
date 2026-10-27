@@ -2,7 +2,7 @@
 
 use super::sizes::{LENGTH_RESERVED, ONE_BYTE_MAX, VARINT_MAX_BYTES};
 use super::{floats, lanes};
-use crate::binary::interner::Interner;
+use crate::binary::table::interner::Interner;
 use crate::binary::writer::START_BYTES;
 use crate::binary::{Writer, varint, zigzag};
 use crate::schema::Schema;
@@ -95,13 +95,14 @@ impl Packer {
 
     /// A string: its index in the table, which gets it the first time.
     pub fn put_str(&mut self, s: &str) {
-        let i = if let Some(i) = self.strings.find(&self.table, s) {
-            i
-        } else {
-            varint(&mut self.table, s.len() as u64);
-            let at = self.table.len();
-            self.table.extend_from_slice(s.as_bytes());
-            self.strings.add(&self.table, s, at)
+        let i = match self.strings.lookup(&self.table, s) {
+            Ok(i) => i,
+            Err(hash) => {
+                varint(&mut self.table, s.len() as u64);
+                let at = self.table.len();
+                self.table.extend_from_slice(s.as_bytes());
+                self.strings.add(&self.table, s, at, hash)
+            }
         };
         self.put_u(i as u64);
     }

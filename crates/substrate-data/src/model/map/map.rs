@@ -156,7 +156,7 @@ impl Map {
     }
 
     /// The keys, in order.
-    pub fn keys(&self) -> impl ExactSizeIterator<Item = &str> {
+    pub fn keys(&self) -> impl ExactSizeIterator<Item = &str> + Clone {
         self.entries.iter().map(|(k, _)| &**k)
     }
 

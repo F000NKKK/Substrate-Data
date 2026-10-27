@@ -8,6 +8,7 @@ export type DecodeErrorKind =
   | 'bad_length'
   | 'bad_utf8'
   | 'bad_string_index'
+  | 'bad_shape_index'
   | 'bad_reference'
   | 'duplicate_key'
   | 'trailing_bytes'

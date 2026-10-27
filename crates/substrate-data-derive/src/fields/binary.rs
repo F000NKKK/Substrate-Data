@@ -7,19 +7,39 @@ use crate::codegen::Codegen;
 use crate::fields::NamedField;
 use crate::marker::Fallback;
 
-/// `fields` (bound by name) written straight as a binary map.
+/// Most fields a struct's keys are found again by a bit each ([`encode_fields`]).
+const MASKED_MAX: usize = 64;
+
+/// `fields` (bound by name) written straight as a binary map: its keys as a
+/// shape (written once, named after), then each value.
 pub(crate) fn encode_fields(cg: &Codegen, fields: &[NamedField]) -> Tokens {
-    put_fields(cg, fields, &quote::format_ident!("encode"))
+    let krate = &cg.krate;
+    let written: Vec<_> = fields.iter().filter(|f| !f.skip).collect();
+    if written.is_empty() {
+        return quote! { __sd_w.map(0); };
+    }
+    let puts = written.iter().map(|f| {
+        let (ident, ty, w) = (&f.ident, &f.ty, &f.with);
+        quote! {
+            if !<#w as #krate::with::With<#ty>>::skip(#ident) {
+                <#w as #krate::with::With<#ty>>::encode(#ident, __sd_w);
+            }
+        }
+    });
+    let record = if written.len() <= MASKED_MAX {
+        masked_record(cg, &written)
+    } else {
+        listed_record(cg, &written)
+    };
+    quote! {
+        #record
+        #(#puts)*
+    }
 }
 
-/// `fields` (bound by name) written straight as a text map.
+/// `fields` (bound by name) written straight as a text map: its length,
+/// then each entry that isn't skipped.
 pub(crate) fn write_text_fields(cg: &Codegen, fields: &[NamedField]) -> Tokens {
-    put_fields(cg, fields, &quote::format_ident!("write_text"))
-}
-
-/// `fields` written as a map by `with`'s `method` (`encode` or `write_text`)
-/// to the writer `__sd_w`: its length, then each entry that isn't skipped.
-fn put_fields(cg: &Codegen, fields: &[NamedField], method: &proc_macro2::Ident) -> Tokens {
     let krate = &cg.krate;
     let written: Vec<_> = fields.iter().filter(|f| !f.skip).collect();
     let counts = written.iter().map(|f| {
@@ -31,13 +51,55 @@ fn put_fields(cg: &Codegen, fields: &[NamedField], method: &proc_macro2::Ident) 
         quote! {
             if !<#w as #krate::with::With<#ty>>::skip(#ident) {
                 __sd_w.key(#key);
-                <#w as #krate::with::With<#ty>>::#method(#ident, __sd_w);
+                <#w as #krate::with::With<#ty>>::write_text(#ident, __sd_w);
             }
         }
     });
     quote! {
         __sd_w.map(0 #(#counts)*);
         #(#puts)*
+    }
+}
+
+/// The keys the fields have, as a static slice and a bit for each one present.
+fn masked_record(cg: &Codegen, written: &[&NamedField]) -> Tokens {
+    let krate = &cg.krate;
+    let keys = written.iter().map(|f| &f.key);
+    let bits = written.iter().enumerate().map(|(i, f)| {
+        let (ident, ty, w) = (&f.ident, &f.ty, &f.with);
+        quote! {
+            if !<#w as #krate::with::With<#ty>>::skip(#ident) {
+                __sd_present |= 1u64 << #i;
+            }
+        }
+    });
+    let len = written.len();
+    quote! {
+        static __SD_KEYS: [&str; #len] = [#(#keys),*];
+        let mut __sd_present = 0u64;
+        #(#bits)*
+        __sd_w.record_masked(&__SD_KEYS, __sd_present);
+    }
+}
+
+/// The keys the fields have, listed on the stack, for a struct with too many fields to number.
+fn listed_record(cg: &Codegen, written: &[&NamedField]) -> Tokens {
+    let krate = &cg.krate;
+    let capacity = written.len();
+    let keys = written.iter().map(|f| {
+        let (ident, key, ty, w) = (&f.ident, &f.key, &f.ty, &f.with);
+        quote! {
+            if !<#w as #krate::with::With<#ty>>::skip(#ident) {
+                __sd_keys[__sd_n] = #key;
+                __sd_n += 1;
+            }
+        }
+    });
+    quote! {
+        let mut __sd_keys: [&str; #capacity] = [""; #capacity];
+        let mut __sd_n = 0usize;
+        #(#keys)*
+        __sd_w.record(&__sd_keys[..__sd_n]);
     }
 }
 

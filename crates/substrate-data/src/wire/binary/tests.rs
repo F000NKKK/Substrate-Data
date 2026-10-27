@@ -116,10 +116,10 @@ fn malformed_bytes_are_errors() {
             .contains("after the value")
     );
     assert!(
-        decode(b"SDAT\x02\x00")
+        decode(b"SDAT\x03\x00")
             .unwrap_err()
             .message
-            .contains("version 2")
+            .contains("version 3")
     );
     assert!(
         decode(b"SDAT\x01\x63")

@@ -40,16 +40,42 @@ function checkText(c: Case, text: string, value: Value): void {
   count('text');
 }
 
-function checkBinary(c: Case, value: Value | undefined): void {
+/** A version 1 document: read only, and upgrading it writes version 2. */
+function checkLegacy(c: Case, value: Value | undefined): Uint8Array {
   const bytes = bytesOf(c.binary, c.binary_file);
+  assert.equal(bytes[4], 1, 'a version 1 document');
+  const decoded = decodeBinary(bytes);
+  if (value !== undefined) {
+    expectValue(decoded, value, 'decoded version 1');
+  }
+  count('binary');
+  return bytes;
+}
+
+/** A version 2 document: read, and (when the case says so) what the reference writes. */
+function checkCurrent(c: Case, value: Value | undefined): Uint8Array {
+  const bytes = bytesOf(c.binary_v2, c.binary_v2_file);
+  assert.equal(bytes[4], 2, 'a version 2 document');
   const decoded = decodeBinary(bytes);
   if (value !== undefined) {
     expectValue(decoded, value, 'decoded binary');
   }
-  if (value === undefined || c.binary_is_encoded === true) {
+  if (value === undefined || c.binary_v2_is_encoded === true) {
     assert.equal(toHex(encodeBinary(value ?? decoded)), toHex(bytes), 'encoded binary');
   }
-  count('binary');
+  count('binary_v2');
+  return bytes;
+}
+
+function checkBinary(c: Case, value: Value | undefined): void {
+  const old = c.binary !== undefined || c.binary_file !== undefined ? checkLegacy(c, value) : undefined;
+  const now =
+    c.binary_v2 !== undefined || c.binary_v2_file !== undefined ? checkCurrent(c, value) : undefined;
+  if (old !== undefined && now !== undefined) {
+    const upgraded = encodeBinary(decodeBinary(old));
+    assert.equal(toHex(upgraded) === toHex(now), c.binary_upgrades, 'what upgrading writes');
+    count('binary_upgrade');
+  }
 }
 
 function checkFrame(c: Case): void {
@@ -57,10 +83,15 @@ function checkFrame(c: Case): void {
   if (frame === undefined) {
     return;
   }
-  const bytes = bytesOf(frame.bytes, frame.bytes_file);
-  expectValue(readFrame(bytes, parseShapeDoc(frame.shape)), modelValue(frame.value), 'frame');
-  for (const other of frame.also_read_by ?? []) {
-    expectValue(readFrame(bytes, parseShapeDoc(other.shape)), modelValue(other.value), `read by ${other.schema}`);
+  const all = [bytesOf(frame.bytes, frame.bytes_file)];
+  if (frame.bytes_v2 !== undefined || frame.bytes_v2_file !== undefined) {
+    all.push(bytesOf(frame.bytes_v2, frame.bytes_v2_file));
+  }
+  for (const bytes of all) {
+    expectValue(readFrame(bytes, parseShapeDoc(frame.shape)), modelValue(frame.value), 'frame');
+    for (const other of frame.also_read_by ?? []) {
+      expectValue(readFrame(bytes, parseShapeDoc(other.shape)), modelValue(other.value), `read by ${other.schema}`);
+    }
   }
   count('frame');
 }
@@ -140,7 +171,7 @@ function runCase(c: Case): void {
   if (c.text !== undefined && value !== undefined) {
     checkText(c, c.text, value);
   }
-  if (c.binary !== undefined || c.binary_file !== undefined) {
+  if (c.binary !== undefined || c.binary_file !== undefined || c.binary_v2 !== undefined || c.binary_v2_file !== undefined) {
     checkBinary(c, value);
   }
   checkFrame(c);

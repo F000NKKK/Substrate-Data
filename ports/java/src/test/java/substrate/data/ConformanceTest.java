@@ -35,7 +35,7 @@ class ConformanceTest {
         if (c.has("text")) {
             checkText(c, value);
         }
-        if (c.has("binary")) {
+        if (c.has("binary") || c.has("binary_v2")) {
             checkBinary(c, value);
         }
         if (c.has("frame")) {
@@ -61,26 +61,62 @@ class ConformanceTest {
     }
 
     private static void checkBinary(JsonNode c, Value value) throws Exception {
+        byte[] old = c.has("binary") ? checkLegacy(c, value) : null;
+        byte[] now = c.has("binary_v2") ? checkCurrent(c, value) : null;
+        if (old != null && now != null) {
+            byte[] upgraded = Binary.encode(Binary.decode(old));
+            assertEquals(c.get("binary_upgrades").asBoolean(), java.util.Arrays.equals(upgraded, now),
+                    "what upgrading writes");
+        }
+    }
+
+    /** A version 1 document: read only (the writer writes version 2). */
+    private static byte[] checkLegacy(JsonNode c, Value value) throws Exception {
         byte[] bytes = Files.readAllBytes(DIR.resolve(c.get("binary_file").asText()));
         assertEquals(c.get("binary").asText(), Hex.encode(bytes), "the manifest's hex is the file's bytes");
+        assertEquals(1, bytes[4], "a version 1 document");
         Value decoded = Binary.decode(bytes);
         if (value != null) {
             assertEquals(value, decoded);
         }
-        if (value == null || c.get("binary_is_encoded").asBoolean()) {
+        return bytes;
+    }
+
+    /** A version 2 document: read, and (when the case says so) what the reference writes. */
+    private static byte[] checkCurrent(JsonNode c, Value value) throws Exception {
+        byte[] bytes = Files.readAllBytes(DIR.resolve(c.get("binary_v2_file").asText()));
+        assertEquals(c.get("binary_v2").asText(), Hex.encode(bytes), "the manifest's hex is the file's bytes");
+        assertEquals(2, bytes[4], "a version 2 document");
+        Value decoded = Binary.decode(bytes);
+        if (value != null) {
+            assertEquals(value, decoded);
+        }
+        if (value == null || c.get("binary_v2_is_encoded").asBoolean()) {
             assertArrayEquals(bytes, Binary.encode(value == null ? decoded : value));
         }
+        return bytes;
     }
 
     private static byte[] bytesOf(JsonNode node) throws IOException {
-        if (node.has("bytes_file")) {
-            return Files.readAllBytes(DIR.resolve(node.get("bytes_file").asText()));
+        return bytesOf(node, "bytes");
+    }
+
+    /** A form's bytes: its file when it has one (long ones), else its hex. */
+    private static byte[] bytesOf(JsonNode node, String key) throws IOException {
+        if (node.has(key + "_file")) {
+            return Files.readAllBytes(DIR.resolve(node.get(key + "_file").asText()));
         }
-        return Hex.decode(node.get("bytes").asText());
+        return Hex.decode(node.get(key).asText());
     }
 
     private static void checkFrame(JsonNode frame) throws Exception {
-        byte[] bytes = bytesOf(frame);
+        checkFrameBytes(frame, bytesOf(frame));
+        if (frame.has("bytes_v2_file") || frame.has("bytes_v2")) {
+            checkFrameBytes(frame, bytesOf(frame, "bytes_v2"));
+        }
+    }
+
+    private static void checkFrameBytes(JsonNode frame, byte[] bytes) throws Exception {
         assertEquals(ExpectedValue.of(frame.get("value")),
                 Frames.read(bytes, ShapeDocument.parse(frame.get("shape").asText())));
         if (frame.has("also_read_by")) {

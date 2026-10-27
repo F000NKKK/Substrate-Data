@@ -4,8 +4,8 @@ use std::collections::HashSet;
 
 use crate::case::Case;
 use crate::{
-    check, containers, evolution, faults_binary, faults_frame, faults_text, frames, io_cases,
-    packed, store, syntax, values, widths,
+    check, containers, evolution, faults_binary, faults_frame, faults_text, forms_v2, frames,
+    io_cases, packed, store, syntax, values, widths,
 };
 
 /// Every case, in manifest order.
@@ -14,6 +14,7 @@ fn all_cases() -> Vec<Case> {
     all.extend(values::cases());
     all.extend(containers::cases());
     all.extend(packed::cases());
+    all.extend(forms_v2::cases());
     all.extend(syntax::cases());
     all.extend(frames::cases());
     all.extend(evolution::cases());

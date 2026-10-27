@@ -14,8 +14,10 @@ Domain-neutral: the cases use only users, docs, files and projects.
 | Path | What |
 |---|---|
 | `cases.json` | the manifest: an array of cases, one object each |
-| `binary/<name>.sdat` | the case's binary form (an `SDAT` document), raw |
-| `frames/<name>.frame` | the case's frame, raw |
+| `binary/<name>.sdat` | the case's version 1 binary form (an `SDAT` document), raw: read-only legacy |
+| `binary_v2/<name>.sdat` | the case's version 2 binary form, raw |
+| `frames/<name>.frame` | the case's frame, raw (what was written before version 2) |
+| `frames_v2/<name>.frame` | the case's frame as the reference writes it now, when that differs from `frames/` |
 | `io/<name>.stream` | the case's length-prefixed frame stream, raw |
 
 Hex strings in the manifest are lower case, no separators. Bytes longer
@@ -31,8 +33,11 @@ than 256 are only in their file (the manifest gives `..._len` and
   "text": "64",                      // the text form, when there is one
   "text_is_written": true,           // the reference writes exactly this text for `value`
   "value": {"t": "int", "v": "64"},  // the expected model value (below)
-  "binary_is_encoded": true,         // the reference writes exactly these bytes for `value`
-  "binary": "5344415401038001", "binary_len": 8, "binary_file": "binary/int_64.sdat",
+  "binary_is_encoded": true,         // the old (version 1) writer wrote exactly these bytes for `value`
+  "binary": "5344415401038001", "binary_len": 8, "binary_file": "binary/int_64.sdat",  // version 1: READ ONLY
+  "binary_v2_is_encoded": true,      // the reference writes exactly these bytes for `value`
+  "binary_v2": "5344415402d0", "binary_v2_len": 6, "binary_v2_file": "binary_v2/int_64.sdat",
+  "binary_upgrades": true,           // reading `binary` and writing gives exactly `binary_v2`
   "frame": {...}, "io": {...}, "error": {...}  // see below; any subset
 }
 ```
@@ -77,18 +82,43 @@ Text-only cases (the `syntax_*` and `text_*` cases without binary) only
 read: they pin the grammar (comments, trailing commas, unquoted keys, a
 byte order mark, escapes, an integer past i64 reads as a float).
 
-**`binary`** (the bytes of `binary_file`):
+**Version 1 and version 2.** SDAT version 2 is the only version written; a
+reader reads versions 1 and 2. The vectors of version 1 (`binary`, the
+files in `binary/`) are never changed and are kept as **read vectors**: a
+port decodes them and does not write them (there is no version 1 writer,
+`binary_is_encoded` only says what the old writer wrote). The version 2
+vectors (`binary_v2`, `binary_v2_file` in `binary_v2/`) are what the
+reference writes now. A case of both forms is an upgrade case.
 
-1. Decode them; the result must be `value`.
-2. When `binary_is_encoded` is true, encoding `value` must give the bytes
-   exactly. When it is false the bytes come from a typed writer (a packed
-   list tag, a stream): a decoder must read them to `value`, a writer is
-   not required to choose that form.
-3. A case with `binary` and no `value` only has to decode and encode back to
-   the same bytes (`binary_depth_256`).
+**`binary`** (the bytes of `binary_file`, version 1):
 
-A writer that has a list of f64 uses tag 14 (f32 each) when every item
-survives f64 -> f32 -> f64 bit for bit, else tag 13. An empty list is tag 14.
+1. Check byte 4 is `1`. Decode them; the result must be `value`.
+2. Never write them back. (`binary_is_encoded` is the old writer's.)
+
+**`binary_v2`** (the bytes of `binary_v2_file`, version 2):
+
+1. Check byte 4 is `2`. Decode them; the result must be `value`.
+2. When `binary_v2_is_encoded` is true, encoding `value` must give the bytes
+   exactly (the canonical form, see `docs/format.md`: shapes, records,
+   inline ints, string tags, packed lists, `f32` narrowing). When it is
+   false the bytes come from a typed writer (a stream, a masked record): a
+   decoder must read them to `value`, a writer is not required to choose
+   that form.
+3. A case with `binary_v2` and no `value` only has to decode and encode back
+   to the same bytes (`binary_v2_depth_256_shaped_maps`).
+
+**`binary_upgrades`** (a case with `binary` and `binary_v2`): decode `binary`
+and encode the result. The bytes are exactly `binary_v2` when
+`binary_upgrades` is true; when false they are another valid version 2
+document (the version 2 bytes came from a typed writer, a stream or a masked
+record) that must decode to the same value. The upgrade never loses a
+value: this is the lossless rule of the format, and the Rust suite also
+checks it over generated values of every type.
+
+Every `binary` error input is read at version 1 (the original vectors) and
+the same malformed documents at version 2 are in the `binary_v2_*` error
+cases. An unknown version byte is `bad_version`: both the reference and a
+port refuse it and read nothing.
 
 **`frame`** (a value packed for a message whose schema both sides know):
 
@@ -114,7 +144,10 @@ Rules the vectors pin that are easy to get wrong:
   widths up to 32 a full group of 256 numbers is packed in 8 lanes of
   32-bit words, the rest (and every list of wider numbers) one after another,
   little-endian bits; a signed list is zigzagged first (`frame_ints_*`);
-- a tagged enum is held as its binary form (own string table, no header).
+- a tagged enum is held as its binary form (own string table, no header):
+  version 1 in `frames/`, version 2 (shapes, inline ints) in `frames_v2/`;
+  a frame has no version byte and its bodies read either way (`bytes_v2` is
+  present when the reference now writes other bytes; read both).
 
 **`io`** (a stream of messages):
 
@@ -139,13 +172,14 @@ stream's body is relative to that body). What must agree is the class:
 | `binary.kind` | Meaning |
 |---|---|
 | `bad_magic` | no `SDAT` header |
-| `bad_version` | a version byte other than 1 |
+| `bad_version` | a version byte other than 1 or 2 |
 | `unexpected_end` | input ends where a byte is needed |
-| `unknown_tag` | a tag byte not in 0..=14 |
+| `unknown_tag` | a tag byte the document's version doesn't have (version 1: 0..=14; version 2: 0..=16, 32..=63, 128..=255) |
 | `bad_varint` | a varint cut short, or longer than 10 bytes, or a 10th byte above 1 |
 | `bad_length` | a count or length past the bytes left (checked before any allocation) |
 | `bad_utf8` | a string that is not UTF-8 |
-| `bad_string_index` | an index not yet in the string table |
+| `bad_string_index` | an index (or a string tag) not yet in the string table |
+| `bad_shape_index` | a shape number not yet defined (version 2) |
 | `bad_reference` | a reference whose kind or id is not valid |
 | `duplicate_key` | a map with a key that is already in it (compared by text, however the string was written) |
 | `trailing_bytes` | bytes after the root value (or after a stream's items) |
@@ -164,7 +198,12 @@ SD0011, which needs a resolver, are not.)
 Vectors only grow. A new case may be added at any time; an existing case,
 and every byte of its files, is never changed: **a changed byte is a format
 break**, and needs a new binary version, not a new vector. Removing a case
-is a format break too.
+is a format break too. Version 2 added fields beside the version 1 ones
+(`binary_v2*`, `binary_upgrades`, `bytes_v2*`) and left every version 1
+file as it was. The one case that left is `binary_version_2` (a document of
+version 2 read as an error): version 2 is a version the readers read now, so that
+input is no longer an error. `binary_version_3` (an unknown version) stands
+in its place; this is the version change itself.
 
 ## Regenerating
 
@@ -177,4 +216,6 @@ version):
 CONFORMANCE_BLESS=1 cargo test -p substrate-data --test conformance
 ```
 
-then review the diff: for an existing case it must be empty.
+then review the diff: for an existing case it must be empty (version 1 files
+are never rewritten: the generator keeps what is on disk as the legacy form
+and writes only the version 2 bytes beside it).

@@ -1,5 +1,7 @@
 //! [`NamedField`]: a struct's (or variant's) named field, its attributes read.
 
+use proc_macro2::TokenStream as Tokens;
+use quote::quote;
 use syn::{Ident, Type};
 
 use crate::attrs::attrs;
@@ -28,6 +30,19 @@ pub(crate) struct NamedField {
     pub(crate) codec: bool,
     /// The numbers it takes.
     pub(crate) range: Option<(f64, f64)>,
+}
+
+impl NamedField {
+    /// Its pattern when a value is taken apart: `ident`, or `ident: _` when
+    /// skipped, so the generated code never binds a field it doesn't use.
+    pub(crate) fn binding(&self) -> Tokens {
+        let ident = &self.ident;
+        if self.skip {
+            quote! { #ident: _ }
+        } else {
+            quote! { #ident }
+        }
+    }
 }
 
 /// `fields` as the derive sees them.

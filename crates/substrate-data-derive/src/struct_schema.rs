@@ -7,7 +7,7 @@ use syn::{Data, DeriveInput, Fields, Type};
 
 use crate::codegen::Codegen;
 use crate::fields::{
-    decode_fields, encode_fields, field_shapes, named_fields, pack_fields, read_fields,
+    NamedField, decode_fields, encode_fields, field_shapes, named_fields, pack_fields, read_fields,
     unpack_fields, write_fields,
 };
 
@@ -22,7 +22,7 @@ pub(crate) fn expand_named(
     let fields = named_fields(cg, named)?;
     let shapes = field_shapes(cg, &fields);
     let read = read_fields(&fields, &quote! { Self });
-    let idents: Vec<_> = fields.iter().map(|f| &f.ident).collect();
+    let bindings: Vec<_> = fields.iter().map(NamedField::binding).collect();
     let write = write_fields(cg, &fields);
     let encode = encode_fields(cg, &fields);
     let decode = decode_fields(cg, &fields, &quote! { Self }).map(|body| {
@@ -35,17 +35,13 @@ pub(crate) fn expand_named(
     let pack = pack_fields(cg, &fields);
     let unpack = unpack_fields(cg, &fields, &quote! { Self });
     Ok(quote! {
-        // A skipped field is bound and not encoded.
-        #[allow(unused_variables, reason = "a skipped field is bound and not used")]
         fn encode(&self, __sd_w: &mut #krate::binary::Writer) {
-            let Self { #(#idents),* } = self;
+            let Self { #(#bindings),* } = self;
             #encode
         }
         #decode
-        // A skipped field is bound and not packed.
-        #[allow(unused_variables, reason = "a skipped field is bound and not used")]
         fn pack(&self, __sd_p: &mut #krate::frame::Packer) {
-            let Self { #(#idents),* } = self;
+            let Self { #(#bindings),* } = self;
             #pack
         }
         fn unpack(__sd_u: &mut #krate::frame::Unpacker<'_>) -> ::std::option::Option<Self> {
@@ -58,10 +54,8 @@ pub(crate) fn expand_named(
             let map = cx.map(v)?;
             #read
         }
-        // A skipped field is bound and not written.
-        #[allow(unused_variables, reason = "a skipped field is bound and not used")]
         fn write(&self) -> #krate::Value {
-            let Self { #(#idents),* } = self;
+            let Self { #(#bindings),* } = self;
             let mut m = #krate::Map::new();
             #write
             #krate::Value::Map(m)

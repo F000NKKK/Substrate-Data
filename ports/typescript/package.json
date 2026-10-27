@@ -1,0 +1,30 @@
+{
+  "name": "substrate-data",
+  "version": "0.2.1",
+  "description": "Substrate Data in TypeScript: the model, the text and binary forms, frames and frame streams, checked against the language-neutral conformance vectors.",
+  "license": "MIT OR Apache-2.0",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    }
+  },
+  "files": [
+    "dist/src"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test \"dist/test/*.test.js\"",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}

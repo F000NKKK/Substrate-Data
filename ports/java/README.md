@@ -36,7 +36,7 @@ Value doc = Text.parse("""
 Value project = Typed.classify("@project:apps/notes");   // Ref("project", "apps/notes")
 
 String compact = Text.write(doc);          // {"name":"Release 1.0",...}
-byte[] sdat = Binary.encode(doc);          // "SDAT" 1 ...
+byte[] sdat = Binary.encode(doc);          // "SDAT" 2 ...
 Value back = Binary.decode(sdat);          // throws DecodeException on malformed input
 
 // A frame is read by the description of its shape (compact text of Shape::describe).
@@ -58,7 +58,7 @@ exception.
 | Form | Read | Write |
 |---|---|---|
 | Text (comments, trailing commas, unquoted keys, BOM, `@kind:id`, `@bytes:`, `@@`, duplicate keys are errors) | yes | yes, byte for byte as the reference (shortest float spelling) |
-| Binary SDAT v1 (all tags 0..=14, string table, packed lists, streams, `MAX_DEPTH`) | yes | yes, as the reference's `Value` encoder (packed list tags are read, not chosen) |
+| Binary SDAT v2 (tags 0..=16, 32..=63 and 128..=255: shapes, records, inline ints, string numbers, packed lists, streams, `MAX_DEPTH`); v1 (tags 0..=14) is read only | yes | yes, version 2 only, as the reference's `Value` encoder; reading v1 and writing upgrades it |
 | Frames (records, options, lists, packed ints in lanes, float lists, refs, unit and tagged enums, appended fields) | by shape | no |
 | IO streams (`u32` length, `MAX_FRAME`) | yes | yes |
 

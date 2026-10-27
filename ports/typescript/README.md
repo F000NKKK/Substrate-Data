@@ -50,9 +50,11 @@ const back = decodeBinary(bytes);
   that reads back as a float (`1.0`, `1e16`, `-0.0`), a ref or bytes as its
   typed string. Errors are `SyntaxError` (this module's own class) with
   `at.line` and `at.col`.
-- **Binary.** `decodeBinary` reads every tag (including packed lists and
-  streams, with their own string tables); `encodeBinary` writes the bytes the
-  reference writes for a `Value`. Malformed input throws a `DecodeError` whose
+- **Binary.** `decodeBinary` reads versions 1 and 2 (every tag, including
+  packed lists, shapes, records and streams, with their own string tables); it
+  never writes version 1: `encodeBinary` writes version 2, the bytes the
+  reference writes for a `Value`, so reading a version 1 document and writing
+  it upgrades it without losing a value. Malformed input throws a `DecodeError` whose
   `kind` is the vectors' class (`bad_magic`, `bad_length`, ...); every count
   and length is checked against the bytes left before anything is allocated,
   and nesting is limited to `MAX_DEPTH` (256).
@@ -81,9 +83,9 @@ input only ever raises this port's own error types.
 ## Not covered
 
 - Packing frames (`to_frame`): frames are read, not written.
-- Writing the packed binary tags (10, 13, 14) and streams: the decoder reads
-  them, the encoder writes the plain forms (tags 3, 4, 6, ...), as the
-  reference does for a `Value`.
+- Writing streams (tag 11) and the typed route's unmasked record forms: the
+  decoder reads them; the encoder writes what the reference writes for a
+  `Value`.
 - Schemas, `patch`, TOML/JSON import, `Resolve`. The one text schema the
   vectors use (`limits`) is checked by a small reader in `test/support`, not
   by the library.

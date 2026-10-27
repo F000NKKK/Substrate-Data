@@ -2367,6 +2367,30 @@
     }
   },
   {
+    "name": "binary_map_key_repeated_by_index",
+    "description": "A map whose second key is the first one again, by its table index.",
+    "error": {
+      "form": "binary",
+      "input": "5344415401070203610302000302",
+      "kind": "duplicate_key",
+      "offset": 11,
+      "message": "`a` is already set in this map",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_map_key_repeated_as_text",
+    "description": "A map whose second key spells the first one's text again as a new string.",
+    "error": {
+      "form": "binary",
+      "input": "534441540107020361030203610302",
+      "kind": "duplicate_key",
+      "offset": 11,
+      "message": "`a` is already set in this map",
+      "schema_code": "SD0009"
+    }
+  },
+  {
     "name": "binary_cut_float",
     "description": "A float with three of its eight bytes.",
     "error": {

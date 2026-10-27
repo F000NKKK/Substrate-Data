@@ -26,6 +26,8 @@ pub struct Reader<'r> {
     pub refs: Vec<Found<Ref>>,
     /// Keys a struct being read doesn't report as unknown (an enum's tag).
     pub(crate) allowed: Vec<&'static str>,
+    /// How many expanded values are being read inside one another.
+    pub(crate) expanding: usize,
 }
 
 impl std::fmt::Debug for Reader<'_> {

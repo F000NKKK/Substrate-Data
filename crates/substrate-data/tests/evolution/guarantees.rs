@@ -120,20 +120,21 @@ fn a_frame_read_by_shape_leaves_out_the_fields_it_does_not_have() {
 }
 
 #[test]
-fn a_stream_checks_its_items_only_when_they_are_read() {
+fn a_stream_checks_its_items_when_it_is_read() {
     #[derive(Schema, Debug, PartialEq)]
     struct Items<T: Schema> {
         items: Stream<T>,
     }
     let newer = Items {
-        items: Stream::from(vec![grown(&["a"])]),
+        items: Stream::from(vec![grown(&["a"]), grown(&["b"])]),
     };
-    let older = read_bytes::<Items<Doc>>(&to_bytes(&newer)).unwrap();
-    assert_eq!(older.items.len(), 1);
+    let errors = read_bytes::<Items<Doc>>(&to_bytes(&newer)).unwrap_err();
     assert!(
-        older.items.to_vec().is_empty(),
-        "iteration stops at the item it cannot read"
+        !errors.is_empty(),
+        "an item it cannot read rejects the stream"
     );
+    let at_index = errors.iter().any(|e| e.to_string().contains("items[0]"));
+    assert!(at_index, "the error names the item: {errors:?}");
     let oldest = Items {
         items: Stream::from(vec![base()]),
     };

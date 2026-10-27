@@ -7,10 +7,10 @@
 //! cargo bench --bench iai
 //! ```
 //!
-//! Four groups: whole documents (text and binary of every topic of the
+//! Five groups: whole documents (text and binary of every topic of the
 //! corpus), typed documents in every form, the same typed documents in
 //! the serde formats this crate is compared with, and value trees against
-//! `serde_json::Value`. A benchmark runs once,
+//! `serde_json::Value`, and streams. A benchmark runs once,
 //! on a document made before the measurement starts.
 
 #![expect(
@@ -28,17 +28,21 @@ mod dynamic;
 mod formats;
 #[path = "iai/serde_trees.rs"]
 mod serde_trees;
+#[path = "iai/streams.rs"]
+mod streams;
 #[path = "iai/typed.rs"]
 mod typed;
 
 use documents::whole_documents;
 use formats::serde_formats;
 use serde_trees::value_trees;
+use streams::stream_forms;
 use typed::typed_forms;
 
 iai_callgrind::main!(
     library_benchmark_groups = whole_documents,
     typed_forms,
     serde_formats,
-    value_trees
+    value_trees,
+    stream_forms
 );

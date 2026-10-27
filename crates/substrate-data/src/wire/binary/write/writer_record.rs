@@ -1,8 +1,9 @@
 //! [`Writer`] writing a map by its keys: a shape, written once and named
 //! after.
 
+use super::Writer;
 use super::static_shape::{STATIC_SHAPES, StaticShape};
-use super::{NEW_STRING, Writer, tag, varint};
+use crate::binary::{NEW_STRING, tag, varint};
 
 impl Writer {
     /// A map of these `keys` (none repeated): the keys are written the
@@ -55,7 +56,7 @@ impl Writer {
 
     /// The shape of `keys`: written (a marker with their count, then them)
     /// the first time, else its number. The shape's number.
-    pub(super) fn shape<'k>(
+    pub(in crate::wire::binary) fn shape<'k>(
         &mut self,
         keys: impl ExactSizeIterator<Item = &'k str> + Clone,
     ) -> usize {

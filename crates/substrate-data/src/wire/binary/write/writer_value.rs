@@ -2,9 +2,10 @@
 //! from the value alone, so every writer (this one, a port's) writes the
 //! same bytes for it — `docs/format.md`, "Binary", says how.
 
-use super::layout::narrows;
-use super::{Writer, tag, varint};
+use super::Writer;
+use crate::binary::{tag, varint};
 use crate::model::value::{Map, Value};
+use crate::wire::binary::layout::narrows;
 
 /// How a list of values is written.
 #[derive(Clone, Copy, PartialEq, Eq)]

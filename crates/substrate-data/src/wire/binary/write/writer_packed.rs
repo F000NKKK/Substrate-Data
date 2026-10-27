@@ -1,6 +1,7 @@
 //! [`Writer`] writing packed lists of numbers: no tag for each.
 
-use super::{Writer, tag, varint, zigzag};
+use super::Writer;
+use crate::binary::{tag, varint, zigzag};
 
 impl Writer {
     /// A list of floats, packed, no tag each: four bytes each when every

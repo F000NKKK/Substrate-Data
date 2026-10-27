@@ -1,12 +1,14 @@
 //! [`Decoder`] reading a reference: its kind and its id, each checked.
 
-use super::{DecodeError, Decoder};
+use crate::binary::{DecodeError, Decoder};
 use crate::model::value::{KindName, RefKey};
 
 impl<'b> Decoder<'b> {
     /// A reference's kind and id, each checked: a malformed one is an error.
     /// A kind is checked, and made an atom, once for each string of the table.
-    pub(super) fn reference(&mut self) -> Result<(KindName, &'b str), DecodeError> {
+    pub(in crate::wire::binary) fn reference(
+        &mut self,
+    ) -> Result<(KindName, &'b str), DecodeError> {
         let kind_at = self.i;
         let kind = self.string_index()?;
         let kind = self.kind_of(kind, kind_at)?;

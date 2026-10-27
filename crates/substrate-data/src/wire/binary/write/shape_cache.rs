@@ -8,14 +8,14 @@ const RECENT_SHAPES: usize = 4;
 
 /// The shapes found lately and the buffers a lookup reuses.
 #[derive(Debug)]
-pub(super) struct ShapeCache {
+pub(in crate::wire::binary) struct ShapeCache {
     /// The shapes of keys that are `'static` slices, by where the slice is and which of its keys.
-    pub(super) known: [StaticShape; STATIC_SHAPES],
+    pub(in crate::wire::binary) known: [StaticShape; STATIC_SHAPES],
     /// The keys of such a shape, picked: kept to be reused.
-    pub(super) picked: Vec<&'static str>,
+    pub(in crate::wire::binary) picked: Vec<&'static str>,
     /// What looking up a shape's keys found, and their numbers: kept to be reused.
-    pub(super) found: Vec<Result<usize, Option<u32>>>,
-    pub(super) numbers: Vec<usize>,
+    pub(in crate::wire::binary) found: Vec<Result<usize, Option<u32>>>,
+    pub(in crate::wire::binary) numbers: Vec<usize>,
     /// The shapes used last, the latest first: a map is compared with
     /// their keys before anything is looked up.
     recent: [u32; RECENT_SHAPES],
@@ -37,13 +37,16 @@ impl Default for ShapeCache {
 
 impl ShapeCache {
     /// Forgets the shapes (a restarted writer has none), keeping the buffers.
-    pub(super) fn clear(&mut self) {
+    pub(in crate::wire::binary) fn clear(&mut self) {
         self.known = [StaticShape::default(); STATIC_SHAPES];
         self.recent_len = 0;
     }
 
     /// The first of the recent shapes that `is` accepts; it becomes the latest.
-    pub(super) fn find_recent(&mut self, mut is: impl FnMut(usize) -> bool) -> Option<usize> {
+    pub(in crate::wire::binary) fn find_recent(
+        &mut self,
+        mut is: impl FnMut(usize) -> bool,
+    ) -> Option<usize> {
         let at = (0..self.recent_len).find(|&at| is(self.recent[at] as usize))?;
         let shape = self.recent[at];
         self.recent.copy_within(0..at, 1);
@@ -52,7 +55,7 @@ impl ShapeCache {
     }
 
     /// `shape` was used: it is the latest of the recent ones.
-    pub(super) fn note(&mut self, shape: usize) {
+    pub(in crate::wire::binary) fn note(&mut self, shape: usize) {
         let Ok(shape) = u32::try_from(shape) else {
             return;
         };

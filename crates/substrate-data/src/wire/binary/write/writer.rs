@@ -1,13 +1,13 @@
 //! Writing the binary form: one buffer, strings written where first used.
 
-use super::layout::{narrow, narrows};
 use super::shape_cache::ShapeCache;
-use super::table::interner::Interner;
-use super::table::shape_table::ShapeTable;
-use super::{
+use crate::binary::{
     INLINE_INT_MAX, INLINE_INT_MIN, MAGIC, NEW_STRING, STR_INDEX_COUNT, VERSION, tag, varint,
     zigzag,
 };
+use crate::wire::binary::layout::{narrow, narrows};
+use crate::wire::binary::table::interner::Interner;
+use crate::wire::binary::table::shape_table::ShapeTable;
 
 /// What a writer reserves to start with: most messages fit.
 pub(crate) const START_BYTES: usize = 256;
@@ -24,13 +24,13 @@ pub(crate) const START_BYTES: usize = 256;
 /// ```
 #[derive(Debug)]
 pub struct Writer {
-    pub(super) out: Vec<u8>,
+    pub(in crate::wire::binary) out: Vec<u8>,
     /// The strings written, by where they are in `out`.
-    pub(super) strings: Interner,
+    pub(in crate::wire::binary) strings: Interner,
     /// The map shapes written, by their keys.
-    pub(super) shapes: ShapeTable,
+    pub(in crate::wire::binary) shapes: ShapeTable,
     /// How shapes are found again quickly, and the buffers that takes.
-    pub(super) cache: ShapeCache,
+    pub(in crate::wire::binary) cache: ShapeCache,
 }
 
 impl Default for Writer {
@@ -199,14 +199,18 @@ impl Writer {
     }
 
     /// `s`: a reference if it was written before, else itself: its number in the table.
-    pub(super) fn string(&mut self, s: &str) -> usize {
+    pub(in crate::wire::binary) fn string(&mut self, s: &str) -> usize {
         let found = self.strings.find(&self.out, s);
         self.put_string(s, found)
     }
 
     /// `s` as a string of the table, where [`Interner::find`] said `found`.
     #[inline]
-    pub(super) fn put_string(&mut self, s: &str, found: Result<usize, Option<u32>>) -> usize {
+    pub(in crate::wire::binary) fn put_string(
+        &mut self,
+        s: &str,
+        found: Result<usize, Option<u32>>,
+    ) -> usize {
         match found {
             Ok(i) => {
                 varint(&mut self.out, (i as u64) << 1);

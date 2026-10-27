@@ -4,7 +4,7 @@
 //! header, the numbers, the string table.
 
 use super::shape::{Shapes, Walk};
-use super::{
+use crate::binary::{
     DecodeError, LEGACY_VERSION, MAGIC, MAX_DEPTH, NEW_STRING, STR_INDEX_COUNT, STREAM_LEN_BYTES,
     VERSION, read_varint, tag,
 };
@@ -12,14 +12,14 @@ use crate::model::value::{KindName, Value};
 use crate::sync::Arc;
 
 /// Strings a decoder makes room for at once: a message's keys and values.
-pub(super) const STRINGS_START: usize = 16;
+pub(in crate::wire::binary) const STRINGS_START: usize = 16;
 
 /// Bytes of a float, and of a 32-bit one.
-pub(super) const F64_BYTES: usize = 8;
-pub(super) const F32_BYTES: usize = 4;
+pub(in crate::wire::binary) const F64_BYTES: usize = 8;
+pub(in crate::wire::binary) const F32_BYTES: usize = 4;
 
 /// Bytes a map entry takes at least: its key and its value's tag.
-pub(super) const MAP_ENTRY_MIN: usize = 2;
+pub(in crate::wire::binary) const MAP_ENTRY_MIN: usize = 2;
 
 /// Reads the binary form. The step-by-step reads ([`Decoder::int`],
 /// [`Decoder::map`] …) answer `None` for anything but what
@@ -27,21 +27,21 @@ pub(super) const MAP_ENTRY_MIN: usize = 2;
 /// slow way, which says what's wrong.
 #[derive(Debug)]
 pub struct Decoder<'b> {
-    pub(super) b: &'b [u8],
-    pub(super) i: usize,
-    pub(super) strings: Vec<&'b str>,
+    pub(in crate::wire::binary) b: &'b [u8],
+    pub(in crate::wire::binary) i: usize,
+    pub(in crate::wire::binary) strings: Vec<&'b str>,
     /// Map keys made so far, by table index: each key is allocated once.
-    pub(super) keys: Vec<Option<Arc<str>>>,
+    pub(in crate::wire::binary) keys: Vec<Option<Arc<str>>>,
     /// Reference kinds checked so far, by table index of their string.
-    pub(super) kinds: Vec<Option<KindName>>,
-    pub(super) depth: usize,
+    pub(in crate::wire::binary) kinds: Vec<Option<KindName>>,
+    pub(in crate::wire::binary) depth: usize,
     /// Whether the tags of version 2 are accepted (a version 1 document is
     /// read with only the tags it was written with).
-    pub(super) v2: bool,
+    pub(in crate::wire::binary) v2: bool,
     /// The map shapes defined so far (version 2).
-    pub(super) shapes: Shapes,
+    pub(in crate::wire::binary) shapes: Shapes,
     /// The shaped maps being read step by step, innermost last.
-    pub(super) frames: Vec<Walk>,
+    pub(in crate::wire::binary) frames: Vec<Walk>,
 }
 
 impl<'b> Decoder<'b> {
@@ -88,7 +88,7 @@ impl<'b> Decoder<'b> {
     }
 
     /// A body inside this one: the same version, its tables its own.
-    pub(super) fn inner(&self, bytes: &'b [u8]) -> Self {
+    pub(in crate::wire::binary) fn inner(&self, bytes: &'b [u8]) -> Self {
         let mut d = Decoder::body(bytes);
         d.v2 = self.v2;
         d.depth = self.depth;
@@ -96,13 +96,13 @@ impl<'b> Decoder<'b> {
     }
 
     /// A stream's body: its bytes, read past.
-    pub(super) fn stream_body(&mut self) -> Result<&'b [u8], DecodeError> {
+    pub(in crate::wire::binary) fn stream_body(&mut self) -> Result<&'b [u8], DecodeError> {
         let len = u32::from_le_bytes(self.fixed::<STREAM_LEN_BYTES>()?) as usize;
         self.take(len)
     }
 
     /// A stream's values, decoded as a list.
-    pub(super) fn stream_values(&mut self) -> Result<Vec<Value>, DecodeError> {
+    pub(in crate::wire::binary) fn stream_values(&mut self) -> Result<Vec<Value>, DecodeError> {
         let body = self.stream_body()?;
         let mut d = self.inner(body);
         let n = d.count(1)?;
@@ -120,7 +120,7 @@ impl<'b> Decoder<'b> {
         self.i == self.b.len()
     }
 
-    pub(super) fn end(&self) -> Result<(), DecodeError> {
+    pub(in crate::wire::binary) fn end(&self) -> Result<(), DecodeError> {
         if self.at_end() {
             Ok(())
         } else {
@@ -128,14 +128,14 @@ impl<'b> Decoder<'b> {
         }
     }
 
-    pub(super) fn error(&self, message: impl Into<String>) -> DecodeError {
+    pub(in crate::wire::binary) fn error(&self, message: impl Into<String>) -> DecodeError {
         DecodeError {
             message: message.into(),
             offset: self.i,
         }
     }
 
-    pub(super) fn byte(&mut self) -> Result<u8, DecodeError> {
+    pub(in crate::wire::binary) fn byte(&mut self) -> Result<u8, DecodeError> {
         let b = *self
             .b
             .get(self.i)
@@ -144,13 +144,13 @@ impl<'b> Decoder<'b> {
         Ok(b)
     }
 
-    pub(super) fn varint(&mut self) -> Result<u64, DecodeError> {
+    pub(in crate::wire::binary) fn varint(&mut self) -> Result<u64, DecodeError> {
         read_varint(self.b, &mut self.i)
             .ok_or_else(|| self.error("a varint cut short or longer than 64 bits"))
     }
 
     /// A length, checked against what's left: each of the `count` things takes at least `min` bytes.
-    pub(super) fn count(&mut self, min: usize) -> Result<usize, DecodeError> {
+    pub(in crate::wire::binary) fn count(&mut self, min: usize) -> Result<usize, DecodeError> {
         let n = self.varint()?;
         let left = self.b.len() - self.i;
         match usize::try_from(n) {
@@ -159,7 +159,9 @@ impl<'b> Decoder<'b> {
         }
     }
 
-    pub(super) fn fixed<const N: usize>(&mut self) -> Result<[u8; N], DecodeError> {
+    pub(in crate::wire::binary) fn fixed<const N: usize>(
+        &mut self,
+    ) -> Result<[u8; N], DecodeError> {
         let bytes = self
             .b
             .get(self.i..self.i + N)
@@ -169,7 +171,7 @@ impl<'b> Decoder<'b> {
     }
 
     /// `len` bytes.
-    pub(super) fn take(&mut self, len: usize) -> Result<&'b [u8], DecodeError> {
+    pub(in crate::wire::binary) fn take(&mut self, len: usize) -> Result<&'b [u8], DecodeError> {
         let end = self
             .i
             .checked_add(len)
@@ -181,7 +183,7 @@ impl<'b> Decoder<'b> {
     }
 
     /// A packed list of floats `N` bytes wide: each one's bytes, read in place (no alignment asked).
-    pub(super) fn packed_floats<const N: usize>(
+    pub(in crate::wire::binary) fn packed_floats<const N: usize>(
         &mut self,
     ) -> Result<std::slice::Iter<'b, [u8; N]>, DecodeError> {
         let n = self.count(N)?;
@@ -190,20 +192,20 @@ impl<'b> Decoder<'b> {
     }
 
     /// A length and that many bytes.
-    pub(super) fn length_bytes(&mut self) -> Result<&'b [u8], DecodeError> {
+    pub(in crate::wire::binary) fn length_bytes(&mut self) -> Result<&'b [u8], DecodeError> {
         let len =
             usize::try_from(self.varint()?).map_err(|_| self.error("a length beyond memory"))?;
         self.take(len)
     }
 
     /// A string: new (read, and added to the table) or the table's.
-    pub(super) fn string(&mut self) -> Result<&'b str, DecodeError> {
+    pub(in crate::wire::binary) fn string(&mut self) -> Result<&'b str, DecodeError> {
         let i = self.string_index()?;
         Ok(self.strings[i])
     }
 
     /// The string a tag of its own names (`tag - STR_INDEX` in the table).
-    pub(super) fn indexed(&self, t: u8) -> Result<&'b str, DecodeError> {
+    pub(in crate::wire::binary) fn indexed(&self, t: u8) -> Result<&'b str, DecodeError> {
         let i = usize::from(t - tag::STR_INDEX);
         self.strings
             .get(i)
@@ -212,16 +214,16 @@ impl<'b> Decoder<'b> {
     }
 
     /// Whether `t` is a tag that names a table string by itself.
-    pub(super) fn is_indexed(&self, t: u8) -> bool {
+    pub(in crate::wire::binary) fn is_indexed(&self, t: u8) -> bool {
         self.v2 && t.wrapping_sub(tag::STR_INDEX) < STR_INDEX_COUNT
     }
 
     /// Whether `t` is a tag that is an int by itself.
-    pub(super) fn is_inline_int(&self, t: u8) -> bool {
+    pub(in crate::wire::binary) fn is_inline_int(&self, t: u8) -> bool {
         self.v2 && t >= tag::INT_INLINE
     }
 
-    pub(super) fn string_index(&mut self) -> Result<usize, DecodeError> {
+    pub(in crate::wire::binary) fn string_index(&mut self) -> Result<usize, DecodeError> {
         let v = self.varint()?;
         if v & NEW_STRING == 0 {
             let i = (v >> 1) as usize;
@@ -242,7 +244,7 @@ impl<'b> Decoder<'b> {
     }
 
     /// The key at table index `i`: shared with every other map that has it.
-    pub(super) fn shared_key_at(&mut self, i: usize) -> Arc<str> {
+    pub(in crate::wire::binary) fn shared_key_at(&mut self, i: usize) -> Arc<str> {
         if self.keys.len() <= i {
             self.keys.resize(i + 1, None);
         }
@@ -251,7 +253,7 @@ impl<'b> Decoder<'b> {
             .clone()
     }
 
-    pub(super) fn deeper(&mut self) -> Result<(), DecodeError> {
+    pub(in crate::wire::binary) fn deeper(&mut self) -> Result<(), DecodeError> {
         self.depth += 1;
         if self.depth > MAX_DEPTH {
             return Err(self.error(format!("nested deeper than {MAX_DEPTH} levels")));

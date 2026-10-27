@@ -1,12 +1,12 @@
 //! [`Decoder`] reading a value as an owned [`Value`].
 
 use super::decoder::{F32_BYTES, F64_BYTES, MAP_ENTRY_MIN};
-use super::{DecodeError, Decoder, tag, unzigzag};
+use crate::binary::{DecodeError, Decoder, tag, unzigzag};
 use crate::model::value::{Map, Ref, RefKey, Value};
 
 /// The int a tag of its own is (`tag` at least [`tag::INT_INLINE`]).
-pub(super) fn inline_int(t: u8) -> i64 {
-    i64::from(t - tag::INT_INLINE) + super::INLINE_INT_MIN
+pub(in crate::wire::binary) fn inline_int(t: u8) -> i64 {
+    i64::from(t - tag::INT_INLINE) + crate::binary::INLINE_INT_MIN
 }
 
 impl Decoder<'_> {

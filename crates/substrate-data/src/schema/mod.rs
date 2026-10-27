@@ -26,7 +26,7 @@ pub use description::{DefinitionDoc, FieldDoc, ShapeDoc, ShapeNode, VariantDoc};
 pub use fields::{Fields, field_name};
 pub use format::Schema;
 pub use named_type::{NamedShape, NamedType, read_named};
-pub use plain::{OneOrList, Ordered};
+pub use plain::{OneOrList, Ordered, RESULT_ERR, RESULT_OK};
 pub use reader::{
     COMMENT_KEY, Expected, Found, META_PREFIX, Numbers, PRIVATE_PREFIX, Read, Reader, Resolve,
     Unresolved, is_metadata_key,

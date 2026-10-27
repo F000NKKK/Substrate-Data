@@ -4,9 +4,10 @@ use crate::model::borrowed::ValueRef;
 use crate::model::value::{Seg, Value};
 use crate::schema::{Expected, Reader, Schema, Shape};
 
-/// The keys of a [`Result`]'s two sides.
-pub(crate) const RESULT_OK: &str = "ok";
-pub(crate) const RESULT_ERR: &str = "err";
+/// The key of a [`Result`]'s success side.
+pub const RESULT_OK: &str = "ok";
+/// The key of a [`Result`]'s failure side.
+pub const RESULT_ERR: &str = "err";
 
 /// What may fail: `{ "ok": T }` or `{ "err": E }`.
 impl<T: Schema, E: Schema> Schema for Result<T, E> {

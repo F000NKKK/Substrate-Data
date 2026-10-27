@@ -368,7 +368,7 @@ dependencies = [
 
 [[package]]
 name = "substrate-data"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "base64",
  "bumpalo",
@@ -381,7 +381,7 @@ dependencies = [
 
 [[package]]
 name = "substrate-data-derive"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",

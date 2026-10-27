@@ -29,7 +29,7 @@ pub use codec::{decode, decode_ref, encode};
 pub use decode_error::DecodeError;
 pub use decoder::Decoder;
 pub use layout::{MAGIC, MAX_DEPTH, VERSION};
-pub(crate) use layout::{NEW_STRING, STREAM_LEN_BYTES};
+pub use layout::{NEW_STRING, STREAM_LEN_BYTES};
 pub(crate) use varint::{
     VARINT_BITS, VARINT_LAST_SHIFT, VARINT_MAX_SHIFT, VARINT_MORE, VARINT_SHIFT, read_varint,
     unzigzag, varint, zigzag,

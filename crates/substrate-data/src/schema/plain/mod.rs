@@ -8,6 +8,7 @@ mod maps;
 mod one_or_list;
 mod ordered;
 mod result;
+pub use result::{RESULT_ERR, RESULT_OK};
 mod text;
 mod tuples;
 mod wrappers;

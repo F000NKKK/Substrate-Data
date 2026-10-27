@@ -17,7 +17,8 @@ use crate::model::value::{KindName, Ref, Value, ValueKind};
 use crate::names::TYPED;
 
 /// The kind word of bytes written as text (`@bytes:…`); no reference has it.
-const BYTES: &str = "bytes";
+/// The kind name of bytes: `@bytes:<base64>`.
+pub(crate) const BYTES: &str = "bytes";
 
 /// What a string spells.
 #[derive(Debug, Clone, PartialEq)]

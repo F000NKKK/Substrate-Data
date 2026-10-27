@@ -580,13 +580,18 @@ fn write(value: &Value, indent: Option<&str>, level: usize, out: &mut String) {
 }
 
 fn write_float(f: f64, out: &mut String) {
-    if !f.is_finite() {
-        out.push_str("null");
-    } else if f.fract() == 0.0 && f.abs() < 1e16 {
-        out.push_str(&format!("{f:.1}"));
+    if f.is_finite() {
+        out.push_str(&float_string(f));
     } else {
-        out.push_str(&f.to_string());
+        out.push_str("null");
     }
+}
+
+/// A finite float in the shortest spelling that reads back as exactly it,
+/// and as a float: `1.0`, `0.1`, `1e-7`, `1e16` (never `10000000000000000`,
+/// which would read back as an integer).
+pub(crate) fn float_string(f: f64) -> String {
+    format!("{f:?}")
 }
 
 /// `s` as a JSON string literal.
@@ -718,6 +723,18 @@ mod tests {
             to_string(&v),
             r#"{"name":"Ruby \"red\"\n","n":[1,2.0,0.1,-5],"empty":{},"none":[],"tab\u0001":null}"#
         );
+    }
+
+    #[test]
+    fn floats_read_back_as_the_same_floats() {
+        for f in [1e16, -2e18, 1e300, 1e-7, 0.1, 1.0, -0.0, f64::MAX] {
+            let text = to_string(&Value::Float(f));
+            assert_eq!(
+                parse_value(&text).unwrap(),
+                Value::Float(f),
+                "{f} as {text}"
+            );
+        }
     }
 
     #[test]

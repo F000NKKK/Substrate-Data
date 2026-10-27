@@ -95,7 +95,12 @@ schema finds points at its line and column, and its path:
 changed and keeps everything else — comments, key order, number spelling,
 layout. This is what an inspector uses to write a field back to a file a
 person also edits by hand. `patch::format` writes new parts the way
-editors write them (short lists and small objects on one line).
+editors write them (short lists and small objects on one line; a whole
+float as an integer, any other in the shortest spelling that reads back
+as exactly the same `f64` — nothing is rounded).
+
+Writing text, a float is always spelled so it reads back as a float
+(`1.0`, `1e16`), never as an integer.
 
 TOML (feature `toml`) and JSON (feature `json`) read into the same model.
 
@@ -161,9 +166,11 @@ record = varint length, its fields in declaration order
 | string | varint index into the table |
 | bytes | varint length, bytes |
 | `Option` | a byte (0/1), then the value |
-| list | varint count, varint byte length, items |
-| list of ints | count, bit width, values bit-packed in lanes |
-| list of floats | count, `f32`-exact flag, raw values |
+| list (and set, `OneOrList`, `Stream`, `Path`) | varint count, varint byte length, items |
+| list of ints | count, bit width (a byte), values bit-packed in lanes |
+| list of `f64` | count, `f32`-exact flag (a byte), raw values (4 bytes each when the flag is set, else 8) |
+| list of `f32` | count, raw values, 4 bytes each |
+| tuple | as a list, each item its binary form as bytes |
 | unit enum | varint variant index |
 | [`Atom`] | its number in this process's table |
 | anything else | its binary form, as bytes |
@@ -243,6 +250,7 @@ One schema gives:
 | `with = "Codec"` | field | read/written through a codec (`with::RefTo<K>`, `with::Opt<…>`, `with::List<…>`, `with::Raw`, …) |
 | `tag = "type"` | enum | tagged by this key (the default for enums with data) |
 | `view` | struct | also generate a frame view |
+| `other` | variant | a tagged enum's catch-all: wraps a type that reads the whole object (tag included) for any tag no other variant names |
 | `crate = "path"` | struct, enum | where `substrate_data` is, for crates that re-export it |
 
 A tagged enum's variant that wraps a struct lays the struct's fields next
@@ -256,6 +264,11 @@ knows the name shows its own editor (a colour picker, a gizmo), one that
 doesn't edits `of`. An engine implements `Schema` for its math types in
 its own adapter crate and returns a named shape; this crate knows nothing
 of them.
+
+A named type is stored as `of` in every form: its `write`, `encode` and
+`pack` produce what `of`'s would (so `frame::read_shaped` reads it as
+`of`). A list of a named type packs item by item (the default
+`pack_list`), not as a packed list of numbers.
 
 ---
 

@@ -10,8 +10,9 @@ use crate::text::{Spans, write_string};
 const ONE_LINE: usize = 72;
 /// One indent step.
 const INDENT: &str = "  ";
-/// Numbers are written to this many decimals.
-const DECIMALS: f64 = 10_000.0;
+/// Below this a whole float is written as an integer (`3`, not `3.0`):
+/// every integer up to it is a float exactly.
+const WHOLE_MAX: f64 = 1e15;
 
 /// `value` as editors write it at indent `level` (two spaces each):
 /// short lists of numbers and short objects of scalars on one line
@@ -47,12 +48,14 @@ fn quoted(s: &str) -> String {
     out
 }
 
+/// A finite float as written by hand: a whole one as an integer (`3`),
+/// any other in the shortest spelling that reads back as exactly it
+/// (`0.1`, `1e-7`, `1e20`) — nothing rounded away.
 fn number(n: f64) -> String {
-    let rounded = (n * DECIMALS).round() / DECIMALS;
-    if rounded.fract() == 0.0 && rounded.abs() < 1e15 {
-        format!("{}", rounded as i64)
+    if n.fract() == 0.0 && n.abs() < WHOLE_MAX {
+        format!("{}", n as i64)
     } else {
-        rounded.to_string()
+        crate::text::float_string(n)
     }
 }
 
@@ -550,5 +553,34 @@ mod tests {
             "{\n  \"uv\": [0, 0, 16, 16.5],\n  \"faces\": {\n    \"north\": { \"texture\": \"x\" }\n  }\n}"
         );
         assert_eq!(patch("{ oops", &Value::Int(1)), "1\n");
+    }
+
+    #[test]
+    fn floats_are_written_exactly() {
+        for f in [
+            0.1,
+            1.0 / 3.0,
+            -0.000_123_456_789,
+            f64::from(0.1f32),
+            1e-7,
+            1e20,
+            123_456.789_012_345,
+            f64::MIN_POSITIVE,
+            f64::MAX,
+        ] {
+            let s = number(f);
+            assert_eq!(parse_value(&s).unwrap(), Value::Float(f), "{f} as {s}");
+        }
+        // Whole ones stay integers, as a person writes them.
+        assert_eq!(number(3.0), "3");
+        assert_eq!(number(-42.0), "-42");
+        assert_eq!(number(0.5), "0.5");
+        let out = edit("{\n  \"at\": [0, 0, 0],\n  \"n\": 1\n}", |m| {
+            m.insert(
+                "at",
+                Value::List(vec![Value::Float(0.123_456_7), Value::Float(2.0)]),
+            );
+        });
+        assert!(out.contains("[0.1234567, 2]"), "{out}");
     }
 }

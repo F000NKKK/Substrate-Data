@@ -20,6 +20,14 @@ impl<T: Schema> Schema for Option<T> {
     fn write(&self) -> Value {
         self.as_ref().map_or(Value::Null, T::write)
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        match self {
+            Some(v) => v.write_text(w),
+            None => {
+                w.null();
+            }
+        }
+    }
     fn encode(&self, w: &mut Writer) {
         match self {
             Some(v) => v.encode(w),
@@ -65,6 +73,9 @@ impl<T: Schema> Schema for Box<T> {
     }
     fn write(&self) -> Value {
         (**self).write()
+    }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        (**self).write_text(w);
     }
     fn encode(&self, w: &mut Writer) {
         (**self).encode(w);

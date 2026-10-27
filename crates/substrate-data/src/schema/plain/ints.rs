@@ -130,6 +130,9 @@ macro_rules! int_schema {
             fn encode(&self, w: &mut Writer) {
                 w.int(self.to_i64());
             }
+            fn write_text(&self, w: &mut crate::text::Writer) {
+                w.int(self.to_i64());
+            }
             fn decode(d: &mut Decoder<'_>) -> Option<Self> {
                 d.int().and_then(<$t as Int>::of_i64)
             }

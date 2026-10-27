@@ -73,6 +73,9 @@ impl<K: Kind> Schema for Id<K> {
     fn write(&self) -> Value {
         Value::Ref(self.to_ref())
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        w.reference(K::kind_name().as_str(), &self.id.spell());
+    }
     fn pack(&self, p: &mut Packer) {
         self.id.pack(p);
     }

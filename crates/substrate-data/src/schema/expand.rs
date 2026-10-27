@@ -97,6 +97,9 @@ impl<F, W: With<F>> With<F> for Expand<W> {
     fn skip(f: &F) -> bool {
         W::skip(f)
     }
+    fn write_text(f: &F, w: &mut crate::text::Writer) {
+        W::write_text(f, w);
+    }
     fn encode(f: &F, w: &mut Writer) {
         W::encode(f, w);
     }

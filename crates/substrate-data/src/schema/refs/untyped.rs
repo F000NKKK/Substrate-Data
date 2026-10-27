@@ -27,6 +27,9 @@ impl Schema for Ref {
     fn write(&self) -> Value {
         Value::Ref(self.clone())
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        w.reference(self.kind.as_str(), self.id.as_str());
+    }
     fn pack(&self, p: &mut Packer) {
         p.put_str(self.kind.as_str());
         p.put_str(self.id.as_str());

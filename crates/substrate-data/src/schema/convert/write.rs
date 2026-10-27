@@ -19,7 +19,9 @@ pub fn to_bytes_into<T: Schema>(v: &T, out: &mut Vec<u8>) {
     *out = w.finish();
 }
 
-/// `value` as text, indented.
+/// `value` as text, indented: written straight, no value tree built.
 pub fn to_text<T: Schema>(value: &T) -> String {
-    text::to_string_pretty(&value.write())
+    let mut w = text::Writer::pretty();
+    value.write_text(&mut w);
+    w.finish()
 }

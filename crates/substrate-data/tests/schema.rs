@@ -190,6 +190,8 @@ fn writes_back_what_it_read() {
     assert!(txt.contains("\"@@release\""), "{txt}");
     assert!(!txt.contains("selected"));
     assert_eq!(from_text::<Task>(&txt).unwrap().value, task);
+    // ...which `to_text` writes straight, without the value tree, the same.
+    assert_eq!(substrate_data::to_text(&task), txt);
     // ...and the binary one, which keeps the types.
     let bytes = binary::encode(&written);
     let decoded = binary::decode(&bytes).unwrap();

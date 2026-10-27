@@ -8,7 +8,7 @@ use syn::{Data, DeriveInput, Fields, Type};
 use crate::codegen::Codegen;
 use crate::fields::{
     NamedField, decode_fields, encode_fields, field_shapes, named_fields, pack_fields, read_fields,
-    unpack_fields, write_fields,
+    unpack_fields, write_fields, write_text_fields,
 };
 
 /// A struct with named fields: an object.
@@ -25,6 +25,7 @@ pub(crate) fn expand_named(
     let bindings: Vec<_> = fields.iter().map(NamedField::binding).collect();
     let write = write_fields(cg, &fields);
     let encode = encode_fields(cg, &fields);
+    let write_text = write_text_fields(cg, &fields);
     let decode = decode_fields(cg, &fields, &quote! { Self }).map(|body| {
         quote! {
             fn decode(__sd_d: &mut #krate::binary::Decoder<'_>) -> ::std::option::Option<Self> {
@@ -38,6 +39,10 @@ pub(crate) fn expand_named(
         fn encode(&self, __sd_w: &mut #krate::binary::Writer) {
             let Self { #(#bindings),* } = self;
             #encode
+        }
+        fn write_text(&self, __sd_w: &mut #krate::text::Writer) {
+            let Self { #(#bindings),* } = self;
+            #write_text
         }
         #decode
         fn pack(&self, __sd_p: &mut #krate::frame::Packer) {
@@ -98,6 +103,7 @@ pub(crate) fn expand_newtype(cg: &Codegen, ty: &Type) -> Tokens {
         }
         fn write(&self) -> #krate::Value { #krate::Schema::write(&self.0) }
         fn encode(&self, w: &mut #krate::binary::Writer) { #krate::Schema::encode(&self.0, w) }
+        fn write_text(&self, w: &mut #krate::text::Writer) { #krate::Schema::write_text(&self.0, w) }
         fn decode(d: &mut #krate::binary::Decoder<'_>) -> ::std::option::Option<Self> {
             <#ty as #krate::Schema>::decode(d).map(Self)
         }

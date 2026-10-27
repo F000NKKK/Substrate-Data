@@ -4,10 +4,6 @@
 //! layout of the same data, the ceiling for any encoding.
 
 #![expect(
-    missing_docs,
-    reason = "criterion_group! makes an undocumented function"
-)]
-#![expect(
     clippy::unwrap_used,
     clippy::cast_possible_truncation,
     clippy::cast_precision_loss,

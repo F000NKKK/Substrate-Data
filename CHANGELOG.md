@@ -14,9 +14,17 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 - `binary::NEW_STRING`, `binary::STREAM_LEN_BYTES`, `schema::RESULT_OK` and
   `schema::RESULT_ERR` are public, for readers in other languages.
 
+### Changed
+
+- Dependencies: `base64` 0.23, `toml` 1, `syn` 3, `criterion` 0.8.
+- `docs/format.md` names the public constants and the `Result` keys.
+
 ### Fixed
 
-- A stream cut inside a frame's length is an error, not a clean end.
+- A stream cut inside a frame's length is an error, not a clean end
+  (`io::read_frame_bytes`).
+- The benches no longer carry a `missing_docs` expectation that
+  `criterion` 0.8 makes unfulfilled (it failed `clippy -D warnings`).
 
 ## [0.1.0] - 2026-10-27
 

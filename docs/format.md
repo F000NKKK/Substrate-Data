@@ -127,7 +127,8 @@ A value is a tag byte and its payload. Strings are interned on the way: a
 varint `v`; when odd, `v >> 1` bytes of UTF-8 follow and become the next
 table entry; when even, it is table entry `v >> 1`. Repeated keys, kinds
 and ids cost one varint after their first use, and the writer never
-seeks back.
+seeks back. The odd marker's low bit alone is `binary::NEW_STRING` (`1`),
+public so decoders in other languages take it from here.
 
 A varint is LEB128 of a `u64`: at most ten bytes, the tenth `0` or `1`. A
 longer one, or one that doesn't fit 64 bits, is malformed.
@@ -144,7 +145,7 @@ longer one, or one that doesn't fit 64 bits, is malformed.
 | 8 | ref | kind string, id string |
 | 9 | bytes | varint length, bytes |
 | 10 | list of ints, packed | varint count, zigzag varints |
-| 11 | stream | u32 LE byte length, then varint count and values with their own string table |
+| 11 | stream | u32 LE byte length (`binary::STREAM_LEN_BYTES` = 4), then varint count and values with their own string table |
 | 12 | float, 32-bit | f32 LE |
 | 13 | list of floats, packed | varint count, f64 LE each |
 | 14 | list of 32-bit floats, packed | varint count, f32 LE each |
@@ -185,6 +186,7 @@ record = varint length, its fields in declaration order
 | list of `f32` | count, raw values, 4 bytes each |
 | tuple | as a list, each item its binary form as bytes |
 | unit enum | varint variant index |
+| `Result` | a map with one key: `ok` or `err` (`schema::RESULT_OK` / `RESULT_ERR`) |
 | [`Atom`] | its number in this process's table |
 | `Id<K>` (and `with::RefTo<K>`) | its id, as `K`'s id type packs (`@user:42` is one varint); the kind is the field's |
 | `Ref` (any kind) | its kind and its id, as strings |

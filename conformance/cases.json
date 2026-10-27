@@ -1,0 +1,2937 @@
+[
+  {
+    "name": "null",
+    "description": "The null value: tag 0, no payload.",
+    "text": "null",
+    "text_is_written": true,
+    "value": {"t": "null"},
+    "binary_is_encoded": true,
+    "binary": "534441540100",
+    "binary_len": 6,
+    "binary_file": "binary/null.sdat"
+  },
+  {
+    "name": "bool_false",
+    "description": "false: tag 1.",
+    "text": "false",
+    "text_is_written": true,
+    "value": {"t": "bool", "v": false},
+    "binary_is_encoded": true,
+    "binary": "534441540101",
+    "binary_len": 6,
+    "binary_file": "binary/bool_false.sdat"
+  },
+  {
+    "name": "bool_true",
+    "description": "true: tag 2.",
+    "text": "true",
+    "text_is_written": true,
+    "value": {"t": "bool", "v": true},
+    "binary_is_encoded": true,
+    "binary": "534441540102",
+    "binary_len": 6,
+    "binary_file": "binary/bool_true.sdat"
+  },
+  {
+    "name": "int_0",
+    "description": "The integer 0: tag 3, then its zigzag form 0 as a varint.",
+    "text": "0",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "0"},
+    "binary_is_encoded": true,
+    "binary": "53444154010300",
+    "binary_len": 7,
+    "binary_file": "binary/int_0.sdat"
+  },
+  {
+    "name": "int_1",
+    "description": "The integer 1: tag 3, then its zigzag form 2 as a varint.",
+    "text": "1",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "1"},
+    "binary_is_encoded": true,
+    "binary": "53444154010302",
+    "binary_len": 7,
+    "binary_file": "binary/int_1.sdat"
+  },
+  {
+    "name": "int_minus_1",
+    "description": "The integer -1: tag 3, then its zigzag form 1 as a varint.",
+    "text": "-1",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "-1"},
+    "binary_is_encoded": true,
+    "binary": "53444154010301",
+    "binary_len": 7,
+    "binary_file": "binary/int_minus_1.sdat"
+  },
+  {
+    "name": "int_63",
+    "description": "The integer 63: tag 3, then its zigzag form 126 as a varint.",
+    "text": "63",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "63"},
+    "binary_is_encoded": true,
+    "binary": "5344415401037e",
+    "binary_len": 7,
+    "binary_file": "binary/int_63.sdat"
+  },
+  {
+    "name": "int_64",
+    "description": "The integer 64: tag 3, then its zigzag form 128 as a varint.",
+    "text": "64",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "64"},
+    "binary_is_encoded": true,
+    "binary": "5344415401038001",
+    "binary_len": 8,
+    "binary_file": "binary/int_64.sdat"
+  },
+  {
+    "name": "int_minus_64",
+    "description": "The integer -64: tag 3, then its zigzag form 127 as a varint.",
+    "text": "-64",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "-64"},
+    "binary_is_encoded": true,
+    "binary": "5344415401037f",
+    "binary_len": 7,
+    "binary_file": "binary/int_minus_64.sdat"
+  },
+  {
+    "name": "int_minus_65",
+    "description": "The integer -65: tag 3, then its zigzag form 129 as a varint.",
+    "text": "-65",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "-65"},
+    "binary_is_encoded": true,
+    "binary": "5344415401038101",
+    "binary_len": 8,
+    "binary_file": "binary/int_minus_65.sdat"
+  },
+  {
+    "name": "int_8191",
+    "description": "The integer 8191: tag 3, then its zigzag form 16382 as a varint.",
+    "text": "8191",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "8191"},
+    "binary_is_encoded": true,
+    "binary": "534441540103fe7f",
+    "binary_len": 8,
+    "binary_file": "binary/int_8191.sdat"
+  },
+  {
+    "name": "int_8192",
+    "description": "The integer 8192: tag 3, then its zigzag form 16384 as a varint.",
+    "text": "8192",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "8192"},
+    "binary_is_encoded": true,
+    "binary": "534441540103808001",
+    "binary_len": 9,
+    "binary_file": "binary/int_8192.sdat"
+  },
+  {
+    "name": "int_2147483647",
+    "description": "The integer 2147483647: tag 3, then its zigzag form 4294967294 as a varint.",
+    "text": "2147483647",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "2147483647"},
+    "binary_is_encoded": true,
+    "binary": "534441540103feffffff0f",
+    "binary_len": 11,
+    "binary_file": "binary/int_2147483647.sdat"
+  },
+  {
+    "name": "int_2147483648",
+    "description": "The integer 2147483648: tag 3, then its zigzag form 4294967296 as a varint.",
+    "text": "2147483648",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "2147483648"},
+    "binary_is_encoded": true,
+    "binary": "5344415401038080808010",
+    "binary_len": 11,
+    "binary_file": "binary/int_2147483648.sdat"
+  },
+  {
+    "name": "int_9223372036854775807",
+    "description": "The integer 9223372036854775807: tag 3, then its zigzag form 18446744073709551614 as a varint.",
+    "text": "9223372036854775807",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "9223372036854775807"},
+    "binary_is_encoded": true,
+    "binary": "534441540103feffffffffffffffff01",
+    "binary_len": 16,
+    "binary_file": "binary/int_9223372036854775807.sdat"
+  },
+  {
+    "name": "int_minus_9223372036854775808",
+    "description": "The integer -9223372036854775808: tag 3, then its zigzag form 18446744073709551615 as a varint.",
+    "text": "-9223372036854775808",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "-9223372036854775808"},
+    "binary_is_encoded": true,
+    "binary": "534441540103ffffffffffffffffff01",
+    "binary_len": 16,
+    "binary_file": "binary/int_minus_9223372036854775808.sdat"
+  },
+  {
+    "name": "float_zero",
+    "description": "A float, positive zero: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "0.0",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "0000000000000000", "v": "0.0"},
+    "binary_is_encoded": true,
+    "binary": "5344415401040000000000000000",
+    "binary_len": 14,
+    "binary_file": "binary/float_zero.sdat"
+  },
+  {
+    "name": "float_minus_zero",
+    "description": "A float, negative zero: its sign bit is kept in every form: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "-0.0",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "8000000000000000", "v": "-0.0"},
+    "binary_is_encoded": true,
+    "binary": "5344415401040000000000000080",
+    "binary_len": 14,
+    "binary_file": "binary/float_minus_zero.sdat"
+  },
+  {
+    "name": "float_one",
+    "description": "A float, one, spelled 1.0 so the text reads back as a float: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "1.0",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "3ff0000000000000", "v": "1.0"},
+    "binary_is_encoded": true,
+    "binary": "534441540104000000000000f03f",
+    "binary_len": 14,
+    "binary_file": "binary/float_one.sdat"
+  },
+  {
+    "name": "float_minus_one_and_a_half",
+    "description": "A float, a negative float: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "-1.5",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "bff8000000000000", "v": "-1.5"},
+    "binary_is_encoded": true,
+    "binary": "534441540104000000000000f8bf",
+    "binary_len": 14,
+    "binary_file": "binary/float_minus_one_and_a_half.sdat"
+  },
+  {
+    "name": "float_tenth",
+    "description": "A float, 0.1, the shortest text that reads back as the same f64: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "0.1",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "3fb999999999999a", "v": "0.1"},
+    "binary_is_encoded": true,
+    "binary": "5344415401049a9999999999b93f",
+    "binary_len": 14,
+    "binary_file": "binary/float_tenth.sdat"
+  },
+  {
+    "name": "float_half",
+    "description": "A float, exactly an f32, still written as a full f64 (tag 4) in a plain value: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "0.5",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "3fe0000000000000", "v": "0.5"},
+    "binary_is_encoded": true,
+    "binary": "534441540104000000000000e03f",
+    "binary_len": 14,
+    "binary_file": "binary/float_half.sdat"
+  },
+  {
+    "name": "float_ten_to_the_16",
+    "description": "A float, text spells it 1e16, never 10000000000000000 (that reads as an int): tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "1e16",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "4341c37937e08000", "v": "1e16"},
+    "binary_is_encoded": true,
+    "binary": "5344415401040080e03779c34143",
+    "binary_len": 14,
+    "binary_file": "binary/float_ten_to_the_16.sdat"
+  },
+  {
+    "name": "float_max",
+    "description": "A float, the largest finite f64: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "1.7976931348623157e308",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "7fefffffffffffff", "v": "1.7976931348623157e308"},
+    "binary_is_encoded": true,
+    "binary": "534441540104ffffffffffffef7f",
+    "binary_len": 14,
+    "binary_file": "binary/float_max.sdat"
+  },
+  {
+    "name": "float_min_positive",
+    "description": "A float, the smallest normal f64: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "2.2250738585072014e-308",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "0010000000000000", "v": "2.2250738585072014e-308"},
+    "binary_is_encoded": true,
+    "binary": "5344415401040000000000001000",
+    "binary_len": 14,
+    "binary_file": "binary/float_min_positive.sdat"
+  },
+  {
+    "name": "float_subnormal",
+    "description": "A float, the smallest subnormal f64: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "5e-324",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "0000000000000001", "v": "5e-324"},
+    "binary_is_encoded": true,
+    "binary": "5344415401040100000000000000",
+    "binary_len": 14,
+    "binary_file": "binary/float_subnormal.sdat"
+  },
+  {
+    "name": "float_small",
+    "description": "A float, a small exponent: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "1e-7",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "3e7ad7f29abcaf48", "v": "1e-7"},
+    "binary_is_encoded": true,
+    "binary": "53444154010448afbc9af2d77a3e",
+    "binary_len": 14,
+    "binary_file": "binary/float_small.sdat"
+  },
+  {
+    "name": "float_f32_max",
+    "description": "A float, the largest f32, as an f64: tag 4, then the f64 as 8 bytes little-endian.",
+    "text": "3.4028234663852886e38",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "47efffffe0000000", "v": "3.4028234663852886e38"},
+    "binary_is_encoded": true,
+    "binary": "534441540104000000e0ffffef47",
+    "binary_len": 14,
+    "binary_file": "binary/float_f32_max.sdat"
+  },
+  {
+    "name": "float_infinity",
+    "description": "Positive infinity. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
+    "value": {"t": "float", "bits": "7ff0000000000000"},
+    "binary_is_encoded": true,
+    "binary": "534441540104000000000000f07f",
+    "binary_len": 14,
+    "binary_file": "binary/float_infinity.sdat"
+  },
+  {
+    "name": "float_minus_infinity",
+    "description": "Negative infinity. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
+    "value": {"t": "float", "bits": "fff0000000000000"},
+    "binary_is_encoded": true,
+    "binary": "534441540104000000000000f0ff",
+    "binary_len": 14,
+    "binary_file": "binary/float_minus_infinity.sdat"
+  },
+  {
+    "name": "float_nan",
+    "description": "The quiet NaN. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
+    "value": {"t": "float", "bits": "7ff8000000000000"},
+    "binary_is_encoded": true,
+    "binary": "534441540104000000000000f87f",
+    "binary_len": 14,
+    "binary_file": "binary/float_nan.sdat"
+  },
+  {
+    "name": "float_nan_payload",
+    "description": "A NaN with a payload. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
+    "value": {"t": "float", "bits": "7ff8000000000001"},
+    "binary_is_encoded": true,
+    "binary": "534441540104010000000000f87f",
+    "binary_len": 14,
+    "binary_file": "binary/float_nan_payload.sdat"
+  },
+  {
+    "name": "float_nan_negative",
+    "description": "A NaN with the sign bit set. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
+    "value": {"t": "float", "bits": "fff8000000000000"},
+    "binary_is_encoded": true,
+    "binary": "534441540104000000000000f8ff",
+    "binary_len": 14,
+    "binary_file": "binary/float_nan_negative.sdat"
+  },
+  {
+    "name": "str_empty",
+    "description": "The empty string: a new table entry of length 0.",
+    "text": "\"\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": ""},
+    "binary_is_encoded": true,
+    "binary": "53444154010501",
+    "binary_len": 7,
+    "binary_file": "binary/str_empty.sdat"
+  },
+  {
+    "name": "str_ascii",
+    "description": "A short ASCII string: tag 5, a new-string marker (length << 1 | 1), the bytes.",
+    "text": "\"hello\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "hello"},
+    "binary_is_encoded": true,
+    "binary": "5344415401050b68656c6c6f",
+    "binary_len": 12,
+    "binary_file": "binary/str_ascii.sdat"
+  },
+  {
+    "name": "str_latin",
+    "description": "Accented letters: UTF-8, the length counts bytes (13), not characters.",
+    "text": "\"héllo wörld\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "héllo wörld"},
+    "binary_is_encoded": true,
+    "binary": "5344415401051b68c3a96c6c6f2077c3b6726c64",
+    "binary_len": 20,
+    "binary_file": "binary/str_latin.sdat"
+  },
+  {
+    "name": "str_cjk",
+    "description": "Three characters, nine bytes.",
+    "text": "\"日本語\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "日本語"},
+    "binary_is_encoded": true,
+    "binary": "53444154010513e697a5e69cace8aa9e",
+    "binary_len": 16,
+    "binary_file": "binary/str_cjk.sdat"
+  },
+  {
+    "name": "str_emoji",
+    "description": "Characters outside the BMP: four bytes each in UTF-8.",
+    "text": "\"🦀 and 🧪\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "🦀 and 🧪"},
+    "binary_is_encoded": true,
+    "binary": "5344415401051bf09fa68020616e6420f09fa7aa",
+    "binary_len": 20,
+    "binary_file": "binary/str_emoji.sdat"
+  },
+  {
+    "name": "str_escapes",
+    "description": "Text escapes these; binary holds them raw.",
+    "text": "\"quote \\\" backslash \\\\ newline \\n tab \\t\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "quote \" backslash \\ newline \n tab \t"},
+    "binary_is_encoded": true,
+    "binary": "5344415401054771756f74652022206261636b736c617368205c206e65776c696e65200a207461622009",
+    "binary_len": 42,
+    "binary_file": "binary/str_escapes.sdat"
+  },
+  {
+    "name": "str_control",
+    "description": "Control characters: text writes them as \\u00xx.",
+    "text": "\"bell \\u0007 and \\u0001 and unit separator \\u001f\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "bell \u0007 and \u0001 and unit separator \u001f"},
+    "binary_is_encoded": true,
+    "binary": "5344415401054362656c6c200720616e64200120616e6420756e697420736570617261746f72201f",
+    "binary_len": 40,
+    "binary_file": "binary/str_control.sdat"
+  },
+  {
+    "name": "str_separators",
+    "description": "Not escaped in text, kept raw.",
+    "text": "\"line   and paragraph   separators\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "line   and paragraph   separators"},
+    "binary_is_encoded": true,
+    "binary": "5344415401054b6c696e6520e280a820616e642070617261677261706820e280a920736570617261746f7273",
+    "binary_len": 44,
+    "binary_file": "binary/str_separators.sdat"
+  },
+  {
+    "name": "str_at_doubled",
+    "description": "A string as spelled: a plain text that starts with `@` is stored with it doubled.",
+    "text": "\"@@everyone\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "@@everyone"},
+    "binary_is_encoded": true,
+    "binary": "53444154010515404065766572796f6e65",
+    "binary_len": 17,
+    "binary_file": "binary/str_at_doubled.sdat"
+  },
+  {
+    "name": "str_looks_like_ref",
+    "description": "A string spelled like a reference is still a string value in the model; only a schema reads it as a ref.",
+    "text": "\"@file:images/logo.png\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "@file:images/logo.png"},
+    "binary_is_encoded": true,
+    "binary": "5344415401052b4066696c653a696d616765732f6c6f676f2e706e67",
+    "binary_len": 28,
+    "binary_file": "binary/str_looks_like_ref.sdat"
+  },
+  {
+    "name": "str_looks_like_bytes",
+    "description": "A string spelled like bytes is still a string value in the model.",
+    "text": "\"@bytes:AQID\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "@bytes:AQID"},
+    "binary_is_encoded": true,
+    "binary": "534441540105174062797465733a41514944",
+    "binary_len": 18,
+    "binary_file": "binary/str_looks_like_bytes.sdat"
+  },
+  {
+    "name": "str_len_63",
+    "description": "63 bytes: the marker 127 is the last one-byte varint.",
+    "text": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+    "binary_is_encoded": true,
+    "binary": "5344415401057f616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+    "binary_len": 70,
+    "binary_file": "binary/str_len_63.sdat"
+  },
+  {
+    "name": "str_len_64",
+    "description": "64 bytes: the marker 129 takes two bytes.",
+    "text": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+    "binary_is_encoded": true,
+    "binary": "534441540105810161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+    "binary_len": 72,
+    "binary_file": "binary/str_len_64.sdat"
+  },
+  {
+    "name": "text_exponent_is_float",
+    "description": "An exponent makes a float, even a whole one (the `E` may be upper case).",
+    "text": "1E5",
+    "text_is_written": false,
+    "value": {"t": "float", "bits": "40f86a0000000000", "v": "100000.0"}
+  },
+  {
+    "name": "text_exponent_two",
+    "description": "1e2 is the float 100.0, not the int 100.",
+    "text": "1e2",
+    "text_is_written": false,
+    "value": {"t": "float", "bits": "4059000000000000", "v": "100.0"}
+  },
+  {
+    "name": "text_int_past_i64",
+    "description": "A whole number that does not fit i64 reads as a float.",
+    "text": "9223372036854775808",
+    "text_is_written": false,
+    "value": {"t": "float", "bits": "43e0000000000000", "v": "9.223372036854776e18"}
+  },
+  {
+    "name": "text_int_past_u64",
+    "description": "Likewise far past u64.",
+    "text": "18446744073709551616",
+    "text_is_written": false,
+    "value": {"t": "float", "bits": "43f0000000000000", "v": "1.8446744073709552e19"}
+  },
+  {
+    "name": "text_float_overflows",
+    "description": "A float too big for f64 reads as infinity (and writes back as null).",
+    "text": "1.5e400",
+    "text_is_written": false,
+    "value": {"t": "float", "bits": "7ff0000000000000"}
+  },
+  {
+    "name": "text_minus_zero_int",
+    "description": "`-0` without a fraction is the int 0.",
+    "text": "-0",
+    "text_is_written": false,
+    "value": {"t": "int", "v": "0"}
+  },
+  {
+    "name": "text_int_min",
+    "description": "i64::MIN reads as an int.",
+    "text": "-9223372036854775808",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "-9223372036854775808"}
+  },
+  {
+    "name": "bytes_empty",
+    "description": "No bytes: tag 9, length 0. Text: `@bytes:`.",
+    "text": "\"@bytes:\"",
+    "text_is_written": true,
+    "value": {"t": "bytes", "hex": ""},
+    "binary_is_encoded": true,
+    "binary": "53444154010900",
+    "binary_len": 7,
+    "binary_file": "binary/bytes_empty.sdat"
+  },
+  {
+    "name": "bytes_small",
+    "description": "Four bytes: tag 9, a varint length, the raw bytes. Text is base64 with padding.",
+    "text": "\"@bytes:AAEC/w==\"",
+    "text_is_written": true,
+    "value": {"t": "bytes", "hex": "000102ff"},
+    "binary_is_encoded": true,
+    "binary": "53444154010904000102ff",
+    "binary_len": 11,
+    "binary_file": "binary/bytes_small.sdat"
+  },
+  {
+    "name": "bytes_every_value",
+    "description": "Every byte value 0..=255: the length 256 is a two-byte varint.",
+    "text": "\"@bytes:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==\"",
+    "text_is_written": true,
+    "value": {"t": "bytes", "hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"},
+    "binary_is_encoded": true,
+    "binary_len": 264,
+    "binary_file": "binary/bytes_every_value.sdat"
+  },
+  {
+    "name": "ref_file",
+    "description": "A reference: tag 8, then its kind and id as table strings. Text: `@kind:id`.",
+    "text": "\"@file:images/logo.png\"",
+    "text_is_written": true,
+    "value": {"t": "ref", "kind": "file", "id": "images/logo.png"},
+    "binary_is_encoded": true,
+    "binary": "5344415401080966696c651f696d616765732f6c6f676f2e706e67",
+    "binary_len": 27,
+    "binary_file": "binary/ref_file.sdat"
+  },
+  {
+    "name": "ref_user",
+    "description": "A reference to a user.",
+    "text": "\"@user:alice\"",
+    "text_is_written": true,
+    "value": {"t": "ref", "kind": "user", "id": "alice"},
+    "binary_is_encoded": true,
+    "binary": "53444154010809757365720b616c696365",
+    "binary_len": 17,
+    "binary_file": "binary/ref_user.sdat"
+  },
+  {
+    "name": "ref_colon_in_id",
+    "description": "An id may hold colons; only the first colon splits kind from id.",
+    "text": "\"@doc:team:alice:notes\"",
+    "text_is_written": true,
+    "value": {"t": "ref", "kind": "doc", "id": "team:alice:notes"},
+    "binary_is_encoded": true,
+    "binary": "53444154010807646f63217465616d3a616c6963653a6e6f746573",
+    "binary_len": 27,
+    "binary_file": "binary/ref_colon_in_id.sdat"
+  },
+  {
+    "name": "ref_unicode_id",
+    "description": "An id is any text without whitespace or control characters.",
+    "text": "\"@doc:guides/читать-меня\"",
+    "text_is_written": true,
+    "value": {"t": "ref", "kind": "doc", "id": "guides/читать-меня"},
+    "binary_is_encoded": true,
+    "binary": "53444154010807646f63396775696465732fd187d0b8d182d0b0d182d18c2dd0bcd0b5d0bdd18f",
+    "binary_len": 39,
+    "binary_file": "binary/ref_unicode_id.sdat"
+  },
+  {
+    "name": "ref_kind_digits",
+    "description": "A kind is `[a-z][a-z0-9_]*`.",
+    "text": "\"@project_2:apps/notes\"",
+    "text_is_written": true,
+    "value": {"t": "ref", "kind": "project_2", "id": "apps/notes"},
+    "binary_is_encoded": true,
+    "binary": "5344415401081370726f6a6563745f3215617070732f6e6f746573",
+    "binary_len": 27,
+    "binary_file": "binary/ref_kind_digits.sdat"
+  },
+  {
+    "name": "ref_at_in_id",
+    "description": "An id may start with `@`.",
+    "text": "\"@user:@alice\"",
+    "text_is_written": true,
+    "value": {"t": "ref", "kind": "user", "id": "@alice"},
+    "binary_is_encoded": true,
+    "binary": "53444154010809757365720d40616c696365",
+    "binary_len": 18,
+    "binary_file": "binary/ref_at_in_id.sdat"
+  },
+  {
+    "name": "list_empty",
+    "description": "An empty list: tag 6, count 0.",
+    "text": "[]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": []},
+    "binary_is_encoded": true,
+    "binary": "53444154010600",
+    "binary_len": 7,
+    "binary_file": "binary/list_empty.sdat"
+  },
+  {
+    "name": "list_mixed",
+    "description": "Values of every plain type in one list.",
+    "text": "[1,\"a\",null,true,0.5]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "int", "v": "1"}, {"t": "str", "v": "a"}, {"t": "null"}, {"t": "bool", "v": true}, {"t": "float", "bits": "3fe0000000000000", "v": "0.5"}]},
+    "binary_is_encoded": true,
+    "binary": "534441540106050302050361000204000000000000e03f",
+    "binary_len": 23,
+    "binary_file": "binary/list_mixed.sdat"
+  },
+  {
+    "name": "list_nested",
+    "description": "Lists in lists.",
+    "text": "[[],[1,[2]]]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "list", "v": []}, {"t": "list", "v": [{"t": "int", "v": "1"}, {"t": "ints", "v": [2]}]}]},
+    "binary_is_encoded": true,
+    "binary": "5344415401060206000602030206010304",
+    "binary_len": 17,
+    "binary_file": "binary/list_nested.sdat"
+  },
+  {
+    "name": "list_of_ints",
+    "description": "A plain list of ints: a value built as a model value is written with tag 6 and a tag per item (a typed writer may pack it, see the packed cases).",
+    "text": "[1,-2,300]",
+    "text_is_written": true,
+    "value": {"t": "ints", "v": [1, -2, 300]},
+    "binary_is_encoded": true,
+    "binary": "534441540106030302030303d804",
+    "binary_len": 14,
+    "binary_file": "binary/list_of_ints.sdat"
+  },
+  {
+    "name": "list_of_refs",
+    "description": "References in a list share the table: kind `file` is written once.",
+    "text": "[\"@file:a.png\",\"@file:b.png\",\"@doc:a.png\"]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "ref", "kind": "file", "id": "a.png"}, {"t": "ref", "kind": "file", "id": "b.png"}, {"t": "ref", "kind": "doc", "id": "a.png"}]},
+    "binary_is_encoded": true,
+    "binary": "53444154010603080966696c650b612e706e6708000b622e706e670807646f6302",
+    "binary_len": 33,
+    "binary_file": "binary/list_of_refs.sdat"
+  },
+  {
+    "name": "map_empty",
+    "description": "An empty map: tag 7, count 0.",
+    "text": "{}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": []},
+    "binary_is_encoded": true,
+    "binary": "53444154010700",
+    "binary_len": 7,
+    "binary_file": "binary/map_empty.sdat"
+  },
+  {
+    "name": "map_file_order",
+    "description": "Keys keep the order they were written in; they are never sorted.",
+    "text": "{\"zeta\":1,\"alpha\":2,\"mid\":3}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["zeta", {"t": "int", "v": "1"}], ["alpha", {"t": "int", "v": "2"}], ["mid", {"t": "int", "v": "3"}]]},
+    "binary_is_encoded": true,
+    "binary": "53444154010703097a65746103020b616c7068610304076d69640306",
+    "binary_len": 28,
+    "binary_file": "binary/map_file_order.sdat"
+  },
+  {
+    "name": "map_nested",
+    "description": "A map of a user: strings, a list, a map, a ref and bytes.",
+    "text": "{\"name\":\"alice\",\"tags\":[\"admin\",\"dev\"],\"profile\":{\"age\":30,\"active\":true},\"home\":\"@project:apps/notes\",\"avatar\":\"@bytes:AQID\"}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["tags", {"t": "list", "v": [{"t": "str", "v": "admin"}, {"t": "str", "v": "dev"}]}], ["profile", {"t": "map", "v": [["age", {"t": "int", "v": "30"}], ["active", {"t": "bool", "v": true}]]}], ["home", {"t": "ref", "kind": "project", "id": "apps/notes"}], ["avatar", {"t": "bytes", "hex": "010203"}]]},
+    "binary_is_encoded": true,
+    "binary": "53444154010705096e616d65050b616c69636509746167730602050b61646d696e05076465760f70726f66696c65070207616765033c0d6163746976650209686f6d65080f70726f6a65637415617070732f6e6f7465730d6176617461720903010203",
+    "binary_len": 99,
+    "binary_file": "binary/map_nested.sdat"
+  },
+  {
+    "name": "map_unicode_key",
+    "description": "Keys are strings like any other.",
+    "text": "{\"имя\":\"алиса\",\"😀\":1}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["имя", {"t": "str", "v": "алиса"}], ["😀", {"t": "int", "v": "1"}]]},
+    "binary_is_encoded": true,
+    "binary": "534441540107020dd0b8d0bcd18f0515d0b0d0bbd0b8d181d0b009f09f98800302",
+    "binary_len": 33,
+    "binary_file": "binary/map_unicode_key.sdat"
+  },
+  {
+    "name": "map_empty_key",
+    "description": "The empty string is a key.",
+    "text": "{\"\":1}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["", {"t": "int", "v": "1"}]]},
+    "binary_is_encoded": true,
+    "binary": "53444154010701010302",
+    "binary_len": 10,
+    "binary_file": "binary/map_empty_key.sdat"
+  },
+  {
+    "name": "map_at_key",
+    "description": "A key starting with `@` is only a key, never a typed value.",
+    "text": "{\"@x\":1}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["@x", {"t": "int", "v": "1"}]]},
+    "binary_is_encoded": true,
+    "binary": "534441540107010540780302",
+    "binary_len": 12,
+    "binary_file": "binary/map_at_key.sdat"
+  },
+  {
+    "name": "table_repeated_values",
+    "description": "A string repeated is written once; later uses are the table index shifted left (an even varint).",
+    "text": "[\"a\",\"a\",\"b\",\"a\"]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "str", "v": "a"}, {"t": "str", "v": "a"}, {"t": "str", "v": "b"}, {"t": "str", "v": "a"}]},
+    "binary_is_encoded": true,
+    "binary": "5344415401060405036105000503620500",
+    "binary_len": 17,
+    "binary_file": "binary/table_repeated_values.sdat"
+  },
+  {
+    "name": "table_repeated_keys",
+    "description": "Map keys are table strings too: `id` and `name` cost one varint after their first map.",
+    "text": "[{\"id\":1,\"name\":\"alice\"},{\"id\":2,\"name\":\"bob\"},{\"id\":3,\"name\":\"alice\"}]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "map", "v": [["id", {"t": "int", "v": "1"}], ["name", {"t": "str", "v": "alice"}]]}, {"t": "map", "v": [["id", {"t": "int", "v": "2"}], ["name", {"t": "str", "v": "bob"}]]}, {"t": "map", "v": [["id", {"t": "int", "v": "3"}], ["name", {"t": "str", "v": "alice"}]]}]},
+    "binary_is_encoded": true,
+    "binary": "5344415401060307020569640302096e616d65050b616c6963650702000304020507626f620702000306020504",
+    "binary_len": 45,
+    "binary_file": "binary/table_repeated_keys.sdat"
+  },
+  {
+    "name": "table_key_is_value",
+    "description": "A key and a value that are the same string share one table entry.",
+    "text": "{\"name\":\"name\"}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "name"}]]},
+    "binary_is_encoded": true,
+    "binary": "53444154010701096e616d650500",
+    "binary_len": 14,
+    "binary_file": "binary/table_key_is_value.sdat"
+  },
+  {
+    "name": "table_empty_string",
+    "description": "The empty string takes a table entry, and is referred to by it.",
+    "text": "[\"\",\"\",{\"\":\"\"}]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "str", "v": ""}, {"t": "str", "v": ""}, {"t": "map", "v": [["", {"t": "str", "v": ""}]]}]},
+    "binary_is_encoded": true,
+    "binary": "53444154010603050105000701000500",
+    "binary_len": 16,
+    "binary_file": "binary/table_empty_string.sdat"
+  },
+  {
+    "name": "table_kinds_and_ids",
+    "description": "A reference's kind and id are table strings: the id `a` of a doc reuses the file's `a`.",
+    "text": "[\"@file:a\",\"@file:b\",\"@doc:a\",\"file\"]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "ref", "kind": "file", "id": "a"}, {"t": "ref", "kind": "file", "id": "b"}, {"t": "ref", "kind": "doc", "id": "a"}, {"t": "str", "v": "file"}]},
+    "binary_is_encoded": true,
+    "binary": "53444154010604080966696c650361080003620807646f63020500",
+    "binary_len": 27,
+    "binary_file": "binary/table_kinds_and_ids.sdat"
+  },
+  {
+    "name": "table_two_byte_index",
+    "description": "Table index 64 needs a two-byte varint (64 << 1 = 128).",
+    "text": "[\"s0\",\"s1\",\"s2\",\"s3\",\"s4\",\"s5\",\"s6\",\"s7\",\"s8\",\"s9\",\"s10\",\"s11\",\"s12\",\"s13\",\"s14\",\"s15\",\"s16\",\"s17\",\"s18\",\"s19\",\"s20\",\"s21\",\"s22\",\"s23\",\"s24\",\"s25\",\"s26\",\"s27\",\"s28\",\"s29\",\"s30\",\"s31\",\"s32\",\"s33\",\"s34\",\"s35\",\"s36\",\"s37\",\"s38\",\"s39\",\"s40\",\"s41\",\"s42\",\"s43\",\"s44\",\"s45\",\"s46\",\"s47\",\"s48\",\"s49\",\"s50\",\"s51\",\"s52\",\"s53\",\"s54\",\"s55\",\"s56\",\"s57\",\"s58\",\"s59\",\"s60\",\"s61\",\"s62\",\"s63\",\"s64\",\"s65\",\"s66\",\"s67\",\"s68\",\"s69\",\"s64\",\"s0\"]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "str", "v": "s0"}, {"t": "str", "v": "s1"}, {"t": "str", "v": "s2"}, {"t": "str", "v": "s3"}, {"t": "str", "v": "s4"}, {"t": "str", "v": "s5"}, {"t": "str", "v": "s6"}, {"t": "str", "v": "s7"}, {"t": "str", "v": "s8"}, {"t": "str", "v": "s9"}, {"t": "str", "v": "s10"}, {"t": "str", "v": "s11"}, {"t": "str", "v": "s12"}, {"t": "str", "v": "s13"}, {"t": "str", "v": "s14"}, {"t": "str", "v": "s15"}, {"t": "str", "v": "s16"}, {"t": "str", "v": "s17"}, {"t": "str", "v": "s18"}, {"t": "str", "v": "s19"}, {"t": "str", "v": "s20"}, {"t": "str", "v": "s21"}, {"t": "str", "v": "s22"}, {"t": "str", "v": "s23"}, {"t": "str", "v": "s24"}, {"t": "str", "v": "s25"}, {"t": "str", "v": "s26"}, {"t": "str", "v": "s27"}, {"t": "str", "v": "s28"}, {"t": "str", "v": "s29"}, {"t": "str", "v": "s30"}, {"t": "str", "v": "s31"}, {"t": "str", "v": "s32"}, {"t": "str", "v": "s33"}, {"t": "str", "v": "s34"}, {"t": "str", "v": "s35"}, {"t": "str", "v": "s36"}, {"t": "str", "v": "s37"}, {"t": "str", "v": "s38"}, {"t": "str", "v": "s39"}, {"t": "str", "v": "s40"}, {"t": "str", "v": "s41"}, {"t": "str", "v": "s42"}, {"t": "str", "v": "s43"}, {"t": "str", "v": "s44"}, {"t": "str", "v": "s45"}, {"t": "str", "v": "s46"}, {"t": "str", "v": "s47"}, {"t": "str", "v": "s48"}, {"t": "str", "v": "s49"}, {"t": "str", "v": "s50"}, {"t": "str", "v": "s51"}, {"t": "str", "v": "s52"}, {"t": "str", "v": "s53"}, {"t": "str", "v": "s54"}, {"t": "str", "v": "s55"}, {"t": "str", "v": "s56"}, {"t": "str", "v": "s57"}, {"t": "str", "v": "s58"}, {"t": "str", "v": "s59"}, {"t": "str", "v": "s60"}, {"t": "str", "v": "s61"}, {"t": "str", "v": "s62"}, {"t": "str", "v": "s63"}, {"t": "str", "v": "s64"}, {"t": "str", "v": "s65"}, {"t": "str", "v": "s66"}, {"t": "str", "v": "s67"}, {"t": "str", "v": "s68"}, {"t": "str", "v": "s69"}, {"t": "str", "v": "s64"}, {"t": "str", "v": "s0"}]},
+    "binary_is_encoded": true,
+    "binary_len": 352,
+    "binary_file": "binary/table_two_byte_index.sdat"
+  },
+  {
+    "name": "ints_packed_empty",
+    "description": "A list of ints packed: tag 10, a count, then a zigzag varint per item with no tag each. Decodes to the same list as tag 6 would.",
+    "text": "[]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": []},
+    "binary_is_encoded": false,
+    "binary": "53444154010a00",
+    "binary_len": 7,
+    "binary_file": "binary/ints_packed_empty.sdat"
+  },
+  {
+    "name": "ints_packed_small",
+    "description": "A list of ints packed: tag 10, a count, then a zigzag varint per item with no tag each. Decodes to the same list as tag 6 would.",
+    "text": "[0,-1,1,63,-64]",
+    "text_is_written": true,
+    "value": {"t": "ints", "v": [0, -1, 1, 63, -64]},
+    "binary_is_encoded": false,
+    "binary": "53444154010a050001027e7f",
+    "binary_len": 12,
+    "binary_file": "binary/ints_packed_small.sdat"
+  },
+  {
+    "name": "ints_packed_varints",
+    "description": "A list of ints packed: tag 10, a count, then a zigzag varint per item with no tag each. Decodes to the same list as tag 6 would.",
+    "text": "[64,-65,8192,2147483648]",
+    "text_is_written": true,
+    "value": {"t": "ints", "v": [64, -65, 8192, 2147483648]},
+    "binary_is_encoded": false,
+    "binary": "53444154010a04800181018080018080808010",
+    "binary_len": 19,
+    "binary_file": "binary/ints_packed_varints.sdat"
+  },
+  {
+    "name": "ints_packed_extremes",
+    "description": "A list of ints packed: tag 10, a count, then a zigzag varint per item with no tag each. Decodes to the same list as tag 6 would.",
+    "text": "[-9223372036854775808,9223372036854775807,0]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "int", "v": "-9223372036854775808"}, {"t": "int", "v": "9223372036854775807"}, {"t": "int", "v": "0"}]},
+    "binary_is_encoded": false,
+    "binary": "53444154010a03ffffffffffffffffff01feffffffffffffffff0100",
+    "binary_len": 28,
+    "binary_file": "binary/ints_packed_extremes.sdat"
+  },
+  {
+    "name": "float32_single",
+    "description": "A float that is an f32: tag 12, four bytes little-endian. Decodes to the f64 of the same value.",
+    "text": "0.5",
+    "text_is_written": true,
+    "value": {"t": "float", "bits": "3fe0000000000000", "v": "0.5"},
+    "binary_is_encoded": false,
+    "binary": "53444154010c0000003f",
+    "binary_len": 10,
+    "binary_file": "binary/float32_single.sdat"
+  },
+  {
+    "name": "floats_packed_narrow",
+    "description": "A writer picks tag 14 (f32 each) when every f64 survives the round trip through f32 bit for bit; -0.0 does.",
+    "text": "[0.5,1.5,-0.0]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3ff8000000000000", "v": "1.5"}, {"t": "float", "bits": "8000000000000000", "v": "-0.0"}]},
+    "binary_is_encoded": false,
+    "binary": "53444154010e030000003f0000c03f00000080",
+    "binary_len": 19,
+    "binary_file": "binary/floats_packed_narrow.sdat"
+  },
+  {
+    "name": "floats_packed_wide",
+    "description": "Tag 13 (f64 each) when any one does not: 0.1 is not an f32.",
+    "text": "[0.1,0.2]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "float", "bits": "3fb999999999999a", "v": "0.1"}, {"t": "float", "bits": "3fc999999999999a", "v": "0.2"}]},
+    "binary_is_encoded": false,
+    "binary": "53444154010d029a9999999999b93f9a9999999999c93f",
+    "binary_len": 23,
+    "binary_file": "binary/floats_packed_wide.sdat"
+  },
+  {
+    "name": "floats_packed_mixed",
+    "description": "One value that is not an f32 widens the whole list, 0.5 included.",
+    "text": "[0.5,0.1]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3fb999999999999a", "v": "0.1"}]},
+    "binary_is_encoded": false,
+    "binary": "53444154010d02000000000000e03f9a9999999999b93f",
+    "binary_len": 23,
+    "binary_file": "binary/floats_packed_mixed.sdat"
+  },
+  {
+    "name": "floats_packed_empty",
+    "description": "An empty list of floats picks the narrow tag 14.",
+    "text": "[]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": []},
+    "binary_is_encoded": false,
+    "binary": "53444154010e00",
+    "binary_len": 7,
+    "binary_file": "binary/floats_packed_empty.sdat"
+  },
+  {
+    "name": "floats32_packed",
+    "description": "A list of f32s: tag 14 always, 4 bytes each.",
+    "text": "[0.5,3.4028234663852886e38]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "47efffffe0000000", "v": "3.4028234663852886e38"}]},
+    "binary_is_encoded": false,
+    "binary": "53444154010e020000003fffff7f7f",
+    "binary_len": 15,
+    "binary_file": "binary/floats32_packed.sdat"
+  },
+  {
+    "name": "floats_packed_non_finite",
+    "description": "Binary only (text writes null for them): a quiet NaN and infinity survive f32 bit for bit, so the narrow tag 14 is used.",
+    "value": {"t": "list", "v": [{"t": "float", "bits": "7ff8000000000000"}, {"t": "float", "bits": "7ff0000000000000"}]},
+    "binary_is_encoded": false,
+    "binary": "53444154010e020000c07f0000807f",
+    "binary_len": 15,
+    "binary_file": "binary/floats_packed_non_finite.sdat"
+  },
+  {
+    "name": "stream_empty",
+    "description": "An empty stream: tag 11, a u32 byte length (here 1), then the count 0.",
+    "text": "{\"name\":\"audit\",\"entries\":[]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "audit"}], ["entries", {"t": "list", "v": []}]]},
+    "binary_is_encoded": false,
+    "binary": "53444154010702096e616d65050b61756469740f656e74726965730b0100000000",
+    "binary_len": 33,
+    "binary_file": "binary/stream_empty.sdat"
+  },
+  {
+    "name": "stream_own_table",
+    "description": "A stream has its own string table: `audit` is written again inside it although the document already has it, and `opened` is written once inside.",
+    "text": "{\"name\":\"audit\",\"entries\":[\"opened\",\"saved\",\"opened\",\"audit\"]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "audit"}], ["entries", {"t": "list", "v": [{"t": "str", "v": "opened"}, {"t": "str", "v": "saved"}, {"t": "str", "v": "opened"}, {"t": "str", "v": "audit"}]}]]},
+    "binary_is_encoded": false,
+    "binary": "53444154010702096e616d65050b61756469740f656e74726965730b1900000004050d6f70656e6564050b73617665640500050b6175646974",
+    "binary_len": 57,
+    "binary_file": "binary/stream_own_table.sdat"
+  },
+  {
+    "name": "stream_ints",
+    "description": "Stream items are values: six ints, each tag 3 and a zigzag varint.",
+    "text": "{\"hits\":[0,1000,2000,3000,4000,5000]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["hits", {"t": "ints", "v": [0, 1000, 2000, 3000, 4000, 5000]}]]},
+    "binary_is_encoded": false,
+    "binary": "5344415401070109686974730b1200000006030003d00f03a01f03f02e03c03e03904e",
+    "binary_len": 35,
+    "binary_file": "binary/stream_ints.sdat"
+  },
+  {
+    "name": "syntax_comments",
+    "description": "Line and block comments are whitespace.",
+    "text": "// the task\n{ /* name */ \"name\": \"Release 1.0\", // why\n \"parts\": [1, 2] }",
+    "text_is_written": false,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "Release 1.0"}], ["parts", {"t": "ints", "v": [1, 2]}]]}
+  },
+  {
+    "name": "syntax_trailing_commas",
+    "description": "A trailing comma is allowed in a list and in a map.",
+    "text": "{\"name\": \"Release 1.0\", \"parts\": [1, 2,],}",
+    "text_is_written": false,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "Release 1.0"}], ["parts", {"t": "ints", "v": [1, 2]}]]}
+  },
+  {
+    "name": "syntax_unquoted_keys",
+    "description": "A key may be written without quotes.",
+    "text": "{ name: \"Release 1.0\", parts: [1, 2] }",
+    "text_is_written": false,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "Release 1.0"}], ["parts", {"t": "ints", "v": [1, 2]}]]}
+  },
+  {
+    "name": "syntax_bom",
+    "description": "A leading byte order mark is skipped.",
+    "text": "﻿[1]",
+    "text_is_written": false,
+    "value": {"t": "ints", "v": [1]}
+  },
+  {
+    "name": "syntax_whitespace",
+    "description": "Spaces, tabs and line breaks between tokens are free.",
+    "text": " \t\r\n[ 1 ,\n 2\t]\n",
+    "text_is_written": false,
+    "value": {"t": "ints", "v": [1, 2]}
+  },
+  {
+    "name": "syntax_typed_strings_stay_strings",
+    "description": "The text parser keeps a typed spelling as the string it is; a schema (or the binary form) gives it its type.",
+    "text": "[\"@file:a.png\", \"@bytes:AQID\", \"@@text\"]",
+    "text_is_written": false,
+    "value": {"t": "list", "v": [{"t": "str", "v": "@file:a.png"}, {"t": "str", "v": "@bytes:AQID"}, {"t": "str", "v": "@@text"}]}
+  },
+  {
+    "name": "syntax_escapes",
+    "description": "The JSON escapes, including `\\/` and `\\b`, `\\f`.",
+    "text": "\"\\\" \\\\ \\/ \\b \\f \\n \\r \\t A\"",
+    "text_is_written": false,
+    "value": {"t": "str", "v": "\" \\ / \u0008 \u000c \n \r \t A"}
+  },
+  {
+    "name": "syntax_surrogate_pair",
+    "description": "A `\\u` surrogate pair is one character.",
+    "text": "\"🦀\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "🦀"}
+  },
+  {
+    "name": "syntax_raw_unicode",
+    "description": "Non-ASCII characters may be written as they are.",
+    "text": "\"héllo 日本語\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "héllo 日本語"}
+  },
+  {
+    "name": "frame_scalars",
+    "description": "A record: its byte length, then the fields in declaration order: a bool byte, zigzag varints for ints, f32 and f64 raw little-endian, a string as its table index.",
+    "text": "{\"flag\":true,\"count\":-300,\"big\":4000000000,\"ratio\":0.25,\"precise\":0.1,\"name\":\"alice\"}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["flag", {"t": "bool", "v": true}], ["count", {"t": "int", "v": "-300"}], ["big", {"t": "int", "v": "4000000000"}], ["ratio", {"t": "float", "bits": "3fd0000000000000", "v": "0.25"}], ["precise", {"t": "float", "bits": "3fb999999999999a", "v": "0.1"}], ["name", {"t": "str", "v": "alice"}]]},
+    "binary_is_encoded": false,
+    "binary": "5344415401070609666c6167020b636f756e7403d704076269670380a0d9e61d0b726174696f0c0000803e0f70726563697365049a9999999999b93f096e616d65050b616c696365",
+    "binary_len": 72,
+    "binary_file": "binary/frame_scalars.sdat",
+    "frame": {
+      "schema": "scalars",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Scalars\"},\"defs\":{\"Scalars\":{\"kind\":\"struct\",\"doc\":\"One of each plain scalar.\",\"fields\":[{\"name\":\"flag\",\"shape\":{\"kind\":\"bool\"},\"required\":true},{\"name\":\"count\",\"shape\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647},\"required\":true},{\"name\":\"big\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807},\"required\":true},{\"name\":\"ratio\",\"shape\":{\"kind\":\"float\",\"bits\":32},\"required\":true},{\"name\":\"precise\",\"shape\":{\"kind\":\"float\",\"bits\":64},\"required\":true},{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["flag", {"t": "bool", "v": true}], ["count", {"t": "int", "v": "-300"}], ["big", {"t": "int", "v": "4000000000"}], ["ratio", {"t": "float", "bits": "3fd0000000000000", "v": "0.25"}], ["precise", {"t": "float", "bits": "3fb999999999999a", "v": "0.1"}], ["name", {"t": "str", "v": "alice"}]]},
+      "bytes": "1501d70480a0d9e61d0000803e9a9999999999b93f0005616c69636506",
+      "bytes_len": 29,
+      "bytes_file": "frames/frame_scalars.frame"
+    }
+  },
+  {
+    "name": "frame_scalars_extremes",
+    "description": "Extremes: i32::MIN, i64::MAX as an unsigned number, -0.0 as an f32, an empty string.",
+    "text": "{\"flag\":false,\"count\":-2147483648,\"big\":9223372036854775807,\"ratio\":-0.0,\"precise\":2.2250738585072014e-308,\"name\":\"\"}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["flag", {"t": "bool", "v": false}], ["count", {"t": "int", "v": "-2147483648"}], ["big", {"t": "int", "v": "9223372036854775807"}], ["ratio", {"t": "float", "bits": "8000000000000000", "v": "-0.0"}], ["precise", {"t": "float", "bits": "0010000000000000", "v": "2.2250738585072014e-308"}], ["name", {"t": "str", "v": ""}]]},
+    "binary_is_encoded": false,
+    "binary": "5344415401070609666c6167010b636f756e7403ffffffff0f0762696703feffffffffffffffff010b726174696f0c000000800f70726563697365040000000000001000096e616d650501",
+    "binary_len": 75,
+    "binary_file": "binary/frame_scalars_extremes.sdat",
+    "frame": {
+      "schema": "scalars",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Scalars\"},\"defs\":{\"Scalars\":{\"kind\":\"struct\",\"doc\":\"One of each plain scalar.\",\"fields\":[{\"name\":\"flag\",\"shape\":{\"kind\":\"bool\"},\"required\":true},{\"name\":\"count\",\"shape\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647},\"required\":true},{\"name\":\"big\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807},\"required\":true},{\"name\":\"ratio\",\"shape\":{\"kind\":\"float\",\"bits\":32},\"required\":true},{\"name\":\"precise\",\"shape\":{\"kind\":\"float\",\"bits\":64},\"required\":true},{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["flag", {"t": "bool", "v": false}], ["count", {"t": "int", "v": "-2147483648"}], ["big", {"t": "int", "v": "9223372036854775807"}], ["ratio", {"t": "float", "bits": "8000000000000000", "v": "-0.0"}], ["precise", {"t": "float", "bits": "0010000000000000", "v": "2.2250738585072014e-308"}], ["name", {"t": "str", "v": ""}]]},
+      "bytes": "1d00ffffffff0ffeffffffffffffffff01000000800000000000001000000001",
+      "bytes_len": 32,
+      "bytes_file": "frames/frame_scalars_extremes.frame"
+    }
+  },
+  {
+    "name": "frame_options_present",
+    "description": "An Option is a byte 0 or 1, then the value when there is one.",
+    "text": "{\"count\":7,\"missing\":0}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["count", {"t": "int", "v": "7"}], ["missing", {"t": "int", "v": "0"}]]},
+    "binary_is_encoded": true,
+    "binary": "534441540107020b636f756e74030e0f6d697373696e670300",
+    "binary_len": 25,
+    "binary_file": "binary/frame_options_present.sdat",
+    "frame": {
+      "schema": "options",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Options\"},\"defs\":{\"Options\":{\"kind\":\"struct\",\"doc\":\"Optional fields, present and absent.\",\"fields\":[{\"name\":\"count\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"required\":false},{\"name\":\"note\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"string\"}},\"required\":false},{\"name\":\"missing\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":255}},\"required\":false}]}}}",
+      "value": {"t": "map", "v": [["count", {"t": "int", "v": "7"}], ["note", {"t": "null"}], ["missing", {"t": "int", "v": "0"}]]},
+      "bytes": "05010e00010000",
+      "bytes_len": 7,
+      "bytes_file": "frames/frame_options_present.frame"
+    }
+  },
+  {
+    "name": "frame_options_absent",
+    "description": "A missing Option is only the byte 0.",
+    "text": "{\"note\":\"n\"}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["note", {"t": "str", "v": "n"}]]},
+    "binary_is_encoded": true,
+    "binary": "53444154010701096e6f746505036e",
+    "binary_len": 15,
+    "binary_file": "binary/frame_options_absent.sdat",
+    "frame": {
+      "schema": "options",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Options\"},\"defs\":{\"Options\":{\"kind\":\"struct\",\"doc\":\"Optional fields, present and absent.\",\"fields\":[{\"name\":\"count\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"required\":false},{\"name\":\"note\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"string\"}},\"required\":false},{\"name\":\"missing\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":255}},\"required\":false}]}}}",
+      "value": {"t": "map", "v": [["count", {"t": "null"}], ["note", {"t": "str", "v": "n"}], ["missing", {"t": "null"}]]},
+      "bytes": "0400010000016e02",
+      "bytes_len": 8,
+      "bytes_file": "frames/frame_options_absent.frame"
+    }
+  },
+  {
+    "name": "frame_bytes",
+    "description": "Bytes: a varint length, then them raw; the string next to them is a table index.",
+    "text": "{\"name\":\"logo\",\"data\":\"@bytes:AAEC/w==\"}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "logo"}], ["data", {"t": "bytes", "hex": "000102ff"}]]},
+    "binary_is_encoded": true,
+    "binary": "53444154010702096e616d6505096c6f676f09646174610904000102ff",
+    "binary_len": 29,
+    "binary_file": "binary/frame_bytes.sdat",
+    "frame": {
+      "schema": "blob",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Blob\"},\"defs\":{\"Blob\":{\"kind\":\"struct\",\"doc\":\"A payload kept as bytes.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"data\",\"shape\":{\"kind\":\"bytes\"},\"required\":false}]}}}",
+      "value": {"t": "map", "v": [["name", {"t": "str", "v": "logo"}], ["data", {"t": "bytes", "hex": "000102ff"}]]},
+      "bytes": "060004000102ff046c6f676f05",
+      "bytes_len": 13,
+      "bytes_file": "frames/frame_bytes.frame"
+    }
+  },
+  {
+    "name": "frame_strings_shared",
+    "description": "Strings go in a table after the body, each once, in the order first used; the body holds table indexes. A repeated string is the same index.",
+    "text": "{\"title\":\"Intro\",\"author\":\"alice\",\"editor\":\"alice\",\"tags\":[\"a\",\"b\",\"a\",\"Intro\"]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["title", {"t": "str", "v": "Intro"}], ["author", {"t": "str", "v": "alice"}], ["editor", {"t": "str", "v": "alice"}], ["tags", {"t": "list", "v": [{"t": "str", "v": "a"}, {"t": "str", "v": "b"}, {"t": "str", "v": "a"}, {"t": "str", "v": "Intro"}]}]]},
+    "binary_is_encoded": true,
+    "binary": "534441540107040b7469746c65050b496e74726f0d617574686f72050b616c6963650d656469746f72050609746167730604050361050362050c0502",
+    "binary_len": 60,
+    "binary_file": "binary/frame_strings_shared.sdat",
+    "frame": {
+      "schema": "page",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Page\"},\"defs\":{\"Page\":{\"kind\":\"struct\",\"doc\":\"Strings that repeat, and a list of them.\",\"fields\":[{\"name\":\"title\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"author\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"editor\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"tags\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"string\"}},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["title", {"t": "str", "v": "Intro"}], ["author", {"t": "str", "v": "alice"}], ["editor", {"t": "str", "v": "alice"}], ["tags", {"t": "list", "v": [{"t": "str", "v": "a"}, {"t": "str", "v": "b"}, {"t": "str", "v": "a"}, {"t": "str", "v": "Intro"}]}]]},
+      "bytes": "0900010104040203020005496e74726f05616c6963650161016210",
+      "bytes_len": 27,
+      "bytes_file": "frames/frame_strings_shared.frame"
+    }
+  },
+  {
+    "name": "frame_strings_empty_and_unicode",
+    "description": "The empty string is a table entry; the table holds raw UTF-8.",
+    "text": "{\"title\":\"\",\"author\":\"\",\"editor\":\"ü\",\"tags\":[]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["title", {"t": "str", "v": ""}], ["author", {"t": "str", "v": ""}], ["editor", {"t": "str", "v": "ü"}], ["tags", {"t": "list", "v": []}]]},
+    "binary_is_encoded": true,
+    "binary": "534441540107040b7469746c6505010d617574686f7205020d656469746f720505c3bc09746167730600",
+    "binary_len": 42,
+    "binary_file": "binary/frame_strings_empty_and_unicode.sdat",
+    "frame": {
+      "schema": "page",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Page\"},\"defs\":{\"Page\":{\"kind\":\"struct\",\"doc\":\"Strings that repeat, and a list of them.\",\"fields\":[{\"name\":\"title\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"author\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"editor\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"tags\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"string\"}},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["title", {"t": "str", "v": ""}], ["author", {"t": "str", "v": ""}], ["editor", {"t": "str", "v": "ü"}], ["tags", {"t": "list", "v": []}]]},
+      "bytes": "0500000100000002c3bc04",
+      "bytes_len": 11,
+      "bytes_file": "frames/frame_strings_empty_and_unicode.frame"
+    }
+  },
+  {
+    "name": "frame_table_length_two_bytes",
+    "description": "A 130-byte string makes the table longer than 127 bytes: its length (131 with its own length byte) is a two-byte varint written backwards at the frame's end.",
+    "text": "{\"title\":\"tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\",\"author\":\"alice\",\"editor\":\"alice\",\"tags\":[]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["title", {"t": "str", "v": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"}], ["author", {"t": "str", "v": "alice"}], ["editor", {"t": "str", "v": "alice"}], ["tags", {"t": "list", "v": []}]]},
+    "binary_is_encoded": true,
+    "binary": "534441540107040b7469746c65058502747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474740d617574686f72050b616c6963650d656469746f72050609746167730600",
+    "binary_len": 176,
+    "binary_file": "binary/frame_table_length_two_bytes.sdat",
+    "frame": {
+      "schema": "page",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Page\"},\"defs\":{\"Page\":{\"kind\":\"struct\",\"doc\":\"Strings that repeat, and a list of them.\",\"fields\":[{\"name\":\"title\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"author\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"editor\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"tags\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"string\"}},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["title", {"t": "str", "v": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"}], ["author", {"t": "str", "v": "alice"}], ["editor", {"t": "str", "v": "alice"}], ["tags", {"t": "list", "v": []}]]},
+      "bytes": "05000101000082017474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747405616c696365018a",
+      "bytes_len": 146,
+      "bytes_file": "frames/frame_table_length_two_bytes.frame"
+    }
+  },
+  {
+    "name": "frame_links",
+    "description": "An `Id<User>` packs as its id's own type (a u64: one varint) with the kind implied by the field; an `Id<Doc>` as a table string; a `Ref` of any kind as two table strings, kind and id.",
+    "text": "{\"owner\":\"@user:7\",\"parent\":\"@doc:guides/intro\",\"attachment\":\"@file:images/logo.png\"}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["owner", {"t": "ref", "kind": "user", "id": "7"}], ["parent", {"t": "ref", "kind": "doc", "id": "guides/intro"}], ["attachment", {"t": "ref", "kind": "file", "id": "images/logo.png"}]]},
+    "binary_is_encoded": true,
+    "binary": "534441540107030b6f776e657208097573657203370d706172656e740807646f63196775696465732f696e74726f156174746163686d656e74080966696c651f696d616765732f6c6f676f2e706e67",
+    "binary_len": 79,
+    "binary_file": "binary/frame_links.sdat",
+    "frame": {
+      "schema": "links",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Links\"},\"defs\":{\"Links\":{\"kind\":\"struct\",\"doc\":\"References: a numeric id, a text id and one of any kind.\",\"fields\":[{\"name\":\"owner\",\"shape\":{\"kind\":\"ref\",\"of\":[\"user\"],\"id\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"required\":true},{\"name\":\"parent\",\"shape\":{\"kind\":\"ref\",\"of\":[\"doc\"],\"id\":{\"kind\":\"string\"}},\"required\":true},{\"name\":\"attachment\",\"shape\":{\"kind\":\"ref\",\"of\":[],\"id\":{\"kind\":\"string\"}},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["owner", {"t": "ref", "kind": "user", "id": "7"}], ["parent", {"t": "ref", "kind": "doc", "id": "guides/intro"}], ["attachment", {"t": "ref", "kind": "file", "id": "images/logo.png"}]]},
+      "bytes": "040e0001020c6775696465732f696e74726f0466696c650f696d616765732f6c6f676f2e706e6722",
+      "bytes_len": 40,
+      "bytes_file": "frames/frame_links.frame"
+    }
+  },
+  {
+    "name": "frame_links_wide_ids",
+    "description": "A user id of 300 takes a two-byte varint.",
+    "text": "{\"owner\":\"@user:300\",\"parent\":\"@doc:x\",\"attachment\":\"@user:alice\"}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["owner", {"t": "ref", "kind": "user", "id": "300"}], ["parent", {"t": "ref", "kind": "doc", "id": "x"}], ["attachment", {"t": "ref", "kind": "user", "id": "alice"}]]},
+    "binary_is_encoded": true,
+    "binary": "534441540107030b6f776e6572080975736572073330300d706172656e740807646f630378156174746163686d656e7408020b616c696365",
+    "binary_len": 56,
+    "binary_file": "binary/frame_links_wide_ids.sdat",
+    "frame": {
+      "schema": "links",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Links\"},\"defs\":{\"Links\":{\"kind\":\"struct\",\"doc\":\"References: a numeric id, a text id and one of any kind.\",\"fields\":[{\"name\":\"owner\",\"shape\":{\"kind\":\"ref\",\"of\":[\"user\"],\"id\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"required\":true},{\"name\":\"parent\",\"shape\":{\"kind\":\"ref\",\"of\":[\"doc\"],\"id\":{\"kind\":\"string\"}},\"required\":true},{\"name\":\"attachment\",\"shape\":{\"kind\":\"ref\",\"of\":[],\"id\":{\"kind\":\"string\"}},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["owner", {"t": "ref", "kind": "user", "id": "300"}], ["parent", {"t": "ref", "kind": "doc", "id": "x"}], ["attachment", {"t": "ref", "kind": "user", "id": "alice"}]]},
+      "bytes": "05d8040001020178047573657205616c6963650d",
+      "bytes_len": 20,
+      "bytes_file": "frames/frame_links_wide_ids.frame"
+    }
+  },
+  {
+    "name": "frame_folder",
+    "description": "A list of records: a count, the list's byte length, then each record with its own length; a unit enum is its variant index as a varint.",
+    "text": "{\"name\":\"team\",\"members\":[{\"name\":\"alice\",\"role\":\"admin\"},{\"name\":\"bob\",\"role\":\"reader\"},{\"name\":\"carol\",\"role\":\"editor\"}],\"tags\":[\"x\"]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "team"}], ["members", {"t": "list", "v": [{"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["role", {"t": "str", "v": "admin"}]]}, {"t": "map", "v": [["name", {"t": "str", "v": "bob"}], ["role", {"t": "str", "v": "reader"}]]}, {"t": "map", "v": [["name", {"t": "str", "v": "carol"}], ["role", {"t": "str", "v": "editor"}]]}]}], ["tags", {"t": "list", "v": [{"t": "str", "v": "x"}]}]]},
+    "binary_is_encoded": true,
+    "binary": "53444154010703096e616d6505097465616d0f6d656d626572730603070200050b616c69636509726f6c65050b61646d696e0702000507626f6208050d726561646572070200050b6361726f6c08050d656469746f7209746167730601050378",
+    "binary_len": 96,
+    "binary_file": "binary/frame_folder.sdat",
+    "frame": {
+      "schema": "folder",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Folder\"},\"defs\":{\"Folder\":{\"kind\":\"struct\",\"doc\":\"A record of records.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"members\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"def\",\"name\":\"Member\"}},\"required\":true},{\"name\":\"tags\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"string\"}},\"required\":true}]},\"Member\":{\"kind\":\"struct\",\"doc\":\"A record with an enum, listed in a folder.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"role\",\"shape\":{\"kind\":\"def\",\"name\":\"Role\"},\"required\":true}]},\"Role\":{\"kind\":\"enum\",\"doc\":\"A unit enum.\",\"variants\":[{\"name\":\"reader\"},{\"name\":\"editor\"},{\"name\":\"admin\"}]}}}",
+      "value": {"t": "map", "v": [["name", {"t": "str", "v": "team"}], ["members", {"t": "list", "v": [{"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["role", {"t": "str", "v": "admin"}]]}, {"t": "map", "v": [["name", {"t": "str", "v": "bob"}], ["role", {"t": "str", "v": "reader"}]]}, {"t": "map", "v": [["name", {"t": "str", "v": "carol"}], ["role", {"t": "str", "v": "editor"}]]}]}], ["tags", {"t": "list", "v": [{"t": "str", "v": "x"}]}]]},
+      "bytes": "0f000309020102020200020301010104047465616d05616c69636503626f62056361726f6c017817",
+      "bytes_len": 40,
+      "bytes_file": "frames/frame_folder.frame"
+    }
+  },
+  {
+    "name": "frame_event_with_fields",
+    "description": "A tagged enum is not packed: it is held as its binary form (no header, its own string table) behind a length, and read as a value.",
+    "text": "{\"id\":1,\"event\":{\"type\":\"opened\",\"at\":9}}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["id", {"t": "int", "v": "1"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "opened"}], ["at", {"t": "int", "v": "9"}]]}]]},
+    "binary_is_encoded": true,
+    "binary": "5344415401070205696403020b6576656e7407020974797065050d6f70656e65640561740312",
+    "binary_len": 38,
+    "binary_file": "binary/frame_event_with_fields.sdat",
+    "frame": {
+      "schema": "activity",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Activity\"},\"defs\":{\"Activity\":{\"kind\":\"struct\",\"doc\":\"A record holding a tagged enum.\",\"fields\":[{\"name\":\"id\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true},{\"name\":\"event\",\"shape\":{\"kind\":\"def\",\"name\":\"Event\"},\"required\":true}]},\"Event\":{\"kind\":\"enum\",\"doc\":\"A tagged enum: a frame holds it in its binary form.\",\"tag\":\"type\",\"variants\":[{\"name\":\"opened\",\"fields\":[{\"name\":\"at\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true}]},{\"name\":\"renamed\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]},{\"name\":\"closed\",\"fields\":[]}]}}}",
+      "value": {"t": "map", "v": [["id", {"t": "int", "v": "1"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "opened"}], ["at", {"t": "int", "v": "9"}]]}]]},
+      "bytes": "16021407020974797065050d6f70656e6564056174031200",
+      "bytes_len": 24,
+      "bytes_file": "frames/frame_event_with_fields.frame"
+    }
+  },
+  {
+    "name": "frame_event_with_string",
+    "description": "The held binary form has its own string table: `notes` is inside it, not in the frame's table.",
+    "text": "{\"id\":2,\"event\":{\"type\":\"renamed\",\"name\":\"notes\"}}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["id", {"t": "int", "v": "2"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "renamed"}], ["name", {"t": "str", "v": "notes"}]]}]]},
+    "binary_is_encoded": true,
+    "binary": "5344415401070205696403040b6576656e7407020974797065050f72656e616d6564096e616d65050b6e6f746573",
+    "binary_len": 46,
+    "binary_file": "binary/frame_event_with_string.sdat",
+    "frame": {
+      "schema": "activity",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Activity\"},\"defs\":{\"Activity\":{\"kind\":\"struct\",\"doc\":\"A record holding a tagged enum.\",\"fields\":[{\"name\":\"id\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true},{\"name\":\"event\",\"shape\":{\"kind\":\"def\",\"name\":\"Event\"},\"required\":true}]},\"Event\":{\"kind\":\"enum\",\"doc\":\"A tagged enum: a frame holds it in its binary form.\",\"tag\":\"type\",\"variants\":[{\"name\":\"opened\",\"fields\":[{\"name\":\"at\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true}]},{\"name\":\"renamed\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]},{\"name\":\"closed\",\"fields\":[]}]}}}",
+      "value": {"t": "map", "v": [["id", {"t": "int", "v": "2"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "renamed"}], ["name", {"t": "str", "v": "notes"}]]}]]},
+      "bytes": "1e041c07020974797065050f72656e616d6564096e616d65050b6e6f74657300",
+      "bytes_len": 32,
+      "bytes_file": "frames/frame_event_with_string.frame"
+    }
+  },
+  {
+    "name": "frame_event_unit",
+    "description": "A tagged variant without fields is a map holding only the tag.",
+    "text": "{\"id\":3,\"event\":{\"type\":\"closed\"}}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["id", {"t": "int", "v": "3"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "closed"}]]}]]},
+    "binary_is_encoded": true,
+    "binary": "5344415401070205696403060b6576656e7407010974797065050d636c6f736564",
+    "binary_len": 33,
+    "binary_file": "binary/frame_event_unit.sdat",
+    "frame": {
+      "schema": "activity",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Activity\"},\"defs\":{\"Activity\":{\"kind\":\"struct\",\"doc\":\"A record holding a tagged enum.\",\"fields\":[{\"name\":\"id\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true},{\"name\":\"event\",\"shape\":{\"kind\":\"def\",\"name\":\"Event\"},\"required\":true}]},\"Event\":{\"kind\":\"enum\",\"doc\":\"A tagged enum: a frame holds it in its binary form.\",\"tag\":\"type\",\"variants\":[{\"name\":\"opened\",\"fields\":[{\"name\":\"at\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true}]},{\"name\":\"renamed\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]},{\"name\":\"closed\",\"fields\":[]}]}}}",
+      "value": {"t": "map", "v": [["id", {"t": "int", "v": "3"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "closed"}]]}]]},
+      "bytes": "11060f07010974797065050d636c6f73656400",
+      "bytes_len": 19,
+      "bytes_file": "frames/frame_event_unit.frame"
+    }
+  },
+  {
+    "name": "frame_samples",
+    "description": "Lists of numbers: f32s raw (4 bytes each); f64s with a flag byte, 1 when every one is an f32 exactly (4 bytes each) else 0 (8 bytes); ints bit-packed with a count and a width byte, signed ones zigzagged first.",
+    "text": "{\"narrow\":[0.5,1.5],\"exact\":[0.5,0.25],\"wide\":[0.1,0.2],\"signed\":[-1,0,1,-2,70000],\"unsigned\":[1,2,65535]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["narrow", {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3ff8000000000000", "v": "1.5"}]}], ["exact", {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3fd0000000000000", "v": "0.25"}]}], ["wide", {"t": "list", "v": [{"t": "float", "bits": "3fb999999999999a", "v": "0.1"}, {"t": "float", "bits": "3fc999999999999a", "v": "0.2"}]}], ["signed", {"t": "ints", "v": [-1, 0, 1, -2, 70000]}], ["unsigned", {"t": "ints", "v": [1, 2, 65535]}]]},
+    "binary_is_encoded": false,
+    "binary": "534441540107050d6e6172726f770e020000003f0000c03f0b65786163740e020000003f0000803e09776964650d029a9999999999b93f9a9999999999c93f0d7369676e65640a0501000203e0c50811756e7369676e65640a030204feff07",
+    "binary_len": 95,
+    "binary_file": "binary/frame_samples.sdat",
+    "frame": {
+      "schema": "samples",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Samples\"},\"defs\":{\"Samples\":{\"kind\":\"struct\",\"doc\":\"Lists of floats and ints.\",\"fields\":[{\"name\":\"narrow\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":32}},\"required\":true},{\"name\":\"exact\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"wide\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"signed\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647}},\"required\":true},{\"name\":\"unsigned\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":65535}},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["narrow", {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3ff8000000000000", "v": "1.5"}]}], ["exact", {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3fd0000000000000", "v": "0.25"}]}], ["wide", {"t": "list", "v": [{"t": "float", "bits": "3fb999999999999a", "v": "0.1"}, {"t": "float", "bits": "3fc999999999999a", "v": "0.2"}]}], ["signed", {"t": "ints", "v": [-1, 0, 1, -2, 70000]}], ["unsigned", {"t": "ints", "v": [1, 2, 65535]}]]},
+      "bytes": "3b020000003f0000c03f02010000003f0000803e02009a9999999999b93f9a9999999999c93f0512010000002000c00000e02202031001000200ffff00",
+      "bytes_len": 61,
+      "bytes_file": "frames/frame_samples.frame"
+    }
+  },
+  {
+    "name": "frame_samples_empty",
+    "description": "Empty lists: a count 0; an empty f64 list has the flag 1; an empty int list has width 1.",
+    "text": "{\"narrow\":[],\"exact\":[],\"wide\":[],\"signed\":[],\"unsigned\":[]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["narrow", {"t": "list", "v": []}], ["exact", {"t": "list", "v": []}], ["wide", {"t": "list", "v": []}], ["signed", {"t": "list", "v": []}], ["unsigned", {"t": "list", "v": []}]]},
+    "binary_is_encoded": false,
+    "binary": "534441540107050d6e6172726f770e000b65786163740e0009776964650e000d7369676e65640a0011756e7369676e65640a00",
+    "binary_len": 51,
+    "binary_file": "binary/frame_samples_empty.sdat",
+    "frame": {
+      "schema": "samples",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Samples\"},\"defs\":{\"Samples\":{\"kind\":\"struct\",\"doc\":\"Lists of floats and ints.\",\"fields\":[{\"name\":\"narrow\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":32}},\"required\":true},{\"name\":\"exact\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"wide\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"signed\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647}},\"required\":true},{\"name\":\"unsigned\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":65535}},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["narrow", {"t": "list", "v": []}], ["exact", {"t": "list", "v": []}], ["wide", {"t": "list", "v": []}], ["signed", {"t": "list", "v": []}], ["unsigned", {"t": "list", "v": []}]]},
+      "bytes": "0900000100010001000100",
+      "bytes_len": 11,
+      "bytes_file": "frames/frame_samples_empty.frame"
+    }
+  },
+  {
+    "name": "frame_record_length_two_bytes",
+    "description": "A record longer than 127 bytes has a two-byte varint length.",
+    "text": "{\"narrow\":[],\"exact\":[],\"wide\":[0.1,1.1,2.1,3.1,4.1,5.1,6.1,7.1,8.1,9.1,10.1,11.1,12.1,13.1,14.1,15.1,16.1,17.1,18.1,19.1],\"signed\":[],\"unsigned\":[]}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["narrow", {"t": "list", "v": []}], ["exact", {"t": "list", "v": []}], ["wide", {"t": "list", "v": [{"t": "float", "bits": "3fb999999999999a", "v": "0.1"}, {"t": "float", "bits": "3ff199999999999a", "v": "1.1"}, {"t": "float", "bits": "4000cccccccccccd", "v": "2.1"}, {"t": "float", "bits": "4008cccccccccccd", "v": "3.1"}, {"t": "float", "bits": "4010666666666666", "v": "4.1"}, {"t": "float", "bits": "4014666666666666", "v": "5.1"}, {"t": "float", "bits": "4018666666666666", "v": "6.1"}, {"t": "float", "bits": "401c666666666666", "v": "7.1"}, {"t": "float", "bits": "4020333333333333", "v": "8.1"}, {"t": "float", "bits": "4022333333333333", "v": "9.1"}, {"t": "float", "bits": "4024333333333333", "v": "10.1"}, {"t": "float", "bits": "4026333333333333", "v": "11.1"}, {"t": "float", "bits": "4028333333333333", "v": "12.1"}, {"t": "float", "bits": "402a333333333333", "v": "13.1"}, {"t": "float", "bits": "402c333333333333", "v": "14.1"}, {"t": "float", "bits": "402e333333333333", "v": "15.1"}, {"t": "float", "bits": "403019999999999a", "v": "16.1"}, {"t": "float", "bits": "403119999999999a", "v": "17.1"}, {"t": "float", "bits": "403219999999999a", "v": "18.1"}, {"t": "float", "bits": "403319999999999a", "v": "19.1"}]}], ["signed", {"t": "list", "v": []}], ["unsigned", {"t": "list", "v": []}]]},
+    "binary_is_encoded": false,
+    "binary": "534441540107050d6e6172726f770e000b65786163740e0009776964650d149a9999999999b93f9a9999999999f13fcdcccccccccc0040cdcccccccccc08406666666666661040666666666666144066666666666618406666666666661c40333333333333204033333333333322403333333333332440333333333333264033333333333328403333333333332a403333333333332c403333333333332e409a999999991930409a999999991931409a999999991932409a999999991933400d7369676e65640a0011756e7369676e65640a00",
+    "binary_len": 211,
+    "binary_file": "binary/frame_record_length_two_bytes.sdat",
+    "frame": {
+      "schema": "samples",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Samples\"},\"defs\":{\"Samples\":{\"kind\":\"struct\",\"doc\":\"Lists of floats and ints.\",\"fields\":[{\"name\":\"narrow\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":32}},\"required\":true},{\"name\":\"exact\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"wide\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"signed\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647}},\"required\":true},{\"name\":\"unsigned\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":65535}},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["narrow", {"t": "list", "v": []}], ["exact", {"t": "list", "v": []}], ["wide", {"t": "list", "v": [{"t": "float", "bits": "3fb999999999999a", "v": "0.1"}, {"t": "float", "bits": "3ff199999999999a", "v": "1.1"}, {"t": "float", "bits": "4000cccccccccccd", "v": "2.1"}, {"t": "float", "bits": "4008cccccccccccd", "v": "3.1"}, {"t": "float", "bits": "4010666666666666", "v": "4.1"}, {"t": "float", "bits": "4014666666666666", "v": "5.1"}, {"t": "float", "bits": "4018666666666666", "v": "6.1"}, {"t": "float", "bits": "401c666666666666", "v": "7.1"}, {"t": "float", "bits": "4020333333333333", "v": "8.1"}, {"t": "float", "bits": "4022333333333333", "v": "9.1"}, {"t": "float", "bits": "4024333333333333", "v": "10.1"}, {"t": "float", "bits": "4026333333333333", "v": "11.1"}, {"t": "float", "bits": "4028333333333333", "v": "12.1"}, {"t": "float", "bits": "402a333333333333", "v": "13.1"}, {"t": "float", "bits": "402c333333333333", "v": "14.1"}, {"t": "float", "bits": "402e333333333333", "v": "15.1"}, {"t": "float", "bits": "403019999999999a", "v": "16.1"}, {"t": "float", "bits": "403119999999999a", "v": "17.1"}, {"t": "float", "bits": "403219999999999a", "v": "18.1"}, {"t": "float", "bits": "403319999999999a", "v": "19.1"}]}], ["signed", {"t": "list", "v": []}], ["unsigned", {"t": "list", "v": []}]]},
+      "bytes": "a90100000114009a9999999999b93f9a9999999999f13fcdcccccccccc0040cdcccccccccc08406666666666661040666666666666144066666666666618406666666666661c40333333333333204033333333333322403333333333332440333333333333264033333333333328403333333333332a403333333333332c403333333333332e409a999999991930409a999999991931409a999999991932409a999999991933400001000100",
+      "bytes_len": 172,
+      "bytes_file": "frames/frame_record_length_two_bytes.frame"
+    }
+  },
+  {
+    "name": "frame_record_appended_fields",
+    "description": "Fields are only ever appended. A frame packed with `owner` and `archived` is read by a schema that knows only `name` and `files`: the record's length lets it skip the rest.",
+    "frame": {
+      "schema": "project_v2",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"ProjectV2\"},\"defs\":{\"ProjectV2\":{\"kind\":\"struct\",\"doc\":\"The same project with fields appended.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"files\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true},{\"name\":\"owner\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"ref\",\"of\":[\"user\"],\"id\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}}},\"required\":false},{\"name\":\"archived\",\"shape\":{\"kind\":\"bool\"},\"required\":false}]}}}",
+      "value": {"t": "map", "v": [["name", {"t": "str", "v": "notes"}], ["files", {"t": "int", "v": "12"}], ["owner", {"t": "ref", "kind": "user", "id": "7"}], ["archived", {"t": "bool", "v": true}]]},
+      "bytes": "050018010e01056e6f74657306",
+      "bytes_len": 13,
+      "bytes_file": "frames/frame_record_appended_fields.frame",
+      "also_read_by": [{"schema": "project_v1", "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"ProjectV1\"},\"defs\":{\"ProjectV1\":{\"kind\":\"struct\",\"doc\":\"A project as it first was.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"files\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true}]}}}", "value": {"t": "map", "v": [["name", {"t": "str", "v": "notes"}], ["files", {"t": "int", "v": "12"}]]}}]
+    }
+  },
+  {
+    "name": "frame_record_older_frame",
+    "description": "A frame packed before the fields were appended, read by a newer schema: the missing trailing fields are left out of the value read by shape, and take their defaults when the schema says `default` (owner none, archived false).",
+    "frame": {
+      "schema": "project_v1",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"ProjectV1\"},\"defs\":{\"ProjectV1\":{\"kind\":\"struct\",\"doc\":\"A project as it first was.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"files\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true}]}}}",
+      "value": {"t": "map", "v": [["name", {"t": "str", "v": "notes"}], ["files", {"t": "int", "v": "12"}]]},
+      "bytes": "020018056e6f74657306",
+      "bytes_len": 10,
+      "bytes_file": "frames/frame_record_older_frame.frame",
+      "also_read_by": [{"schema": "project_v2", "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"ProjectV2\"},\"defs\":{\"ProjectV2\":{\"kind\":\"struct\",\"doc\":\"The same project with fields appended.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"files\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true},{\"name\":\"owner\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"ref\",\"of\":[\"user\"],\"id\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}}},\"required\":false},{\"name\":\"archived\",\"shape\":{\"kind\":\"bool\"},\"required\":false}]}}}", "value": {"t": "map", "v": [["name", {"t": "str", "v": "notes"}], ["files", {"t": "int", "v": "12"}]]}}]
+    }
+  },
+  {
+    "name": "frame_root_uint",
+    "description": "A frame whose root is a number: the varint, then an empty table (length 0).",
+    "text": "300",
+    "text_is_written": true,
+    "value": {"t": "int", "v": "300"},
+    "binary_is_encoded": true,
+    "binary": "534441540103d804",
+    "binary_len": 8,
+    "binary_file": "binary/frame_root_uint.sdat",
+    "frame": {
+      "schema": "uint",
+      "shape": "{\"root\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"defs\":{}}",
+      "value": {"t": "int", "v": "300"},
+      "bytes": "d80400",
+      "bytes_len": 3,
+      "bytes_file": "frames/frame_root_uint.frame"
+    }
+  },
+  {
+    "name": "frame_root_text",
+    "description": "A frame whose root is a string: the table index 0, then the table holding the string.",
+    "text": "\"hi\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "hi"},
+    "binary_is_encoded": true,
+    "binary": "534441540105056869",
+    "binary_len": 9,
+    "binary_file": "binary/frame_root_text.sdat",
+    "frame": {
+      "schema": "text",
+      "shape": "{\"root\":{\"kind\":\"string\"},\"defs\":{}}",
+      "value": {"t": "str", "v": "hi"},
+      "bytes": "0002686903",
+      "bytes_len": 5,
+      "bytes_file": "frames/frame_root_text.frame"
+    }
+  },
+  {
+    "name": "frame_root_text_at",
+    "description": "A frame holds a string raw; reading it by shape gives the model's spelling, a leading `@` doubled.",
+    "text": "\"@@home\"",
+    "text_is_written": true,
+    "value": {"t": "str", "v": "@@home"},
+    "binary_is_encoded": true,
+    "binary": "5344415401050d4040686f6d65",
+    "binary_len": 13,
+    "binary_file": "binary/frame_root_text_at.sdat",
+    "frame": {
+      "schema": "text",
+      "shape": "{\"root\":{\"kind\":\"string\"},\"defs\":{}}",
+      "value": {"t": "str", "v": "@@home"},
+      "bytes": "000540686f6d6506",
+      "bytes_len": 8,
+      "bytes_file": "frames/frame_root_text_at.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w1_n255",
+    "description": "255 unsigned ints of 1 bits: count, the width byte, then no full group: numbers one after another.",
+    "value": {"t": "ints", "v": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]},
+    "binary_is_encoded": false,
+    "binary_len": 263,
+    "binary_file": "binary/frame_ints_w1_n255.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]},
+      "bytes": "ff0101555555555555555555555555555555555555555555555555555555555555555500",
+      "bytes_len": 36,
+      "bytes_file": "frames/frame_ints_w1_n255.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w1_n256",
+    "description": "256 unsigned ints of 1 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]},
+    "binary_is_encoded": false,
+    "binary_len": 264,
+    "binary_file": "binary/frame_ints_w1_n256.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]},
+      "bytes": "800201ffffffff00000000ffffffff00000000ffffffff00000000ffffffff0000000000",
+      "bytes_len": 36,
+      "bytes_file": "frames/frame_ints_w1_n256.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w1_n257",
+    "description": "257 unsigned ints of 1 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]},
+    "binary_is_encoded": false,
+    "binary_len": 265,
+    "binary_file": "binary/frame_ints_w1_n257.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]},
+      "bytes": "810201ffffffff00000000ffffffff00000000ffffffff00000000ffffffff000000000100",
+      "bytes_len": 37,
+      "bytes_file": "frames/frame_ints_w1_n257.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w7_n255",
+    "description": "255 unsigned ints of 7 bits: count, the width byte, then no full group: numbers one after another.",
+    "value": {"t": "ints", "v": [127, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87]},
+    "binary_is_encoded": false,
+    "binary_len": 392,
+    "binary_file": "binary/frame_ints_w7_n255.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [127, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87]},
+      "bytes": "ff01077ff586d9777d2141f9885ab09d3149fd8adbf0bd4151c18c5c31de5159c58edd71fe6161c9905eb21e7069cd92dff23e8071d19450335f9079d596d1737fa001d99852b49fb009dd9ad3f4bfc011e19c5435dcd019e59ed575fce021e98056b61cf129ed82d7f63c0131f18458375d1139f586d9777d2141f9885ab09d3149fd8adbf0bd4151c18c5c31de5159c58edd71fe6161c9905eb21e7069cd92dff23e8071d19450335f9079d596d1737fa001d99852b49fb009dd9ad3f4bfc011e19c5435dcd019e59ed575fce021e98056b61cf129ed82d7f63c0131f18458375d0100",
+      "bytes_len": 228,
+      "bytes_file": "frames/frame_ints_w7_n255.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w7_n256",
+    "description": "256 unsigned ints of 7 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [127, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8]},
+    "binary_is_encoded": false,
+    "binary_len": 393,
+    "binary_file": "binary/frame_ints_w7_n256.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [127, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8]},
+      "bytes": "800207ff60329a6ab95ea09bd16ab64c2a97ccfd42a3d22e9bcfe8dff3fbfe100c08050da7e3f99068442a1b2ea7dba6f3090c29b56abdb47acd6e3f3c2e9fc301915040229209994ea894f17abe1f0a87c4a262b3da2dbbdfe0b0d3ebf63b2c180dc7a562b9606ac56ab92c269bd1f1884c2ab7ebfd42784c2e9b3eafdff30310100c329a0da75ea090686ab61b2e97cca6f3a3d229b5cfe8b47afbfe3f3c0805c301e3f94022442a994ea7dbf17a090c0a876abd62b3cd6ebbdf2e9fd3eb91502c189209a562a8946ac5be1f2c26c4a2f188da2db7ebe0b0784cf63b3eaf0dc7031000",
+      "bytes_len": 228,
+      "bytes_file": "frames/frame_ints_w7_n256.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w7_n257",
+    "description": "257 unsigned ints of 7 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [127, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57]},
+    "binary_is_encoded": false,
+    "binary_len": 394,
+    "binary_file": "binary/frame_ints_w7_n257.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [127, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57]},
+      "bytes": "810207ff60329a6ab95ea09bd16ab64c2a97ccfd42a3d22e9bcfe8dff3fbfe100c08050da7e3f99068442a1b2ea7dba6f3090c29b56abdb47acd6e3f3c2e9fc301915040229209994ea894f17abe1f0a87c4a262b3da2dbbdfe0b0d3ebf63b2c180dc7a562b9606ac56ab92c269bd1f1884c2ab7ebfd42784c2e9b3eafdff30310100c329a0da75ea090686ab61b2e97cca6f3a3d229b5cfe8b47afbfe3f3c0805c301e3f94022442a994ea7dbf17a090c0a876abd62b3cd6ebbdf2e9fd3eb91502c189209a562a8946ac5be1f2c26c4a2f188da2db7ebe0b0784cf63b3eaf0dc703103900",
+      "bytes_len": 229,
+      "bytes_file": "frames/frame_ints_w7_n257.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w8_n255",
+    "description": "255 unsigned ints of 8 bits: count, the width byte, then no full group: numbers one after another.",
+    "value": {"t": "ints", "v": [255, 234, 155, 76, 253, 174, 95, 16, 193, 114, 35, 212, 133, 54, 231, 152, 73, 250, 171, 92, 13, 190, 111, 32, 209, 130, 51, 228, 149, 70, 247, 168, 89, 10, 187, 108, 29, 206, 127, 48, 225, 146, 67, 244, 165, 86, 7, 184, 105, 26, 203, 124, 45, 222, 143, 64, 241, 162, 83, 4, 181, 102, 23, 200, 121, 42, 219, 140, 61, 238, 159, 80, 1, 178, 99, 20, 197, 118, 39, 216, 137, 58, 235, 156, 77, 254, 175, 96, 17, 194, 115, 36, 213, 134, 55, 232, 153, 74, 251, 172, 93, 14, 191, 112, 33, 210, 131, 52, 229, 150, 71, 248, 169, 90, 11, 188, 109, 30, 207, 128, 49, 226, 147, 68, 245, 166, 87, 8, 185, 106, 27, 204, 125, 46, 223, 144, 65, 242, 163, 84, 5, 182, 103, 24, 201, 122, 43, 220, 141, 62, 239, 160, 81, 2, 179, 100, 21, 198, 119, 40, 217, 138, 59, 236, 157, 78, 255, 176, 97, 18, 195, 116, 37, 214, 135, 56, 233, 154, 75, 252, 173, 94, 15, 192, 113, 34, 211, 132, 53, 230, 151, 72, 249, 170, 91, 12, 189, 110, 31, 208, 129, 50, 227, 148, 69, 246, 167, 88, 9, 186, 107, 28, 205, 126, 47, 224, 145, 66, 243, 164, 85, 6, 183, 104, 25, 202, 123, 44, 221, 142, 63, 240, 161, 82, 3, 180, 101, 22, 199, 120, 41, 218, 139, 60, 237, 158, 79, 0, 177, 98, 19, 196, 117, 38, 215]},
+    "binary_is_encoded": false,
+    "binary_len": 455,
+    "binary_file": "binary/frame_ints_w8_n255.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [255, 234, 155, 76, 253, 174, 95, 16, 193, 114, 35, 212, 133, 54, 231, 152, 73, 250, 171, 92, 13, 190, 111, 32, 209, 130, 51, 228, 149, 70, 247, 168, 89, 10, 187, 108, 29, 206, 127, 48, 225, 146, 67, 244, 165, 86, 7, 184, 105, 26, 203, 124, 45, 222, 143, 64, 241, 162, 83, 4, 181, 102, 23, 200, 121, 42, 219, 140, 61, 238, 159, 80, 1, 178, 99, 20, 197, 118, 39, 216, 137, 58, 235, 156, 77, 254, 175, 96, 17, 194, 115, 36, 213, 134, 55, 232, 153, 74, 251, 172, 93, 14, 191, 112, 33, 210, 131, 52, 229, 150, 71, 248, 169, 90, 11, 188, 109, 30, 207, 128, 49, 226, 147, 68, 245, 166, 87, 8, 185, 106, 27, 204, 125, 46, 223, 144, 65, 242, 163, 84, 5, 182, 103, 24, 201, 122, 43, 220, 141, 62, 239, 160, 81, 2, 179, 100, 21, 198, 119, 40, 217, 138, 59, 236, 157, 78, 255, 176, 97, 18, 195, 116, 37, 214, 135, 56, 233, 154, 75, 252, 173, 94, 15, 192, 113, 34, 211, 132, 53, 230, 151, 72, 249, 170, 91, 12, 189, 110, 31, 208, 129, 50, 227, 148, 69, 246, 167, 88, 9, 186, 107, 28, 205, 126, 47, 224, 145, 66, 243, 164, 85, 6, 183, 104, 25, 202, 123, 44, 221, 142, 63, 240, 161, 82, 3, 180, 101, 22, 199, 120, 41, 218, 139, 60, 237, 158, 79, 0, 177, 98, 19, 196, 117, 38, 215]},
+      "bytes_len": 259,
+      "bytes_file": "frames/frame_ints_w8_n255.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w8_n256",
+    "description": "256 unsigned ints of 8 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [255, 234, 155, 76, 253, 174, 95, 16, 193, 114, 35, 212, 133, 54, 231, 152, 73, 250, 171, 92, 13, 190, 111, 32, 209, 130, 51, 228, 149, 70, 247, 168, 89, 10, 187, 108, 29, 206, 127, 48, 225, 146, 67, 244, 165, 86, 7, 184, 105, 26, 203, 124, 45, 222, 143, 64, 241, 162, 83, 4, 181, 102, 23, 200, 121, 42, 219, 140, 61, 238, 159, 80, 1, 178, 99, 20, 197, 118, 39, 216, 137, 58, 235, 156, 77, 254, 175, 96, 17, 194, 115, 36, 213, 134, 55, 232, 153, 74, 251, 172, 93, 14, 191, 112, 33, 210, 131, 52, 229, 150, 71, 248, 169, 90, 11, 188, 109, 30, 207, 128, 49, 226, 147, 68, 245, 166, 87, 8, 185, 106, 27, 204, 125, 46, 223, 144, 65, 242, 163, 84, 5, 182, 103, 24, 201, 122, 43, 220, 141, 62, 239, 160, 81, 2, 179, 100, 21, 198, 119, 40, 217, 138, 59, 236, 157, 78, 255, 176, 97, 18, 195, 116, 37, 214, 135, 56, 233, 154, 75, 252, 173, 94, 15, 192, 113, 34, 211, 132, 53, 230, 151, 72, 249, 170, 91, 12, 189, 110, 31, 208, 129, 50, 227, 148, 69, 246, 167, 88, 9, 186, 107, 28, 205, 126, 47, 224, 145, 66, 243, 164, 85, 6, 183, 104, 25, 202, 123, 44, 221, 142, 63, 240, 161, 82, 3, 180, 101, 22, 199, 120, 41, 218, 139, 60, 237, 158, 79, 0, 177, 98, 19, 196, 117, 38, 215, 136]},
+    "binary_is_encoded": false,
+    "binary_len": 457,
+    "binary_file": "binary/frame_ints_w8_n256.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [255, 234, 155, 76, 253, 174, 95, 16, 193, 114, 35, 212, 133, 54, 231, 152, 73, 250, 171, 92, 13, 190, 111, 32, 209, 130, 51, 228, 149, 70, 247, 168, 89, 10, 187, 108, 29, 206, 127, 48, 225, 146, 67, 244, 165, 86, 7, 184, 105, 26, 203, 124, 45, 222, 143, 64, 241, 162, 83, 4, 181, 102, 23, 200, 121, 42, 219, 140, 61, 238, 159, 80, 1, 178, 99, 20, 197, 118, 39, 216, 137, 58, 235, 156, 77, 254, 175, 96, 17, 194, 115, 36, 213, 134, 55, 232, 153, 74, 251, 172, 93, 14, 191, 112, 33, 210, 131, 52, 229, 150, 71, 248, 169, 90, 11, 188, 109, 30, 207, 128, 49, 226, 147, 68, 245, 166, 87, 8, 185, 106, 27, 204, 125, 46, 223, 144, 65, 242, 163, 84, 5, 182, 103, 24, 201, 122, 43, 220, 141, 62, 239, 160, 81, 2, 179, 100, 21, 198, 119, 40, 217, 138, 59, 236, 157, 78, 255, 176, 97, 18, 195, 116, 37, 214, 135, 56, 233, 154, 75, 252, 173, 94, 15, 192, 113, 34, 211, 132, 53, 230, 151, 72, 249, 170, 91, 12, 189, 110, 31, 208, 129, 50, 227, 148, 69, 246, 167, 88, 9, 186, 107, 28, 205, 126, 47, 224, 145, 66, 243, 164, 85, 6, 183, 104, 25, 202, 123, 44, 221, 142, 63, 240, 161, 82, 3, 180, 101, 22, 199, 120, 41, 218, 139, 60, 237, 158, 79, 0, 177, 98, 19, 196, 117, 38, 215, 136]},
+      "bytes_len": 260,
+      "bytes_file": "frames/frame_ints_w8_n256.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w8_n257",
+    "description": "257 unsigned ints of 8 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [255, 234, 155, 76, 253, 174, 95, 16, 193, 114, 35, 212, 133, 54, 231, 152, 73, 250, 171, 92, 13, 190, 111, 32, 209, 130, 51, 228, 149, 70, 247, 168, 89, 10, 187, 108, 29, 206, 127, 48, 225, 146, 67, 244, 165, 86, 7, 184, 105, 26, 203, 124, 45, 222, 143, 64, 241, 162, 83, 4, 181, 102, 23, 200, 121, 42, 219, 140, 61, 238, 159, 80, 1, 178, 99, 20, 197, 118, 39, 216, 137, 58, 235, 156, 77, 254, 175, 96, 17, 194, 115, 36, 213, 134, 55, 232, 153, 74, 251, 172, 93, 14, 191, 112, 33, 210, 131, 52, 229, 150, 71, 248, 169, 90, 11, 188, 109, 30, 207, 128, 49, 226, 147, 68, 245, 166, 87, 8, 185, 106, 27, 204, 125, 46, 223, 144, 65, 242, 163, 84, 5, 182, 103, 24, 201, 122, 43, 220, 141, 62, 239, 160, 81, 2, 179, 100, 21, 198, 119, 40, 217, 138, 59, 236, 157, 78, 255, 176, 97, 18, 195, 116, 37, 214, 135, 56, 233, 154, 75, 252, 173, 94, 15, 192, 113, 34, 211, 132, 53, 230, 151, 72, 249, 170, 91, 12, 189, 110, 31, 208, 129, 50, 227, 148, 69, 246, 167, 88, 9, 186, 107, 28, 205, 126, 47, 224, 145, 66, 243, 164, 85, 6, 183, 104, 25, 202, 123, 44, 221, 142, 63, 240, 161, 82, 3, 180, 101, 22, 199, 120, 41, 218, 139, 60, 237, 158, 79, 0, 177, 98, 19, 196, 117, 38, 215, 136, 57]},
+    "binary_is_encoded": false,
+    "binary_len": 458,
+    "binary_file": "binary/frame_ints_w8_n257.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [255, 234, 155, 76, 253, 174, 95, 16, 193, 114, 35, 212, 133, 54, 231, 152, 73, 250, 171, 92, 13, 190, 111, 32, 209, 130, 51, 228, 149, 70, 247, 168, 89, 10, 187, 108, 29, 206, 127, 48, 225, 146, 67, 244, 165, 86, 7, 184, 105, 26, 203, 124, 45, 222, 143, 64, 241, 162, 83, 4, 181, 102, 23, 200, 121, 42, 219, 140, 61, 238, 159, 80, 1, 178, 99, 20, 197, 118, 39, 216, 137, 58, 235, 156, 77, 254, 175, 96, 17, 194, 115, 36, 213, 134, 55, 232, 153, 74, 251, 172, 93, 14, 191, 112, 33, 210, 131, 52, 229, 150, 71, 248, 169, 90, 11, 188, 109, 30, 207, 128, 49, 226, 147, 68, 245, 166, 87, 8, 185, 106, 27, 204, 125, 46, 223, 144, 65, 242, 163, 84, 5, 182, 103, 24, 201, 122, 43, 220, 141, 62, 239, 160, 81, 2, 179, 100, 21, 198, 119, 40, 217, 138, 59, 236, 157, 78, 255, 176, 97, 18, 195, 116, 37, 214, 135, 56, 233, 154, 75, 252, 173, 94, 15, 192, 113, 34, 211, 132, 53, 230, 151, 72, 249, 170, 91, 12, 189, 110, 31, 208, 129, 50, 227, 148, 69, 246, 167, 88, 9, 186, 107, 28, 205, 126, 47, 224, 145, 66, 243, 164, 85, 6, 183, 104, 25, 202, 123, 44, 221, 142, 63, 240, 161, 82, 3, 180, 101, 22, 199, 120, 41, 218, 139, 60, 237, 158, 79, 0, 177, 98, 19, 196, 117, 38, 215, 136, 57]},
+      "bytes_len": 261,
+      "bytes_file": "frames/frame_ints_w8_n257.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w13_n255",
+    "description": "255 unsigned ints of 13 bits: count, the width byte, then no full group: numbers one after another.",
+    "value": {"t": "ints", "v": [8191, 2538, 923, 7500, 5885, 4270, 2655, 1040, 7617, 6002, 4387, 2772, 1157, 7734, 6119, 4504, 2889, 1274, 7851, 6236, 4621, 3006, 1391, 7968, 6353, 4738, 3123, 1508, 8085, 6470, 4855, 3240, 1625, 10, 6587, 4972, 3357, 1742, 127, 6704, 5089, 3474, 1859, 244, 6821, 5206, 3591, 1976, 361, 6938, 5323, 3708, 2093, 478, 7055, 5440, 3825, 2210, 595, 7172, 5557, 3942, 2327, 712, 7289, 5674, 4059, 2444, 829, 7406, 5791, 4176, 2561, 946, 7523, 5908, 4293, 2678, 1063, 7640, 6025, 4410, 2795, 1180, 7757, 6142, 4527, 2912, 1297, 7874, 6259, 4644, 3029, 1414, 7991, 6376, 4761, 3146, 1531, 8108, 6493, 4878, 3263, 1648, 33, 6610, 4995, 3380, 1765, 150, 6727, 5112, 3497, 1882, 267, 6844, 5229, 3614, 1999, 384, 6961, 5346, 3731, 2116, 501, 7078, 5463, 3848, 2233, 618, 7195, 5580, 3965, 2350, 735, 7312, 5697, 4082, 2467, 852, 7429, 5814, 4199, 2584, 969, 7546, 5931, 4316, 2701, 1086, 7663, 6048, 4433, 2818, 1203, 7780, 6165, 4550, 2935, 1320, 7897, 6282, 4667, 3052, 1437, 8014, 6399, 4784, 3169, 1554, 8131, 6516, 4901, 3286, 1671, 56, 6633, 5018, 3403, 1788, 173, 6750, 5135, 3520, 1905, 290, 6867, 5252, 3637, 2022, 407, 6984, 5369, 3754, 2139, 524, 7101, 5486, 3871, 2256, 641, 7218, 5603, 3988, 2373, 758, 7335, 5720, 4105, 2490, 875, 7452, 5837, 4222, 2607, 992, 7569, 5954, 4339, 2724, 1109, 7686, 6071, 4456, 2841, 1226, 7803, 6188, 4573, 2958, 1343, 7920, 6305, 4690, 3075, 1460, 8037, 6422, 4807, 3192, 1577, 8154, 6539, 4924, 3309, 1694, 79, 6656, 5041, 3426, 1811, 196, 6773, 5158, 3543]},
+    "binary_is_encoded": false,
+    "binary_len": 515,
+    "binary_file": "binary/frame_ints_w13_n255.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [8191, 2538, 923, 7500, 5885, 4270, 2655, 1040, 7617, 6002, 4387, 2772, 1157, 7734, 6119, 4504, 2889, 1274, 7851, 6236, 4621, 3006, 1391, 7968, 6353, 4738, 3123, 1508, 8085, 6470, 4855, 3240, 1625, 10, 6587, 4972, 3357, 1742, 127, 6704, 5089, 3474, 1859, 244, 6821, 5206, 3591, 1976, 361, 6938, 5323, 3708, 2093, 478, 7055, 5440, 3825, 2210, 595, 7172, 5557, 3942, 2327, 712, 7289, 5674, 4059, 2444, 829, 7406, 5791, 4176, 2561, 946, 7523, 5908, 4293, 2678, 1063, 7640, 6025, 4410, 2795, 1180, 7757, 6142, 4527, 2912, 1297, 7874, 6259, 4644, 3029, 1414, 7991, 6376, 4761, 3146, 1531, 8108, 6493, 4878, 3263, 1648, 33, 6610, 4995, 3380, 1765, 150, 6727, 5112, 3497, 1882, 267, 6844, 5229, 3614, 1999, 384, 6961, 5346, 3731, 2116, 501, 7078, 5463, 3848, 2233, 618, 7195, 5580, 3965, 2350, 735, 7312, 5697, 4082, 2467, 852, 7429, 5814, 4199, 2584, 969, 7546, 5931, 4316, 2701, 1086, 7663, 6048, 4433, 2818, 1203, 7780, 6165, 4550, 2935, 1320, 7897, 6282, 4667, 3052, 1437, 8014, 6399, 4784, 3169, 1554, 8131, 6516, 4901, 3286, 1671, 56, 6633, 5018, 3403, 1788, 173, 6750, 5135, 3520, 1905, 290, 6867, 5252, 3637, 2022, 407, 6984, 5369, 3754, 2139, 524, 7101, 5486, 3871, 2256, 641, 7218, 5603, 3988, 2373, 758, 7335, 5720, 4105, 2490, 875, 7452, 5837, 4222, 2607, 992, 7569, 5954, 4339, 2724, 1109, 7686, 6071, 4456, 2841, 1226, 7803, 6188, 4573, 2958, 1343, 7920, 6305, 4690, 3075, 1460, 8037, 6422, 4807, 3192, 1577, 8154, 6539, 4924, 3309, 1694, 79, 6656, 5041, 3426, 1811, 196, 6773, 5158, 3543]},
+      "bytes_len": 419,
+      "bytes_file": "frames/frame_ints_w13_n255.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w13_n256",
+    "description": "256 unsigned ints of 13 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [8191, 2538, 923, 7500, 5885, 4270, 2655, 1040, 7617, 6002, 4387, 2772, 1157, 7734, 6119, 4504, 2889, 1274, 7851, 6236, 4621, 3006, 1391, 7968, 6353, 4738, 3123, 1508, 8085, 6470, 4855, 3240, 1625, 10, 6587, 4972, 3357, 1742, 127, 6704, 5089, 3474, 1859, 244, 6821, 5206, 3591, 1976, 361, 6938, 5323, 3708, 2093, 478, 7055, 5440, 3825, 2210, 595, 7172, 5557, 3942, 2327, 712, 7289, 5674, 4059, 2444, 829, 7406, 5791, 4176, 2561, 946, 7523, 5908, 4293, 2678, 1063, 7640, 6025, 4410, 2795, 1180, 7757, 6142, 4527, 2912, 1297, 7874, 6259, 4644, 3029, 1414, 7991, 6376, 4761, 3146, 1531, 8108, 6493, 4878, 3263, 1648, 33, 6610, 4995, 3380, 1765, 150, 6727, 5112, 3497, 1882, 267, 6844, 5229, 3614, 1999, 384, 6961, 5346, 3731, 2116, 501, 7078, 5463, 3848, 2233, 618, 7195, 5580, 3965, 2350, 735, 7312, 5697, 4082, 2467, 852, 7429, 5814, 4199, 2584, 969, 7546, 5931, 4316, 2701, 1086, 7663, 6048, 4433, 2818, 1203, 7780, 6165, 4550, 2935, 1320, 7897, 6282, 4667, 3052, 1437, 8014, 6399, 4784, 3169, 1554, 8131, 6516, 4901, 3286, 1671, 56, 6633, 5018, 3403, 1788, 173, 6750, 5135, 3520, 1905, 290, 6867, 5252, 3637, 2022, 407, 6984, 5369, 3754, 2139, 524, 7101, 5486, 3871, 2256, 641, 7218, 5603, 3988, 2373, 758, 7335, 5720, 4105, 2490, 875, 7452, 5837, 4222, 2607, 992, 7569, 5954, 4339, 2724, 1109, 7686, 6071, 4456, 2841, 1226, 7803, 6188, 4573, 2958, 1343, 7920, 6305, 4690, 3075, 1460, 8037, 6422, 4807, 3192, 1577, 8154, 6539, 4924, 3309, 1694, 79, 6656, 5041, 3426, 1811, 196, 6773, 5158, 3543, 1928]},
+    "binary_is_encoded": false,
+    "binary_len": 517,
+    "binary_file": "binary/frame_ints_w13_n256.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [8191, 2538, 923, 7500, 5885, 4270, 2655, 1040, 7617, 6002, 4387, 2772, 1157, 7734, 6119, 4504, 2889, 1274, 7851, 6236, 4621, 3006, 1391, 7968, 6353, 4738, 3123, 1508, 8085, 6470, 4855, 3240, 1625, 10, 6587, 4972, 3357, 1742, 127, 6704, 5089, 3474, 1859, 244, 6821, 5206, 3591, 1976, 361, 6938, 5323, 3708, 2093, 478, 7055, 5440, 3825, 2210, 595, 7172, 5557, 3942, 2327, 712, 7289, 5674, 4059, 2444, 829, 7406, 5791, 4176, 2561, 946, 7523, 5908, 4293, 2678, 1063, 7640, 6025, 4410, 2795, 1180, 7757, 6142, 4527, 2912, 1297, 7874, 6259, 4644, 3029, 1414, 7991, 6376, 4761, 3146, 1531, 8108, 6493, 4878, 3263, 1648, 33, 6610, 4995, 3380, 1765, 150, 6727, 5112, 3497, 1882, 267, 6844, 5229, 3614, 1999, 384, 6961, 5346, 3731, 2116, 501, 7078, 5463, 3848, 2233, 618, 7195, 5580, 3965, 2350, 735, 7312, 5697, 4082, 2467, 852, 7429, 5814, 4199, 2584, 969, 7546, 5931, 4316, 2701, 1086, 7663, 6048, 4433, 2818, 1203, 7780, 6165, 4550, 2935, 1320, 7897, 6282, 4667, 3052, 1437, 8014, 6399, 4784, 3169, 1554, 8131, 6516, 4901, 3286, 1671, 56, 6633, 5018, 3403, 1788, 173, 6750, 5135, 3520, 1905, 290, 6867, 5252, 3637, 2022, 407, 6984, 5369, 3754, 2139, 524, 7101, 5486, 3871, 2256, 641, 7218, 5603, 3988, 2373, 758, 7335, 5720, 4105, 2490, 875, 7452, 5837, 4222, 2607, 992, 7569, 5954, 4339, 2724, 1109, 7686, 6071, 4456, 2841, 1226, 7803, 6188, 4573, 2958, 1343, 7920, 6305, 4690, 3075, 1460, 8037, 6422, 4807, 3192, 1577, 8154, 6539, 4924, 3309, 1694, 79, 6656, 5041, 3426, 1811, 196, 6773, 5158, 3543, 1928]},
+      "bytes_len": 420,
+      "bytes_file": "frames/frame_ints_w13_n256.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w13_n257",
+    "description": "257 unsigned ints of 13 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [8191, 2538, 923, 7500, 5885, 4270, 2655, 1040, 7617, 6002, 4387, 2772, 1157, 7734, 6119, 4504, 2889, 1274, 7851, 6236, 4621, 3006, 1391, 7968, 6353, 4738, 3123, 1508, 8085, 6470, 4855, 3240, 1625, 10, 6587, 4972, 3357, 1742, 127, 6704, 5089, 3474, 1859, 244, 6821, 5206, 3591, 1976, 361, 6938, 5323, 3708, 2093, 478, 7055, 5440, 3825, 2210, 595, 7172, 5557, 3942, 2327, 712, 7289, 5674, 4059, 2444, 829, 7406, 5791, 4176, 2561, 946, 7523, 5908, 4293, 2678, 1063, 7640, 6025, 4410, 2795, 1180, 7757, 6142, 4527, 2912, 1297, 7874, 6259, 4644, 3029, 1414, 7991, 6376, 4761, 3146, 1531, 8108, 6493, 4878, 3263, 1648, 33, 6610, 4995, 3380, 1765, 150, 6727, 5112, 3497, 1882, 267, 6844, 5229, 3614, 1999, 384, 6961, 5346, 3731, 2116, 501, 7078, 5463, 3848, 2233, 618, 7195, 5580, 3965, 2350, 735, 7312, 5697, 4082, 2467, 852, 7429, 5814, 4199, 2584, 969, 7546, 5931, 4316, 2701, 1086, 7663, 6048, 4433, 2818, 1203, 7780, 6165, 4550, 2935, 1320, 7897, 6282, 4667, 3052, 1437, 8014, 6399, 4784, 3169, 1554, 8131, 6516, 4901, 3286, 1671, 56, 6633, 5018, 3403, 1788, 173, 6750, 5135, 3520, 1905, 290, 6867, 5252, 3637, 2022, 407, 6984, 5369, 3754, 2139, 524, 7101, 5486, 3871, 2256, 641, 7218, 5603, 3988, 2373, 758, 7335, 5720, 4105, 2490, 875, 7452, 5837, 4222, 2607, 992, 7569, 5954, 4339, 2724, 1109, 7686, 6071, 4456, 2841, 1226, 7803, 6188, 4573, 2958, 1343, 7920, 6305, 4690, 3075, 1460, 8037, 6422, 4807, 3192, 1577, 8154, 6539, 4924, 3309, 1694, 79, 6656, 5041, 3426, 1811, 196, 6773, 5158, 3543, 1928, 313]},
+    "binary_is_encoded": false,
+    "binary_len": 519,
+    "binary_file": "binary/frame_ints_w13_n257.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [8191, 2538, 923, 7500, 5885, 4270, 2655, 1040, 7617, 6002, 4387, 2772, 1157, 7734, 6119, 4504, 2889, 1274, 7851, 6236, 4621, 3006, 1391, 7968, 6353, 4738, 3123, 1508, 8085, 6470, 4855, 3240, 1625, 10, 6587, 4972, 3357, 1742, 127, 6704, 5089, 3474, 1859, 244, 6821, 5206, 3591, 1976, 361, 6938, 5323, 3708, 2093, 478, 7055, 5440, 3825, 2210, 595, 7172, 5557, 3942, 2327, 712, 7289, 5674, 4059, 2444, 829, 7406, 5791, 4176, 2561, 946, 7523, 5908, 4293, 2678, 1063, 7640, 6025, 4410, 2795, 1180, 7757, 6142, 4527, 2912, 1297, 7874, 6259, 4644, 3029, 1414, 7991, 6376, 4761, 3146, 1531, 8108, 6493, 4878, 3263, 1648, 33, 6610, 4995, 3380, 1765, 150, 6727, 5112, 3497, 1882, 267, 6844, 5229, 3614, 1999, 384, 6961, 5346, 3731, 2116, 501, 7078, 5463, 3848, 2233, 618, 7195, 5580, 3965, 2350, 735, 7312, 5697, 4082, 2467, 852, 7429, 5814, 4199, 2584, 969, 7546, 5931, 4316, 2701, 1086, 7663, 6048, 4433, 2818, 1203, 7780, 6165, 4550, 2935, 1320, 7897, 6282, 4667, 3052, 1437, 8014, 6399, 4784, 3169, 1554, 8131, 6516, 4901, 3286, 1671, 56, 6633, 5018, 3403, 1788, 173, 6750, 5135, 3520, 1905, 290, 6867, 5252, 3637, 2022, 407, 6984, 5369, 3754, 2139, 524, 7101, 5486, 3871, 2256, 641, 7218, 5603, 3988, 2373, 758, 7335, 5720, 4105, 2490, 875, 7452, 5837, 4222, 2607, 992, 7569, 5954, 4339, 2724, 1109, 7686, 6071, 4456, 2841, 1226, 7803, 6188, 4573, 2958, 1343, 7920, 6305, 4690, 3075, 1460, 8037, 6422, 4807, 3192, 1577, 8154, 6539, 4924, 3309, 1694, 79, 6656, 5041, 3426, 1811, 196, 6773, 5158, 3543, 1928, 313]},
+      "bytes_len": 422,
+      "bytes_file": "frames/frame_ints_w13_n257.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w32_n3",
+    "description": "3 unsigned ints of 32 bits: count, the width byte, then no full group: numbers one after another.",
+    "text": "[4294967295,2654448106,1013916571]",
+    "text_is_written": true,
+    "value": {"t": "ints", "v": [4294967295, 2654448106, 1013916571]},
+    "binary_is_encoded": false,
+    "binary": "53444154010a03feffffff1fd4a7bde313b68ef9c607",
+    "binary_len": 22,
+    "binary_file": "binary/frame_ints_w32_n3.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [4294967295, 2654448106, 1013916571]},
+      "bytes": "0320ffffffffeaa9379e9b236f3c00",
+      "bytes_len": 15,
+      "bytes_file": "frames/frame_ints_w32_n3.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w32_n256",
+    "description": "256 unsigned ints of 32 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [4294967295, 2654448106, 1013916571, 3668352332, 2027820797, 387289262, 3041725023, 1401193488, 4055629249, 2415097714, 774566179, 3429001940, 1788470405, 147938870, 2802374631, 1161843096, 3816278857, 2175747322, 535215787, 3189651548, 1549120013, 4203555774, 2563024239, 922492704, 3576928465, 1936396930, 295865395, 2950301156, 1309769621, 3964205382, 2323673847, 683142312, 3337578073, 1697046538, 56515003, 2710950764, 1070419229, 3724854990, 2084323455, 443791920, 3098227681, 1457696146, 4112131907, 2471600372, 831068837, 3485504598, 1844973063, 204441528, 2858877289, 1218345754, 3872781515, 2232249980, 591718445, 3246154206, 1605622671, 4260058432, 2619526897, 978995362, 3633431123, 1992899588, 352368053, 3006803814, 1366272279, 4020708040, 2380176505, 739644970, 3394080731, 1753549196, 113017661, 2767453422, 1126921887, 3781357648, 2140826113, 500294578, 3154730339, 1514198804, 4168634565, 2528103030, 887571495, 3542007256, 1901475721, 260944186, 2915379947, 1274848412, 3929284173, 2288752638, 648221103, 3302656864, 1662125329, 21593794, 2676029555, 1035498020, 3689933781, 2049402246, 408870711, 3063306472, 1422774937, 4077210698, 2436679163, 796147628, 3450583389, 1810051854, 169520319, 2823956080, 1183424545, 3837860306, 2197328771, 556797236, 3211232997, 1570701462, 4225137223, 2584605688, 944074153, 3598509914, 1957978379, 317446844, 2971882605, 1331351070, 3985786831, 2345255296, 704723761, 3359159522, 1718627987, 78096452, 2732532213, 1092000678, 3746436439, 2105904904, 465373369, 3119809130, 1479277595, 4133713356, 2493181821, 852650286, 3507086047, 1866554512, 226022977, 2880458738, 1239927203, 3894362964, 2253831429, 613299894, 3267735655, 1627204120, 4281639881, 2641108346, 1000576811, 3655012572, 2014481037, 373949502, 3028385263, 1387853728, 4042289489, 2401757954, 761226419, 3415662180, 1775130645, 134599110, 2789034871, 1148503336, 3802939097, 2162407562, 521876027, 3176311788, 1535780253, 4190216014, 2549684479, 909152944, 3563588705, 1923057170, 282525635, 2936961396, 1296429861, 3950865622, 2310334087, 669802552, 3324238313, 1683706778, 43175243, 2697611004, 1057079469, 3711515230, 2070983695, 430452160, 3084887921, 1444356386, 4098792147, 2458260612, 817729077, 3472164838, 1831633303, 191101768, 2845537529, 1205005994, 3859441755, 2218910220, 578378685, 3232814446, 1592282911, 4246718672, 2606187137, 965655602, 3620091363, 1979559828, 339028293, 2993464054, 1352932519, 4007368280, 2366836745, 726305210, 3380740971, 1740209436, 99677901, 2754113662, 1113582127, 3768017888, 2127486353, 486954818, 3141390579, 1500859044, 4155294805, 2514763270, 874231735, 3528667496, 1888135961, 247604426, 2902040187, 1261508652, 3915944413, 2275412878, 634881343, 3289317104, 1648785569, 8254034, 2662689795, 1022158260, 3676594021, 2036062486, 395530951, 3049966712, 1409435177, 4063870938, 2423339403, 782807868, 3437243629, 1796712094, 156180559, 2810616320, 1170084785, 3824520546, 2183989011, 543457476, 3197893237, 1557361702, 4211797463, 2571265928]},
+    "binary_is_encoded": false,
+    "binary_len": 1281,
+    "binary_file": "binary/frame_ints_w32_n256.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [4294967295, 2654448106, 1013916571, 3668352332, 2027820797, 387289262, 3041725023, 1401193488, 4055629249, 2415097714, 774566179, 3429001940, 1788470405, 147938870, 2802374631, 1161843096, 3816278857, 2175747322, 535215787, 3189651548, 1549120013, 4203555774, 2563024239, 922492704, 3576928465, 1936396930, 295865395, 2950301156, 1309769621, 3964205382, 2323673847, 683142312, 3337578073, 1697046538, 56515003, 2710950764, 1070419229, 3724854990, 2084323455, 443791920, 3098227681, 1457696146, 4112131907, 2471600372, 831068837, 3485504598, 1844973063, 204441528, 2858877289, 1218345754, 3872781515, 2232249980, 591718445, 3246154206, 1605622671, 4260058432, 2619526897, 978995362, 3633431123, 1992899588, 352368053, 3006803814, 1366272279, 4020708040, 2380176505, 739644970, 3394080731, 1753549196, 113017661, 2767453422, 1126921887, 3781357648, 2140826113, 500294578, 3154730339, 1514198804, 4168634565, 2528103030, 887571495, 3542007256, 1901475721, 260944186, 2915379947, 1274848412, 3929284173, 2288752638, 648221103, 3302656864, 1662125329, 21593794, 2676029555, 1035498020, 3689933781, 2049402246, 408870711, 3063306472, 1422774937, 4077210698, 2436679163, 796147628, 3450583389, 1810051854, 169520319, 2823956080, 1183424545, 3837860306, 2197328771, 556797236, 3211232997, 1570701462, 4225137223, 2584605688, 944074153, 3598509914, 1957978379, 317446844, 2971882605, 1331351070, 3985786831, 2345255296, 704723761, 3359159522, 1718627987, 78096452, 2732532213, 1092000678, 3746436439, 2105904904, 465373369, 3119809130, 1479277595, 4133713356, 2493181821, 852650286, 3507086047, 1866554512, 226022977, 2880458738, 1239927203, 3894362964, 2253831429, 613299894, 3267735655, 1627204120, 4281639881, 2641108346, 1000576811, 3655012572, 2014481037, 373949502, 3028385263, 1387853728, 4042289489, 2401757954, 761226419, 3415662180, 1775130645, 134599110, 2789034871, 1148503336, 3802939097, 2162407562, 521876027, 3176311788, 1535780253, 4190216014, 2549684479, 909152944, 3563588705, 1923057170, 282525635, 2936961396, 1296429861, 3950865622, 2310334087, 669802552, 3324238313, 1683706778, 43175243, 2697611004, 1057079469, 3711515230, 2070983695, 430452160, 3084887921, 1444356386, 4098792147, 2458260612, 817729077, 3472164838, 1831633303, 191101768, 2845537529, 1205005994, 3859441755, 2218910220, 578378685, 3232814446, 1592282911, 4246718672, 2606187137, 965655602, 3620091363, 1979559828, 339028293, 2993464054, 1352932519, 4007368280, 2366836745, 726305210, 3380740971, 1740209436, 99677901, 2754113662, 1113582127, 3768017888, 2127486353, 486954818, 3141390579, 1500859044, 4155294805, 2514763270, 874231735, 3528667496, 1888135961, 247604426, 2902040187, 1261508652, 3915944413, 2275412878, 634881343, 3289317104, 1648785569, 8254034, 2662689795, 1022158260, 3676594021, 2036062486, 395530951, 3049966712, 1409435177, 4063870938, 2423339403, 782807868, 3437243629, 1796712094, 156180559, 2810616320, 1170084785, 3824520546, 2183989011, 543457476, 3197893237, 1557361702, 4211797463, 2571265928]},
+      "bytes_len": 1028,
+      "bytes_file": "frames/frame_ints_w32_n256.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w32_n257",
+    "description": "257 unsigned ints of 32 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
+    "value": {"t": "ints", "v": [4294967295, 2654448106, 1013916571, 3668352332, 2027820797, 387289262, 3041725023, 1401193488, 4055629249, 2415097714, 774566179, 3429001940, 1788470405, 147938870, 2802374631, 1161843096, 3816278857, 2175747322, 535215787, 3189651548, 1549120013, 4203555774, 2563024239, 922492704, 3576928465, 1936396930, 295865395, 2950301156, 1309769621, 3964205382, 2323673847, 683142312, 3337578073, 1697046538, 56515003, 2710950764, 1070419229, 3724854990, 2084323455, 443791920, 3098227681, 1457696146, 4112131907, 2471600372, 831068837, 3485504598, 1844973063, 204441528, 2858877289, 1218345754, 3872781515, 2232249980, 591718445, 3246154206, 1605622671, 4260058432, 2619526897, 978995362, 3633431123, 1992899588, 352368053, 3006803814, 1366272279, 4020708040, 2380176505, 739644970, 3394080731, 1753549196, 113017661, 2767453422, 1126921887, 3781357648, 2140826113, 500294578, 3154730339, 1514198804, 4168634565, 2528103030, 887571495, 3542007256, 1901475721, 260944186, 2915379947, 1274848412, 3929284173, 2288752638, 648221103, 3302656864, 1662125329, 21593794, 2676029555, 1035498020, 3689933781, 2049402246, 408870711, 3063306472, 1422774937, 4077210698, 2436679163, 796147628, 3450583389, 1810051854, 169520319, 2823956080, 1183424545, 3837860306, 2197328771, 556797236, 3211232997, 1570701462, 4225137223, 2584605688, 944074153, 3598509914, 1957978379, 317446844, 2971882605, 1331351070, 3985786831, 2345255296, 704723761, 3359159522, 1718627987, 78096452, 2732532213, 1092000678, 3746436439, 2105904904, 465373369, 3119809130, 1479277595, 4133713356, 2493181821, 852650286, 3507086047, 1866554512, 226022977, 2880458738, 1239927203, 3894362964, 2253831429, 613299894, 3267735655, 1627204120, 4281639881, 2641108346, 1000576811, 3655012572, 2014481037, 373949502, 3028385263, 1387853728, 4042289489, 2401757954, 761226419, 3415662180, 1775130645, 134599110, 2789034871, 1148503336, 3802939097, 2162407562, 521876027, 3176311788, 1535780253, 4190216014, 2549684479, 909152944, 3563588705, 1923057170, 282525635, 2936961396, 1296429861, 3950865622, 2310334087, 669802552, 3324238313, 1683706778, 43175243, 2697611004, 1057079469, 3711515230, 2070983695, 430452160, 3084887921, 1444356386, 4098792147, 2458260612, 817729077, 3472164838, 1831633303, 191101768, 2845537529, 1205005994, 3859441755, 2218910220, 578378685, 3232814446, 1592282911, 4246718672, 2606187137, 965655602, 3620091363, 1979559828, 339028293, 2993464054, 1352932519, 4007368280, 2366836745, 726305210, 3380740971, 1740209436, 99677901, 2754113662, 1113582127, 3768017888, 2127486353, 486954818, 3141390579, 1500859044, 4155294805, 2514763270, 874231735, 3528667496, 1888135961, 247604426, 2902040187, 1261508652, 3915944413, 2275412878, 634881343, 3289317104, 1648785569, 8254034, 2662689795, 1022158260, 3676594021, 2036062486, 395530951, 3049966712, 1409435177, 4063870938, 2423339403, 782807868, 3437243629, 1796712094, 156180559, 2810616320, 1170084785, 3824520546, 2183989011, 543457476, 3197893237, 1557361702, 4211797463, 2571265928, 930734393]},
+    "binary_is_encoded": false,
+    "binary_len": 1286,
+    "binary_file": "binary/frame_ints_w32_n257.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [4294967295, 2654448106, 1013916571, 3668352332, 2027820797, 387289262, 3041725023, 1401193488, 4055629249, 2415097714, 774566179, 3429001940, 1788470405, 147938870, 2802374631, 1161843096, 3816278857, 2175747322, 535215787, 3189651548, 1549120013, 4203555774, 2563024239, 922492704, 3576928465, 1936396930, 295865395, 2950301156, 1309769621, 3964205382, 2323673847, 683142312, 3337578073, 1697046538, 56515003, 2710950764, 1070419229, 3724854990, 2084323455, 443791920, 3098227681, 1457696146, 4112131907, 2471600372, 831068837, 3485504598, 1844973063, 204441528, 2858877289, 1218345754, 3872781515, 2232249980, 591718445, 3246154206, 1605622671, 4260058432, 2619526897, 978995362, 3633431123, 1992899588, 352368053, 3006803814, 1366272279, 4020708040, 2380176505, 739644970, 3394080731, 1753549196, 113017661, 2767453422, 1126921887, 3781357648, 2140826113, 500294578, 3154730339, 1514198804, 4168634565, 2528103030, 887571495, 3542007256, 1901475721, 260944186, 2915379947, 1274848412, 3929284173, 2288752638, 648221103, 3302656864, 1662125329, 21593794, 2676029555, 1035498020, 3689933781, 2049402246, 408870711, 3063306472, 1422774937, 4077210698, 2436679163, 796147628, 3450583389, 1810051854, 169520319, 2823956080, 1183424545, 3837860306, 2197328771, 556797236, 3211232997, 1570701462, 4225137223, 2584605688, 944074153, 3598509914, 1957978379, 317446844, 2971882605, 1331351070, 3985786831, 2345255296, 704723761, 3359159522, 1718627987, 78096452, 2732532213, 1092000678, 3746436439, 2105904904, 465373369, 3119809130, 1479277595, 4133713356, 2493181821, 852650286, 3507086047, 1866554512, 226022977, 2880458738, 1239927203, 3894362964, 2253831429, 613299894, 3267735655, 1627204120, 4281639881, 2641108346, 1000576811, 3655012572, 2014481037, 373949502, 3028385263, 1387853728, 4042289489, 2401757954, 761226419, 3415662180, 1775130645, 134599110, 2789034871, 1148503336, 3802939097, 2162407562, 521876027, 3176311788, 1535780253, 4190216014, 2549684479, 909152944, 3563588705, 1923057170, 282525635, 2936961396, 1296429861, 3950865622, 2310334087, 669802552, 3324238313, 1683706778, 43175243, 2697611004, 1057079469, 3711515230, 2070983695, 430452160, 3084887921, 1444356386, 4098792147, 2458260612, 817729077, 3472164838, 1831633303, 191101768, 2845537529, 1205005994, 3859441755, 2218910220, 578378685, 3232814446, 1592282911, 4246718672, 2606187137, 965655602, 3620091363, 1979559828, 339028293, 2993464054, 1352932519, 4007368280, 2366836745, 726305210, 3380740971, 1740209436, 99677901, 2754113662, 1113582127, 3768017888, 2127486353, 486954818, 3141390579, 1500859044, 4155294805, 2514763270, 874231735, 3528667496, 1888135961, 247604426, 2902040187, 1261508652, 3915944413, 2275412878, 634881343, 3289317104, 1648785569, 8254034, 2662689795, 1022158260, 3676594021, 2036062486, 395530951, 3049966712, 1409435177, 4063870938, 2423339403, 782807868, 3437243629, 1796712094, 156180559, 2810616320, 1170084785, 3824520546, 2183989011, 543457476, 3197893237, 1557361702, 4211797463, 2571265928, 930734393]},
+      "bytes_len": 1032,
+      "bytes_file": "frames/frame_ints_w32_n257.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w33_n5",
+    "description": "5 unsigned ints of 33 bits: wider than 32 bits never use lanes, the numbers follow one another.",
+    "text": "[8589934591,2654448106,5308883867,7963319628,2027820797]",
+    "text_is_written": true,
+    "value": {"t": "ints", "v": [8589934591, 2654448106, 5308883867, 7963319628, 2027820797]},
+    "binary_is_encoded": false,
+    "binary": "53444154010a05feffffff3fd4a7bde313b68ef9c62798f5b4aa3bfadbf08d0f",
+    "binary_len": 32,
+    "binary_file": "binary/frame_ints_w33_n5.sdat",
+    "frame": {
+      "schema": "ulong_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [8589934591, 2654448106, 5308883867, 7963319628, 2027820797]},
+      "bytes": "0521ffffffffd5536f3c6d8ebcf164ea34d5de6fe18d0700",
+      "bytes_len": 24,
+      "bytes_file": "frames/frame_ints_w33_n5.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w33_n257",
+    "description": "257 unsigned ints of 33 bits: wider than 32 bits never use lanes, the numbers follow one another.",
+    "value": {"t": "ints", "v": [8589934591, 2654448106, 5308883867, 7963319628, 2027820797, 4682256558, 7336692319, 1401193488, 4055629249, 6710065010, 774566179, 3429001940, 6083437701, 147938870, 2802374631, 5456810392, 8111246153, 2175747322, 4830183083, 7484618844, 1549120013, 4203555774, 6857991535, 922492704, 3576928465, 6231364226, 295865395, 2950301156, 5604736917, 8259172678, 2323673847, 4978109608, 7632545369, 1697046538, 4351482299, 7005918060, 1070419229, 3724854990, 6379290751, 443791920, 3098227681, 5752663442, 8407099203, 2471600372, 5126036133, 7780471894, 1844973063, 4499408824, 7153844585, 1218345754, 3872781515, 6527217276, 591718445, 3246154206, 5900589967, 8555025728, 2619526897, 5273962658, 7928398419, 1992899588, 4647335349, 7301771110, 1366272279, 4020708040, 6675143801, 739644970, 3394080731, 6048516492, 113017661, 2767453422, 5421889183, 8076324944, 2140826113, 4795261874, 7449697635, 1514198804, 4168634565, 6823070326, 887571495, 3542007256, 6196443017, 260944186, 2915379947, 5569815708, 8224251469, 2288752638, 4943188399, 7597624160, 1662125329, 4316561090, 6970996851, 1035498020, 3689933781, 6344369542, 408870711, 3063306472, 5717742233, 8372177994, 2436679163, 5091114924, 7745550685, 1810051854, 4464487615, 7118923376, 1183424545, 3837860306, 6492296067, 556797236, 3211232997, 5865668758, 8520104519, 2584605688, 5239041449, 7893477210, 1957978379, 4612414140, 7266849901, 1331351070, 3985786831, 6640222592, 704723761, 3359159522, 6013595283, 78096452, 2732532213, 5386967974, 8041403735, 2105904904, 4760340665, 7414776426, 1479277595, 4133713356, 6788149117, 852650286, 3507086047, 6161521808, 226022977, 2880458738, 5534894499, 8189330260, 2253831429, 4908267190, 7562702951, 1627204120, 4281639881, 6936075642, 1000576811, 3655012572, 6309448333, 373949502, 3028385263, 5682821024, 8337256785, 2401757954, 5056193715, 7710629476, 1775130645, 4429566406, 7084002167, 1148503336, 3802939097, 6457374858, 521876027, 3176311788, 5830747549, 8485183310, 2549684479, 5204120240, 7858556001, 1923057170, 4577492931, 7231928692, 1296429861, 3950865622, 6605301383, 669802552, 3324238313, 5978674074, 43175243, 2697611004, 5352046765, 8006482526, 2070983695, 4725419456, 7379855217, 1444356386, 4098792147, 6753227908, 817729077, 3472164838, 6126600599, 191101768, 2845537529, 5499973290, 8154409051, 2218910220, 4873345981, 7527781742, 1592282911, 4246718672, 6901154433, 965655602, 3620091363, 6274527124, 339028293, 2993464054, 5647899815, 8302335576, 2366836745, 5021272506, 7675708267, 1740209436, 4394645197, 7049080958, 1113582127, 3768017888, 6422453649, 486954818, 3141390579, 5795826340, 8450262101, 2514763270, 5169199031, 7823634792, 1888135961, 4542571722, 7197007483, 1261508652, 3915944413, 6570380174, 634881343, 3289317104, 5943752865, 8254034, 2662689795, 5317125556, 7971561317, 2036062486, 4690498247, 7344934008, 1409435177, 4063870938, 6718306699, 782807868, 3437243629, 6091679390, 156180559, 2810616320, 5465052081, 8119487842, 2183989011, 4838424772, 7492860533, 1557361702, 4211797463, 6866233224, 930734393]},
+    "binary_is_encoded": false,
+    "binary_len": 1289,
+    "binary_file": "binary/frame_ints_w33_n257.sdat",
+    "frame": {
+      "schema": "ulong_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [8589934591, 2654448106, 5308883867, 7963319628, 2027820797, 4682256558, 7336692319, 1401193488, 4055629249, 6710065010, 774566179, 3429001940, 6083437701, 147938870, 2802374631, 5456810392, 8111246153, 2175747322, 4830183083, 7484618844, 1549120013, 4203555774, 6857991535, 922492704, 3576928465, 6231364226, 295865395, 2950301156, 5604736917, 8259172678, 2323673847, 4978109608, 7632545369, 1697046538, 4351482299, 7005918060, 1070419229, 3724854990, 6379290751, 443791920, 3098227681, 5752663442, 8407099203, 2471600372, 5126036133, 7780471894, 1844973063, 4499408824, 7153844585, 1218345754, 3872781515, 6527217276, 591718445, 3246154206, 5900589967, 8555025728, 2619526897, 5273962658, 7928398419, 1992899588, 4647335349, 7301771110, 1366272279, 4020708040, 6675143801, 739644970, 3394080731, 6048516492, 113017661, 2767453422, 5421889183, 8076324944, 2140826113, 4795261874, 7449697635, 1514198804, 4168634565, 6823070326, 887571495, 3542007256, 6196443017, 260944186, 2915379947, 5569815708, 8224251469, 2288752638, 4943188399, 7597624160, 1662125329, 4316561090, 6970996851, 1035498020, 3689933781, 6344369542, 408870711, 3063306472, 5717742233, 8372177994, 2436679163, 5091114924, 7745550685, 1810051854, 4464487615, 7118923376, 1183424545, 3837860306, 6492296067, 556797236, 3211232997, 5865668758, 8520104519, 2584605688, 5239041449, 7893477210, 1957978379, 4612414140, 7266849901, 1331351070, 3985786831, 6640222592, 704723761, 3359159522, 6013595283, 78096452, 2732532213, 5386967974, 8041403735, 2105904904, 4760340665, 7414776426, 1479277595, 4133713356, 6788149117, 852650286, 3507086047, 6161521808, 226022977, 2880458738, 5534894499, 8189330260, 2253831429, 4908267190, 7562702951, 1627204120, 4281639881, 6936075642, 1000576811, 3655012572, 6309448333, 373949502, 3028385263, 5682821024, 8337256785, 2401757954, 5056193715, 7710629476, 1775130645, 4429566406, 7084002167, 1148503336, 3802939097, 6457374858, 521876027, 3176311788, 5830747549, 8485183310, 2549684479, 5204120240, 7858556001, 1923057170, 4577492931, 7231928692, 1296429861, 3950865622, 6605301383, 669802552, 3324238313, 5978674074, 43175243, 2697611004, 5352046765, 8006482526, 2070983695, 4725419456, 7379855217, 1444356386, 4098792147, 6753227908, 817729077, 3472164838, 6126600599, 191101768, 2845537529, 5499973290, 8154409051, 2218910220, 4873345981, 7527781742, 1592282911, 4246718672, 6901154433, 965655602, 3620091363, 6274527124, 339028293, 2993464054, 5647899815, 8302335576, 2366836745, 5021272506, 7675708267, 1740209436, 4394645197, 7049080958, 1113582127, 3768017888, 6422453649, 486954818, 3141390579, 5795826340, 8450262101, 2514763270, 5169199031, 7823634792, 1888135961, 4542571722, 7197007483, 1261508652, 3915944413, 6570380174, 634881343, 3289317104, 5943752865, 8254034, 2662689795, 5317125556, 7971561317, 2036062486, 4690498247, 7344934008, 1409435177, 4063870938, 6718306699, 782807868, 3437243629, 6091679390, 156180559, 2810616320, 5465052081, 8119487842, 2183989011, 4838424772, 7492860533, 1557361702, 4211797463, 6866233224, 930734393]},
+      "bytes_len": 1065,
+      "bytes_file": "frames/frame_ints_w33_n257.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w48_n5",
+    "description": "5 unsigned ints of 48 bits: wider than 32 bits never use lanes, the numbers follow one another.",
+    "text": "[281474976710655,2654448106,5308883867,7963319628,10617755389]",
+    "text_is_written": true,
+    "value": {"t": "ints", "v": [281474976710655, 2654448106, 5308883867, 7963319628, 10617755389]},
+    "binary_is_encoded": false,
+    "binary": "53444154010a05feffffffffff7fd4a7bde313b68ef9c62798f5b4aa3bfadbf08d4f",
+    "binary_len": 34,
+    "binary_file": "binary/frame_ints_w48_n5.sdat",
+    "frame": {
+      "schema": "ulong_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [281474976710655, 2654448106, 5308883867, 7963319628, 10617755389]},
+      "bytes": "0530ffffffffffffeaa9379e00009b236f3c01004c9da6da0100fd16de78020000",
+      "bytes_len": 33,
+      "bytes_file": "frames/frame_ints_w48_n5.frame"
+    }
+  },
+  {
+    "name": "frame_ints_w63_n5",
+    "description": "5 unsigned ints of 63 bits: wider than 32 bits never use lanes, the numbers follow one another.",
+    "text": "[9223372036854775807,2654448106,5308883867,7963319628,10617755389]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "int", "v": "9223372036854775807"}, {"t": "int", "v": "2654448106"}, {"t": "int", "v": "5308883867"}, {"t": "int", "v": "7963319628"}, {"t": "int", "v": "10617755389"}]},
+    "binary_is_encoded": false,
+    "binary": "53444154010a05feffffffffffffffff01d4a7bde313b68ef9c62798f5b4aa3bfadbf08d4f",
+    "binary_len": 37,
+    "binary_file": "binary/frame_ints_w63_n5.sdat",
+    "frame": {
+      "schema": "ulong_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"defs\":{}}",
+      "value": {"t": "list", "v": [{"t": "int", "v": "9223372036854775807"}, {"t": "int", "v": "2654448106"}, {"t": "int", "v": "5308883867"}, {"t": "int", "v": "7963319628"}, {"t": "int", "v": "10617755389"}]},
+      "bytes": "053fffffffffffffff7ff5d41b4f000000c0e6c81b4f00000080a9d3543b000000d06fe18d270000000000",
+      "bytes_len": 43,
+      "bytes_file": "frames/frame_ints_w63_n5.frame"
+    }
+  },
+  {
+    "name": "frame_ints_empty",
+    "description": "No ints: count 0, width 1, no bytes.",
+    "text": "[]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": []},
+    "binary_is_encoded": false,
+    "binary": "53444154010a00",
+    "binary_len": 7,
+    "binary_file": "binary/frame_ints_empty.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "list", "v": []},
+      "bytes": "000100",
+      "bytes_len": 3,
+      "bytes_file": "frames/frame_ints_empty.frame"
+    }
+  },
+  {
+    "name": "frame_ints_one",
+    "description": "One int: count 1, width 1.",
+    "text": "[1]",
+    "text_is_written": true,
+    "value": {"t": "ints", "v": [1]},
+    "binary_is_encoded": false,
+    "binary": "53444154010a0102",
+    "binary_len": 8,
+    "binary_file": "binary/frame_ints_one.sdat",
+    "frame": {
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [1]},
+      "bytes": "01010100",
+      "bytes_len": 4,
+      "bytes_file": "frames/frame_ints_one.frame"
+    }
+  },
+  {
+    "name": "frame_ints_signed",
+    "description": "Signed ints are zigzagged before they are packed (-1 is 1, 1 is 2, -3 is 5, 70000 is 140000), and the width is that of the biggest.",
+    "text": "[-3,5,-70000,0,-2147483648,2147483647]",
+    "text_is_written": true,
+    "value": {"t": "ints", "v": [-3, 5, -70000, 0, -2147483648, 2147483647]},
+    "binary_is_encoded": false,
+    "binary": "53444154010a06050adfc50800ffffffff0ffeffffff0f",
+    "binary_len": 23,
+    "binary_file": "binary/frame_ints_signed.sdat",
+    "frame": {
+      "schema": "int_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647}},\"defs\":{}}",
+      "value": {"t": "ints", "v": [-3, 5, -70000, 0, -2147483648, 2147483647]},
+      "bytes": "0620050000000a000000df22020000000000fffffffffeffffff00",
+      "bytes_len": 27,
+      "bytes_file": "frames/frame_ints_signed.frame"
+    }
+  },
+  {
+    "name": "io_two_messages",
+    "description": "Each message is a little-endian u32 length, then that many bytes (here a binary document). The stream ends cleanly after a whole frame, where a read of the next length finds no byte.",
+    "io": {
+      "bytes": "1400000053444154010702056f70050970696e67036e03021400000053444154010702056f700509706f6e67036e0302",
+      "bytes_len": 48,
+      "bytes_file": "io/io_two_messages.stream",
+      "messages": ["53444154010702056f70050970696e67036e0302", "53444154010702056f700509706f6e67036e0302"],
+      "end": "clean"
+    }
+  },
+  {
+    "name": "io_no_messages",
+    "description": "An empty stream ends cleanly at once: no error, no frame.",
+    "io": {
+      "bytes": "",
+      "bytes_len": 0,
+      "bytes_file": "io/io_no_messages.stream",
+      "messages": [],
+      "end": "clean"
+    }
+  },
+  {
+    "name": "io_empty_frame",
+    "description": "A frame may be zero bytes long; it is still a frame, and the stream goes on.",
+    "io": {
+      "bytes": "00000000",
+      "bytes_len": 4,
+      "bytes_file": "io/io_empty_frame.stream",
+      "messages": [""],
+      "end": "clean"
+    }
+  },
+  {
+    "name": "io_long_message",
+    "description": "A 300-byte message: the length is 0x0000012c, four bytes always (never a varint).",
+    "io": {
+      "bytes_len": 312,
+      "bytes_file": "io/io_long_message.stream",
+      "messages": ["534441540109ac02070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707"],
+      "end": "clean"
+    }
+  },
+  {
+    "name": "text_empty",
+    "description": "Nothing at all is not a value.",
+    "error": {
+      "form": "text",
+      "input": "",
+      "code": "SD0001",
+      "line": 1,
+      "col": 1,
+      "message": "expected a value, found the end of the file"
+    }
+  },
+  {
+    "name": "text_only_whitespace",
+    "description": "Whitespace only.",
+    "error": {
+      "form": "text",
+      "input": "  ",
+      "code": "SD0001",
+      "line": 1,
+      "col": 3,
+      "message": "expected a value, found the end of the file"
+    }
+  },
+  {
+    "name": "text_missing_value",
+    "description": "A comma with no value before it.",
+    "error": {
+      "form": "text",
+      "input": "[1,,2]",
+      "code": "SD0001",
+      "line": 1,
+      "col": 4,
+      "message": "expected a value"
+    }
+  },
+  {
+    "name": "text_missing_comma",
+    "description": "Two values without a comma.",
+    "error": {
+      "form": "text",
+      "input": "[1 2]",
+      "code": "SD0001",
+      "line": 1,
+      "col": 4,
+      "message": "expected `,` or `]`"
+    }
+  },
+  {
+    "name": "text_missing_colon",
+    "description": "A key without a colon.",
+    "error": {
+      "form": "text",
+      "input": "{\"a\" 1}",
+      "code": "SD0001",
+      "line": 1,
+      "col": 6,
+      "message": "expected `:` after the key"
+    }
+  },
+  {
+    "name": "text_missing_map_value",
+    "description": "A key with no value.",
+    "error": {
+      "form": "text",
+      "input": "{a:}",
+      "code": "SD0001",
+      "line": 1,
+      "col": 4,
+      "message": "expected a value"
+    }
+  },
+  {
+    "name": "text_missing_map_comma",
+    "description": "Two entries without a comma.",
+    "error": {
+      "form": "text",
+      "input": "{a:1 b:2}",
+      "code": "SD0001",
+      "line": 1,
+      "col": 6,
+      "message": "expected `,` or `}`"
+    }
+  },
+  {
+    "name": "text_number_key",
+    "description": "A key must be a string or an identifier.",
+    "error": {
+      "form": "text",
+      "input": "{1:2}",
+      "code": "SD0001",
+      "line": 1,
+      "col": 2,
+      "message": "expected a key"
+    }
+  },
+  {
+    "name": "text_duplicate_key",
+    "description": "Keys are unique: the second `a` is the error.",
+    "error": {
+      "form": "text",
+      "input": "{a:1,a:2}",
+      "code": "SD0001",
+      "line": 1,
+      "col": 6,
+      "message": "`a` is already set in this object"
+    }
+  },
+  {
+    "name": "text_unclosed_list",
+    "description": "A list never closed.",
+    "error": {
+      "form": "text",
+      "input": "[",
+      "code": "SD0001",
+      "line": 1,
+      "col": 2,
+      "message": "expected a value, found the end of the file"
+    }
+  },
+  {
+    "name": "text_extra_closer",
+    "description": "Text after the value.",
+    "error": {
+      "form": "text",
+      "input": "[]]",
+      "code": "SD0001",
+      "line": 1,
+      "col": 3,
+      "message": "unexpected text after the value"
+    }
+  },
+  {
+    "name": "text_two_values",
+    "description": "Two values in one document.",
+    "error": {
+      "form": "text",
+      "input": "1 2",
+      "code": "SD0001",
+      "line": 1,
+      "col": 3,
+      "message": "unexpected text after the value"
+    }
+  },
+  {
+    "name": "text_unclosed_string",
+    "description": "A string never closed.",
+    "error": {
+      "form": "text",
+      "input": "\"abc",
+      "code": "SD0001",
+      "line": 1,
+      "col": 1,
+      "message": "unclosed string"
+    }
+  },
+  {
+    "name": "text_single_quotes",
+    "description": "Strings use double quotes.",
+    "error": {
+      "form": "text",
+      "input": "'x'",
+      "code": "SD0001",
+      "line": 1,
+      "col": 1,
+      "message": "strings use double quotes"
+    }
+  },
+  {
+    "name": "text_raw_newline",
+    "description": "A line break inside a string must be written `\\n`.",
+    "error": {
+      "form": "text",
+      "input": "\"a\nb\"",
+      "code": "SD0001",
+      "line": 1,
+      "col": 3,
+      "message": "line break in a string (write `\\n`)"
+    }
+  },
+  {
+    "name": "text_raw_tab",
+    "description": "A control character inside a string must be escaped.",
+    "error": {
+      "form": "text",
+      "input": "\"\t\"",
+      "code": "SD0001",
+      "line": 1,
+      "col": 2,
+      "message": "control character in a string"
+    }
+  },
+  {
+    "name": "text_unknown_escape",
+    "description": "An escape that is not defined.",
+    "error": {
+      "form": "text",
+      "input": "\"\\x\"",
+      "code": "SD0001",
+      "line": 1,
+      "col": 2,
+      "message": "unknown escape (`\\n`, `\\t`, `\\\"`, `\\\\`, `\\uXXXX`, ...)"
+    }
+  },
+  {
+    "name": "text_lone_surrogate",
+    "description": "A `\\u` surrogate without its pair.",
+    "error": {
+      "form": "text",
+      "input": "\"\\ud800\"",
+      "code": "SD0001",
+      "line": 1,
+      "col": 2,
+      "message": "unpaired surrogate in `\\u` escape"
+    }
+  },
+  {
+    "name": "text_unclosed_comment",
+    "description": "A block comment never closed.",
+    "error": {
+      "form": "text",
+      "input": "/* x",
+      "code": "SD0001",
+      "line": 1,
+      "col": 1,
+      "message": "unclosed `/*` comment"
+    }
+  },
+  {
+    "name": "text_leading_zero",
+    "description": "Numbers do not start with 0.",
+    "error": {
+      "form": "text",
+      "input": "01",
+      "code": "SD0001",
+      "line": 1,
+      "col": 1,
+      "message": "numbers don't start with 0"
+    }
+  },
+  {
+    "name": "text_plus_sign",
+    "description": "A number has no leading plus.",
+    "error": {
+      "form": "text",
+      "input": "+1",
+      "code": "SD0001",
+      "line": 1,
+      "col": 1,
+      "message": "expected a value"
+    }
+  },
+  {
+    "name": "text_no_digits_after_point",
+    "description": "A fraction needs digits.",
+    "error": {
+      "form": "text",
+      "input": "1.",
+      "code": "SD0001",
+      "line": 1,
+      "col": 3,
+      "message": "expected digits after `.`, found the end of the file"
+    }
+  },
+  {
+    "name": "text_no_exponent_digits",
+    "description": "An exponent needs digits.",
+    "error": {
+      "form": "text",
+      "input": "1e",
+      "code": "SD0001",
+      "line": 1,
+      "col": 3,
+      "message": "expected digits in the exponent, found the end of the file"
+    }
+  },
+  {
+    "name": "text_nan_word",
+    "description": "NaN and Infinity are no text values.",
+    "error": {
+      "form": "text",
+      "input": "NaN",
+      "code": "SD0001",
+      "line": 1,
+      "col": 1,
+      "message": "expected a value"
+    }
+  },
+  {
+    "name": "text_hex_number",
+    "description": "Hexadecimal numbers are not text.",
+    "error": {
+      "form": "text",
+      "input": "0x10",
+      "code": "SD0001",
+      "line": 1,
+      "col": 2,
+      "message": "unexpected text after the value"
+    }
+  },
+  {
+    "name": "text_line_and_column",
+    "description": "The position is a 1-based line and column (columns count characters): here line 3.",
+    "error": {
+      "form": "text",
+      "input": "{\n  name: \"x\",\n  size: ,\n}",
+      "code": "SD0001",
+      "line": 3,
+      "col": 9,
+      "message": "expected a value"
+    }
+  },
+  {
+    "name": "text_too_deep",
+    "description": "Nesting deeper than 256 levels is an error at the opening bracket that passes it (here column 257).",
+    "error": {
+      "form": "text",
+      "input": "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[",
+      "code": "SD0001",
+      "line": 1,
+      "col": 257,
+      "message": "nested deeper than 256 levels"
+    }
+  },
+  {
+    "name": "schema_type_mismatch",
+    "description": "SD0002: a value of another type than its field's, at the value.",
+    "error": {
+      "form": "text_schema",
+      "schema": "limits",
+      "input": "{\n  copies: \"three\",\n  owner: \"@user:7\",\n  file: \"@file:a.png\",\n}",
+      "diagnostics": [{"code": "SD0002", "line": 2, "col": 11, "path": "copies", "message": "expected an integer, found \"three\""}]
+    }
+  },
+  {
+    "name": "schema_bare_id",
+    "description": "SD0003: an id where a reference `@kind:id` goes.",
+    "error": {
+      "form": "text_schema",
+      "schema": "limits",
+      "input": "{\n  copies: 3,\n  owner: \"7\",\n  file: \"@file:a.png\",\n}",
+      "diagnostics": [{"code": "SD0003", "line": 3, "col": 10, "path": "owner", "message": "`7`: name it by a reference — `@user:7`"}]
+    }
+  },
+  {
+    "name": "schema_wrong_kind",
+    "description": "SD0004: a reference of another kind than the field takes.",
+    "error": {
+      "form": "text_schema",
+      "schema": "limits",
+      "input": "{\n  copies: 3,\n  owner: \"@user:7\",\n  file: \"@doc:a.png\",\n}",
+      "diagnostics": [{"code": "SD0004", "line": 4, "col": 9, "path": "file", "message": "`@doc:a.png` is a reference to doc — this takes `@file:`"}]
+    }
+  },
+  {
+    "name": "schema_unknown_field",
+    "description": "SD0005: an unknown key, reported at the key (not its value).",
+    "error": {
+      "form": "text_schema",
+      "schema": "limits",
+      "input": "{\n  copies: 3,\n  colour: 1,\n  owner: \"@user:7\",\n  file: \"@file:a.png\",\n}",
+      "diagnostics": [{"code": "SD0005", "line": 3, "col": 3, "path": "colour", "message": "unknown field `colour` (expected `copies`, `owner`, `file`)"}]
+    }
+  },
+  {
+    "name": "schema_missing_field",
+    "description": "SD0006: a required field that is not there, reported at the object.",
+    "error": {
+      "form": "text_schema",
+      "schema": "limits",
+      "input": "{\n  copies: 3,\n  owner: \"@user:7\",\n}",
+      "diagnostics": [{"code": "SD0006", "line": 1, "col": 1, "path": "(root)", "message": "missing `file`"}]
+    }
+  },
+  {
+    "name": "schema_out_of_range",
+    "description": "SD0007: a number outside its field's `range` (1..=99 here).",
+    "error": {
+      "form": "text_schema",
+      "schema": "limits",
+      "input": "{\n  copies: 300,\n  owner: \"@user:7\",\n  file: \"@file:a.png\",\n}",
+      "diagnostics": [{"code": "SD0007", "line": 2, "col": 11, "path": "copies", "message": "300 is out of range (1..=99)"}]
+    }
+  },
+  {
+    "name": "schema_bad_typed",
+    "description": "SD0008: a string spelled as a typed value that is not one (a kind is lower case).",
+    "error": {
+      "form": "text_schema",
+      "schema": "limits",
+      "input": "{\n  copies: 3,\n  owner: \"@user:7\",\n  file: \"@File:a.png\",\n}",
+      "diagnostics": [{"code": "SD0008", "line": 4, "col": 9, "path": "file", "message": "`File` isn't a kind (lower case letters, digits and `_`: `user`, `doc`, `file`, ...)"}]
+    }
+  },
+  {
+    "name": "schema_bad_id",
+    "description": "SD0010: a reference whose id is not its kind's id type (a user's id is a number).",
+    "error": {
+      "form": "text_schema",
+      "schema": "limits",
+      "input": "{\n  copies: 3,\n  owner: \"@user:abc\",\n  file: \"@file:a.png\",\n}",
+      "diagnostics": [{"code": "SD0010", "line": 3, "col": 10, "path": "owner", "message": "`@user:abc`: `abc` isn't a user id (expected an unsigned integer)"}]
+    }
+  },
+  {
+    "name": "schema_several",
+    "description": "Every problem is reported, in file order.",
+    "error": {
+      "form": "text_schema",
+      "schema": "limits",
+      "input": "{\n  copies: 300,\n  owner: \"@user:7\",\n  file: \"@doc:a.png\",\n}",
+      "diagnostics": [{"code": "SD0007", "line": 2, "col": 11, "path": "copies", "message": "300 is out of range (1..=99)"}, {"code": "SD0004", "line": 4, "col": 9, "path": "file", "message": "`@doc:a.png` is a reference to doc — this takes `@file:`"}]
+    }
+  },
+  {
+    "name": "binary_empty",
+    "description": "No bytes at all.",
+    "error": {
+      "form": "binary",
+      "input": "",
+      "kind": "bad_magic",
+      "offset": 0,
+      "message": "not Substrate Data (no `SDAT` header)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_short_magic",
+    "description": "Fewer than the four magic bytes.",
+    "error": {
+      "form": "binary",
+      "input": "534441",
+      "kind": "bad_magic",
+      "offset": 0,
+      "message": "not Substrate Data (no `SDAT` header)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_wrong_magic",
+    "description": "Four bytes that are not `SDAT`.",
+    "error": {
+      "form": "binary",
+      "input": "584441540100",
+      "kind": "bad_magic",
+      "offset": 0,
+      "message": "not Substrate Data (no `SDAT` header)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_no_version",
+    "description": "The magic and nothing after it.",
+    "error": {
+      "form": "binary",
+      "input": "53444154",
+      "kind": "unexpected_end",
+      "offset": 4,
+      "message": "unexpected end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_version_0",
+    "description": "Only version 1 is read; any other version byte is an error at byte 5.",
+    "error": {
+      "form": "binary",
+      "input": "5344415400",
+      "kind": "bad_version",
+      "offset": 5,
+      "message": "Substrate Data version 0, this reads version 1",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_version_2",
+    "description": "Only version 1 is read; any other version byte is an error at byte 5.",
+    "error": {
+      "form": "binary",
+      "input": "5344415402",
+      "kind": "bad_version",
+      "offset": 5,
+      "message": "Substrate Data version 2, this reads version 1",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_version_255",
+    "description": "Only version 1 is read; any other version byte is an error at byte 5.",
+    "error": {
+      "form": "binary",
+      "input": "53444154ff",
+      "kind": "bad_version",
+      "offset": 5,
+      "message": "Substrate Data version 255, this reads version 1",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_header_only",
+    "description": "A header and no value.",
+    "error": {
+      "form": "binary",
+      "input": "5344415401",
+      "kind": "unexpected_end",
+      "offset": 5,
+      "message": "unexpected end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_cut_float",
+    "description": "A float with three of its eight bytes.",
+    "error": {
+      "form": "binary",
+      "input": "534441540104000000",
+      "kind": "unexpected_end",
+      "offset": 6,
+      "message": "unexpected end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_cut_float32",
+    "description": "A 32-bit float with one of its four bytes.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010c00",
+      "kind": "unexpected_end",
+      "offset": 6,
+      "message": "unexpected end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_cut_int",
+    "description": "An int whose varint continues past the end.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010380",
+      "kind": "bad_varint",
+      "offset": 7,
+      "message": "a varint cut short or longer than 64 bits",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_cut_bytes",
+    "description": "Bytes that say length 2 and have 1.",
+    "error": {
+      "form": "binary",
+      "input": "5344415401090201",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "bytes past the end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_cut_string",
+    "description": "A new string of 2 bytes with 1 left.",
+    "error": {
+      "form": "binary",
+      "input": "5344415401050541",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "bytes past the end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_list_count_past_end",
+    "description": "A list of 5 items with none left.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010605",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "length 5 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_trailing_bytes",
+    "description": "A whole value followed by one more byte.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010000",
+      "kind": "trailing_bytes",
+      "offset": 6,
+      "message": "bytes after the value",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_ints_trailing",
+    "description": "A packed int list shorter than the bytes after it.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010a02020300",
+      "kind": "trailing_bytes",
+      "offset": 9,
+      "message": "bytes after the value",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_string_not_utf8",
+    "description": "A string whose bytes are not UTF-8.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010505fffe",
+      "kind": "bad_utf8",
+      "offset": 7,
+      "message": "a string isn't UTF-8",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_string_index_missing",
+    "description": "A string index (here 1) with nothing in the table yet.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010502",
+      "kind": "bad_string_index",
+      "offset": 7,
+      "message": "string 1 isn't in the table",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_string_index_after_end",
+    "description": "Index 1 when only one string is in the table.",
+    "error": {
+      "form": "binary",
+      "input": "534441540106020503610502",
+      "kind": "bad_string_index",
+      "offset": 12,
+      "message": "string 1 isn't in the table",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_ref_bad_kind",
+    "description": "A reference kind must be lower case.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010803580361",
+      "kind": "bad_reference",
+      "offset": 6,
+      "message": "`X` isn't a kind (lower case letters, digits and `_`: `user`, `doc`, `file`, ...)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_ref_empty_id",
+    "description": "A reference id may not be empty.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010805616201",
+      "kind": "bad_reference",
+      "offset": 9,
+      "message": "`` isn't a reference's id",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_ref_space_in_id",
+    "description": "A reference id may not hold whitespace.",
+    "error": {
+      "form": "binary",
+      "input": "5344415401080561620320",
+      "kind": "bad_reference",
+      "offset": 9,
+      "message": "` ` isn't a reference's id",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_ref_control_in_id",
+    "description": "A reference id may not hold control characters.",
+    "error": {
+      "form": "binary",
+      "input": "5344415401080561620300",
+      "kind": "bad_reference",
+      "offset": 9,
+      "message": "`\u0000` isn't a reference's id",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_stream_length_past_end",
+    "description": "A stream that says 9 bytes and has 1.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010b0900000001",
+      "kind": "bad_length",
+      "offset": 10,
+      "message": "bytes past the end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_stream_trailing",
+    "description": "A stream body longer than its items: the offset is within the stream's own body.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010b020000000001",
+      "kind": "trailing_bytes",
+      "offset": 1,
+      "message": "bytes after the value",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_map_key_missing",
+    "description": "A map of one entry with no key.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010701",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "length 1 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_ints_count_past_end",
+    "description": "A packed int list of 2 items with one varint.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010a0202",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "length 2 past the end (1 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_unknown_tag_15",
+    "description": "A tag byte that is none of 0..=14.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010f",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 15",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_unknown_tag_200",
+    "description": "A tag byte that is none of 0..=14.",
+    "error": {
+      "form": "binary",
+      "input": "5344415401c8",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 200",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_unknown_tag_255",
+    "description": "A tag byte that is none of 0..=14.",
+    "error": {
+      "form": "binary",
+      "input": "5344415401ff",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 255",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_list_count_huge",
+    "description": "A list that says 2^63-1 items: an error, no allocation.",
+    "error": {
+      "form": "binary",
+      "input": "534441540106ffffffffffffffff7f",
+      "kind": "bad_length",
+      "offset": 15,
+      "message": "length 9223372036854775807 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_map_count_huge",
+    "description": "A map that says 2^63-1 entries.",
+    "error": {
+      "form": "binary",
+      "input": "534441540107ffffffffffffffff7f",
+      "kind": "bad_length",
+      "offset": 15,
+      "message": "length 9223372036854775807 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_ints_count_huge",
+    "description": "A packed int list that says 2^63-1 items.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010affffffffffffffff7f",
+      "kind": "bad_length",
+      "offset": 15,
+      "message": "length 9223372036854775807 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_floats_count_huge",
+    "description": "A packed float list that says 2^63-1 items.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010dffffffffffffffff7f",
+      "kind": "bad_length",
+      "offset": 15,
+      "message": "length 9223372036854775807 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_varint_tenth_byte_two",
+    "description": "A varint's tenth byte may only be 0 or 1: 2 would not fit 64 bits.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010380808080808080808002",
+      "kind": "bad_varint",
+      "offset": 16,
+      "message": "a varint cut short or longer than 64 bits",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_varint_eleven_bytes",
+    "description": "A varint longer than ten bytes.",
+    "error": {
+      "form": "binary",
+      "input": "5344415401038080808080808080808001",
+      "kind": "bad_varint",
+      "offset": 16,
+      "message": "a varint cut short or longer than 64 bits",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_varint_never_ends",
+    "description": "A varint whose bytes all continue.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010380808080808080808080808080",
+      "kind": "bad_varint",
+      "offset": 16,
+      "message": "a varint cut short or longer than 64 bits",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_depth_257_lists",
+    "description": "Lists nested 257 deep: more than MAX_DEPTH (256).",
+    "error": {
+      "form": "binary",
+      "input": "53444154010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060106010601060100",
+      "kind": "too_deep",
+      "offset": 519,
+      "message": "nested deeper than 256 levels",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_depth_257_maps",
+    "description": "Maps nested 257 deep.",
+    "error": {
+      "form": "binary",
+      "input": "53444154010701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b0701036b00",
+      "kind": "too_deep",
+      "offset": 1031,
+      "message": "nested deeper than 256 levels",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_depth_256",
+    "description": "Lists nested exactly 256 deep (MAX_DEPTH) decode; the innermost holds null.",
+    "binary_len": 518,
+    "binary_file": "binary/binary_depth_256.sdat"
+  },
+  {
+    "name": "frame_empty",
+    "description": "No bytes: not even the table length.",
+    "error": {
+      "form": "frame",
+      "schema": "uint",
+      "shape": "{\"root\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"defs\":{}}",
+      "input": ""
+    }
+  },
+  {
+    "name": "frame_trailer_continues",
+    "description": "The backwards table length never ends (every byte continues).",
+    "error": {
+      "form": "frame",
+      "schema": "uint",
+      "shape": "{\"root\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"defs\":{}}",
+      "input": "8080"
+    }
+  },
+  {
+    "name": "frame_trailer_too_long",
+    "description": "A backwards varint longer than ten bytes.",
+    "error": {
+      "form": "frame",
+      "schema": "uint",
+      "shape": "{\"root\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"defs\":{}}",
+      "input": "8080808080808080808080"
+    }
+  },
+  {
+    "name": "frame_table_longer_than_frame",
+    "description": "The table length says 100 bytes in a frame of two.",
+    "error": {
+      "form": "frame",
+      "schema": "uint",
+      "shape": "{\"root\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"defs\":{}}",
+      "input": "0064"
+    }
+  },
+  {
+    "name": "frame_body_left_over",
+    "description": "A number and a byte after it that nothing reads.",
+    "error": {
+      "form": "frame",
+      "schema": "uint",
+      "shape": "{\"root\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"defs\":{}}",
+      "input": "010000"
+    }
+  },
+  {
+    "name": "frame_missing_body",
+    "description": "The root number is not there (an empty body).",
+    "error": {
+      "form": "frame",
+      "schema": "uint",
+      "shape": "{\"root\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"defs\":{}}",
+      "input": "00"
+    }
+  },
+  {
+    "name": "frame_bool_byte_two",
+    "description": "A bool is a byte 0 or 1.",
+    "error": {
+      "form": "frame",
+      "schema": "bool",
+      "shape": "{\"root\":{\"kind\":\"bool\"},\"defs\":{}}",
+      "input": "0200"
+    }
+  },
+  {
+    "name": "frame_string_index_missing",
+    "description": "A string index with no table entry.",
+    "error": {
+      "form": "frame",
+      "schema": "text",
+      "shape": "{\"root\":{\"kind\":\"string\"},\"defs\":{}}",
+      "input": "0500"
+    }
+  },
+  {
+    "name": "frame_table_not_utf8",
+    "description": "A table string that is not UTF-8.",
+    "error": {
+      "form": "frame",
+      "schema": "text",
+      "shape": "{\"root\":{\"kind\":\"string\"},\"defs\":{}}",
+      "input": "0001ff02"
+    }
+  },
+  {
+    "name": "frame_table_string_cut",
+    "description": "A table entry that says 5 bytes and has 1.",
+    "error": {
+      "form": "frame",
+      "schema": "text",
+      "shape": "{\"root\":{\"kind\":\"string\"},\"defs\":{}}",
+      "input": "00056102"
+    }
+  },
+  {
+    "name": "frame_ints_width_zero",
+    "description": "A packed int list's width byte is 1..=64: 0 is none.",
+    "error": {
+      "form": "frame",
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "input": "010000"
+    }
+  },
+  {
+    "name": "frame_ints_width_65",
+    "description": "Width 65 is too wide.",
+    "error": {
+      "form": "frame",
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "input": "01410000"
+    }
+  },
+  {
+    "name": "frame_ints_count_lies",
+    "description": "200 numbers of 8 bits and no bytes for them.",
+    "error": {
+      "form": "frame",
+      "schema": "uint_list",
+      "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
+      "input": "c8010800"
+    }
+  },
+  {
+    "name": "frame_record_length_lies",
+    "description": "A record that says 127 bytes long in a frame without them.",
+    "error": {
+      "form": "frame",
+      "schema": "project_v1",
+      "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"ProjectV1\"},\"defs\":{\"ProjectV1\":{\"kind\":\"struct\",\"doc\":\"A project as it first was.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"files\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true}]}}}",
+      "input": "7f00"
+    }
+  },
+  {
+    "name": "io_cut_length",
+    "description": "The stream ends inside a length (two of its four bytes): an error, unlike an end between frames.",
+    "error": {
+      "form": "io",
+      "input": "0100",
+      "frames_before": 0,
+      "kind": "unexpected_eof"
+    }
+  },
+  {
+    "name": "io_cut_frame",
+    "description": "A length 5 and three bytes after it.",
+    "error": {
+      "form": "io",
+      "input": "05000000010203",
+      "frames_before": 0,
+      "kind": "unexpected_eof"
+    }
+  },
+  {
+    "name": "io_cut_second_length",
+    "description": "One good frame, then a length cut short: the first frame is read, then the error.",
+    "error": {
+      "form": "io",
+      "input": "030000000001020100",
+      "frames_before": 1,
+      "kind": "unexpected_eof"
+    }
+  },
+  {
+    "name": "io_length_over_max",
+    "description": "A length above MAX_FRAME (268435456) is refused before any byte is read.",
+    "error": {
+      "form": "io",
+      "input": "01000010",
+      "frames_before": 0,
+      "kind": "invalid_data"
+    }
+  },
+  {
+    "name": "io_length_all_ones",
+    "description": "The biggest length, 0xffffffff.",
+    "error": {
+      "form": "io",
+      "input": "ffffffff",
+      "frames_before": 0,
+      "kind": "invalid_data"
+    }
+  }
+]

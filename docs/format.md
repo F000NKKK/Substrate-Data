@@ -15,6 +15,9 @@ service is one value throughout.
 The crate is `substrate-data`; `#[derive(Schema)]` comes from
 `substrate-data-derive`, re-exported as `substrate_data::Schema`.
 
+Golden test vectors for ports in other languages — exact bytes of every
+tag, frame and malformed input — are in [`conformance/`](../conformance/README.md).
+
 ---
 
 ## Model
@@ -202,8 +205,9 @@ struct generates a zero-copy view (`frame::View`) over a frame's bytes.
 for a tool that has no code for the message (an editor's message
 inspector).
 
-`io::write_frame` / `read_frame` put frames on a byte stream (a socket, a
-pipe): each message a little-endian `u32` length, then the frame.
+`io::write_frame` / `read_frame` put messages on a byte stream (a socket, a
+pipe): each a little-endian `u32` length, then the message's binary form (an
+`SDAT` document, see [Binary](#binary)).
 
 ---
 

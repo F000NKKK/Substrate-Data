@@ -11,6 +11,9 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Added
 
+- `conformance/`: language-neutral golden vectors (a JSON manifest and the
+  raw bytes) for ports in other languages, and a test that fails when the
+  implementation drifts from them (`CONFORMANCE_BLESS=1` regenerates).
 - `binary::NEW_STRING`, `binary::STREAM_LEN_BYTES`, `schema::RESULT_OK` and
   `schema::RESULT_ERR` are public, for readers in other languages.
 

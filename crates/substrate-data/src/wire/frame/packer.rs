@@ -95,7 +95,7 @@ impl Packer {
 
     /// A string: its index in the table, which gets it the first time.
     pub fn put_str(&mut self, s: &str) {
-        let i = match self.strings.find(&self.table, s) {
+        let i = match self.strings.lookup(&self.table, s) {
             Ok(i) => i,
             Err(hash) => {
                 varint(&mut self.table, s.len() as u64);

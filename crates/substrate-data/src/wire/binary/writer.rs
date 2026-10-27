@@ -56,6 +56,9 @@ impl Default for Writer {
     }
 }
 
+/// Up to this many keys, a map's shape is looked up without a buffer.
+const FEW_KEYS: usize = 8;
+
 impl Writer {
     /// A writer of a whole document: the header first.
     #[must_use]
@@ -177,7 +180,7 @@ impl Writer {
     /// A string: its bytes the first time, its index after (in the tag
     /// itself for the first 32 strings of the document).
     pub fn str(&mut self, s: &str) -> &mut Self {
-        let found = self.strings.find(&self.out, s);
+        let found = self.strings.lookup(&self.out, s);
         if let Ok(i) = found
             && let Ok(at) = u8::try_from(i)
             && at < STR_INDEX_COUNT
@@ -310,14 +313,21 @@ impl Writer {
         keys: impl ExactSizeIterator<Item = &'k str> + Clone,
     ) -> usize {
         let n = keys.len();
+        if let Some(shape) = self.known_shape(keys.clone()) {
+            varint(&mut self.out, (shape as u64) << 1);
+            return shape;
+        }
         let mut found = std::mem::take(&mut self.found);
         let mut numbers = std::mem::take(&mut self.numbers);
         found.clear();
-        for key in keys.clone() {
-            found.push(self.strings.find(&self.out, key));
-        }
         numbers.clear();
-        numbers.extend(found.iter().map_while(|f| f.as_ref().ok().copied()));
+        for key in keys.clone() {
+            let at = self.strings.find(&self.out, key);
+            if let Ok(number) = at {
+                numbers.push(number);
+            }
+            found.push(at);
+        }
         let known = if numbers.len() == n {
             self.shapes.find(&numbers)
         } else {
@@ -337,6 +347,18 @@ impl Writer {
         self.found = found;
         self.numbers = numbers;
         shape
+    }
+
+    /// The number of the shape of `keys` when it was written before and
+    /// there are few of them: found without a pass to collect them.
+    fn known_shape<'k>(&mut self, keys: impl Iterator<Item = &'k str>) -> Option<usize> {
+        let mut numbers = [0usize; FEW_KEYS];
+        let mut n = 0;
+        for key in keys {
+            *numbers.get_mut(n)? = self.strings.find(&self.out, key).ok()?;
+            n += 1;
+        }
+        self.shapes.find(&numbers[..n])
     }
 
     /// The bytes.

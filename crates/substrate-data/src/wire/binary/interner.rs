@@ -11,6 +11,15 @@ const LINEAR_STRINGS: usize = 16;
 /// Slots of the cache of recent strings (a power of two).
 const RECENT: usize = 64;
 
+/// A string that was found, by where it is: where it points, how long it
+/// is, and its number + 1 (0 for a free slot).
+#[derive(Debug, Clone, Copy, Default)]
+struct Recent {
+    at: usize,
+    len: u32,
+    number: u32,
+}
+
 /// The strings written so far, by where their bytes are in the buffer the
 /// owner writes them to.
 #[derive(Debug)]
@@ -21,9 +30,8 @@ pub(crate) struct Interner {
     index: HashIndex,
     /// The last string found at each slot, by where its `&str` points (a
     /// struct's keys are the same `&'static str` every time, a decoded
-    /// map's keys one allocation each): its number + 1. A guess the bytes
-    /// are compared to.
-    recent: [u32; RECENT],
+    /// map's keys one allocation each). A guess the bytes are compared to.
+    recent: [Recent; RECENT],
 }
 
 impl Default for Interner {
@@ -31,7 +39,7 @@ impl Default for Interner {
         Interner {
             spans: Vec::new(),
             index: HashIndex::default(),
-            recent: [0; RECENT],
+            recent: [Recent::default(); RECENT],
         }
     }
 }
@@ -45,31 +53,49 @@ impl Interner {
     pub(crate) fn clear(&mut self) {
         self.spans.clear();
         self.index.clear();
-        self.recent = [0; RECENT];
+        self.recent = [Recent::default(); RECENT];
+    }
+
+    /// [`Interner::lookup`] for a string that is likely to be looked up
+    /// again from the same place (a key, a kind): the last string found
+    /// where `s` points is tried first.
+    #[inline]
+    pub(crate) fn find(&mut self, buf: &[u8], s: &str) -> Result<usize, Option<u32>> {
+        let at = s.as_ptr() as usize;
+        let slot = ((at >> ADDRESS_SHIFT) ^ s.len()) & (RECENT - 1);
+        let guess = self.recent[slot];
+        if guess.at == at
+            && guess.number > 0
+            && guess.len as usize == s.len()
+            && self.is(buf, guess.number as usize - 1, s)
+        {
+            return Ok(guess.number as usize - 1);
+        }
+        let found = self.lookup(buf, s)?;
+        self.recent[slot] = Recent {
+            at,
+            len: u32::try_from(s.len()).unwrap_or(0),
+            number: u32::try_from(found + 1).unwrap_or(0),
+        };
+        Ok(found)
     }
 
     /// Which string written before (into `buf`) `s` is: its number; else,
     /// when it had to be hashed, its hash, for [`Interner::add`].
-    pub(crate) fn find(&mut self, buf: &[u8], s: &str) -> Result<usize, Option<u32>> {
-        let slot = recent_slot(s);
-        let guess = self.recent[slot] as usize;
-        if guess > 0 && self.is(buf, guess - 1, s) {
-            return Ok(guess - 1);
-        }
+    #[inline(never)]
+    pub(crate) fn lookup(&self, buf: &[u8], s: &str) -> Result<usize, Option<u32>> {
         if self.spans.len() <= LINEAR_STRINGS {
-            return (0..self.spans.len())
-                .find(|&i| self.is(buf, i, s))
-                .inspect(|&i| self.recent[slot] = remembered(i))
+            let bytes = s.as_bytes();
+            return self
+                .spans
+                .iter()
+                .position(|&(at, len)| len == bytes.len() && same_bytes(&buf[at..at + len], bytes))
                 .ok_or(None);
         }
         let hash = hash_bytes(s.as_bytes());
-        match self.index.find(hash, |i| self.is(buf, i, s)) {
-            Some(found) => {
-                self.recent[slot] = remembered(found);
-                Ok(found)
-            }
-            None => Err(Some(hash)),
-        }
+        self.index
+            .find(hash, |i| self.is(buf, i, s))
+            .ok_or(Some(hash))
     }
 
     /// Whether string `i` is `s`.
@@ -78,8 +104,8 @@ impl Interner {
         len == s.len() && same_bytes(&buf[at..at + len], s.as_bytes())
     }
 
-    /// `s` (hash `hash`, if [`Interner::find`] made one), just written into
-    /// `buf` at `at`: its number.
+    /// `s` (hash `hash`, if a lookup made one), just written into `buf` at
+    /// `at`: its number.
     pub(crate) fn add(&mut self, buf: &[u8], s: &str, at: usize, hash: Option<u32>) -> usize {
         let i = self.spans.len();
         self.spans.push((at, s.len()));
@@ -93,19 +119,9 @@ impl Interner {
                     .push(hash.unwrap_or_else(|| hash_bytes(s.as_bytes())));
             }
         }
-        self.recent[recent_slot(s)] = remembered(i);
         i
     }
 }
 
-/// `s`'s slot in the cache of recent strings: where it points, and how long.
-fn recent_slot(s: &str) -> usize {
-    /// The low bits of an address that alignment leaves alike.
-    const ADDRESS_SHIFT: u32 = 3;
-    ((s.as_ptr() as usize >> ADDRESS_SHIFT) ^ s.len()) & (RECENT - 1)
-}
-
-/// String `i` in the recent cache, where 0 is empty; past `u32` it isn't cached.
-fn remembered(i: usize) -> u32 {
-    u32::try_from(i + 1).unwrap_or(0)
-}
+/// The low bits of an address that alignment leaves alike.
+const ADDRESS_SHIFT: u32 = 3;

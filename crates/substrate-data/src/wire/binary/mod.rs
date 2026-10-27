@@ -28,8 +28,7 @@ pub(crate) mod writer;
 pub use codec::{decode, decode_ref, encode};
 pub use decode_error::DecodeError;
 pub use decoder::Decoder;
-pub use layout::{MAGIC, MAX_DEPTH, VERSION};
-pub use layout::{NEW_STRING, STREAM_LEN_BYTES};
+pub use layout::{MAGIC, MAX_DEPTH, NEW_STRING, STREAM_LEN_BYTES, VERSION};
 pub(crate) use varint::{
     VARINT_BITS, VARINT_LAST_SHIFT, VARINT_MAX_SHIFT, VARINT_MORE, VARINT_SHIFT, read_varint,
     unzigzag, varint, zigzag,

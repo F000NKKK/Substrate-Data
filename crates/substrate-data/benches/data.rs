@@ -3,10 +3,6 @@
 //! it, and the binary form.
 
 #![expect(
-    missing_docs,
-    reason = "criterion_group! makes an undocumented function"
-)]
-#![expect(
     clippy::unwrap_used,
     clippy::print_stderr,
     clippy::cast_precision_loss,

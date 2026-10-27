@@ -40,8 +40,8 @@ const fn same(a: &str, b: &str) -> bool {
     true
 }
 
-/// Field `ident` of struct `T` as files write it: `field!(BlockProps, tool_level)`
-/// → `"tool_level"`. A field `T` hasn't got doesn't compile.
+/// Field `ident` of struct `T` as files write it: `field!(UserProfile, display_name)`
+/// → `"display_name"`. A field `T` hasn't got doesn't compile.
 #[macro_export]
 macro_rules! field {
     ($t:ty, $f:ident) => {{

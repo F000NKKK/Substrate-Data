@@ -1,20 +1,20 @@
 //! [`Stream`]: a list kept in the binary form — its items written as they
 //! come (no `Vec` of them on the way) and read back one at a time, when
-//! asked. For the big ones: an area of blocks, a picture's pixels, a log.
+//! asked. For the big ones: a table's rows, a picture's pixels, a log.
 //!
 //! ```
 //! use substrate_data::{Schema, Stream};
 //!
 //! #[derive(Schema)]
-//! struct Area {
+//! struct Sheet {
 //!     name: String,
-//!     blocks: Stream<u16>,
+//!     cells: Stream<u16>,
 //! }
 //!
-//! let area = Area { name: "pit".into(), blocks: (0..1000u16).map(|i| i % 3).collect() };
-//! let back: Area = substrate_data::read_bytes(&substrate_data::to_bytes(&area)).unwrap();
-//! assert_eq!(back.blocks.len(), 1000);
-//! assert_eq!(back.blocks.iter().filter(|b| *b == 2).count(), 333);
+//! let sheet = Sheet { name: "q3".into(), cells: (0..1000u16).map(|i| i % 3).collect() };
+//! let back: Sheet = substrate_data::read_bytes(&substrate_data::to_bytes(&sheet)).unwrap();
+//! assert_eq!(back.cells.len(), 1000);
+//! assert_eq!(back.cells.iter().filter(|c| *c == 2).count(), 333);
 //! ```
 
 use std::fmt;

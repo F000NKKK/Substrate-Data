@@ -1,5 +1,5 @@
 //! One value, or a list of them: `"a"` or `["a", "b"]` — what a format
-//! accepts where several will do (a slot's accepted items, the meshes to
+//! accepts where several will do (a field's accepted types, the files to
 //! pick one from).
 
 use super::{Reader, Schema, Shape};

@@ -14,43 +14,43 @@ struct Point {
     z: f64,
 }
 
-/// Small: an entity's state.
+/// Small: a user's profile.
 #[derive(Schema, Clone, PartialEq, Debug)]
-struct EntityInfo {
-    type_id: String,
-    dimension: String,
-    pos: Point,
-    eye_height: f64,
-    width: f64,
-    height: f64,
+struct UserInfo {
+    role_id: String,
+    region: String,
+    home: Point,
+    score: f64,
+    rating: f64,
+    weight: f64,
     flags: u32,
     name: String,
 }
 
 #[derive(Schema, Clone, PartialEq, Debug)]
-struct Stack {
-    item: String,
+struct Line {
+    sku: String,
     count: u32,
     extra: String,
 }
 
-/// Medium: an inventory.
+/// Medium: a shopping cart.
 #[derive(Schema, Clone, PartialEq, Debug)]
-struct SlotStack {
-    slot: u32,
-    stack: Stack,
+struct CartLine {
+    position: u32,
+    line: Line,
 }
 
 #[derive(Schema, Clone, PartialEq, Debug)]
-struct Inventory {
-    stacks: Vec<SlotStack>,
+struct Cart {
+    lines: Vec<CartLine>,
 }
 
-/// Large: an area of voxels, 32³.
+/// Large: a 32×32×32 table of codes.
 #[derive(Schema, Clone, PartialEq, Debug)]
-struct Area {
-    palette: Vec<String>,
-    blocks: Vec<u16>,
+struct Grid {
+    legend: Vec<String>,
+    cells: Vec<u16>,
 }
 
 /// Strings: each different (the writer's hash index), or a few over and over.
@@ -85,27 +85,27 @@ struct Blob {
 
 /// A big list of structs: whole (`Vec`), or kept written (`Stream`, read when asked).
 #[derive(Schema, Clone, PartialEq, Debug)]
-struct Placed {
+struct Entry {
     id: String,
     count: u32,
 }
 
 #[derive(Schema, Clone, PartialEq, Debug)]
-struct Placements {
-    items: Vec<Placed>,
+struct Entries {
+    items: Vec<Entry>,
 }
 
 #[derive(Schema, Clone, PartialEq, Debug)]
-struct PlacementStream {
-    items: substrate_data::Stream<Placed>,
+struct EntryStream {
+    items: substrate_data::Stream<Entry>,
 }
 
-const PLACED: usize = 10_000;
+const ENTRIES: usize = 10_000;
 
-fn placed() -> Vec<Placed> {
-    (0..PLACED)
-        .map(|i| Placed {
-            id: format!("core:block_{}", i % 16),
+fn entries() -> Vec<Entry> {
+    (0..ENTRIES)
+        .map(|i| Entry {
+            id: format!("docs/page_{}", i % 16),
             count: i as u32,
         })
         .collect()
@@ -138,34 +138,34 @@ fn chain() -> Node {
     )
 }
 
-const AREA_SIDE: usize = 32;
-const INVENTORY_SLOTS: u32 = 41;
+const GRID_SIDE: usize = 32;
+const CART_LINES: u32 = 41;
 
-fn entity() -> EntityInfo {
-    EntityInfo {
-        type_id: "core:zombie".into(),
-        dimension: "core:overworld".into(),
-        pos: Point {
+fn user() -> UserInfo {
+    UserInfo {
+        role_id: "core:editor".into(),
+        region: "core:eu_west".into(),
+        home: Point {
             x: 12.5,
             y: 64.0,
             z: -3.25,
         },
-        eye_height: 1.74,
-        width: 0.6,
-        height: 1.95,
+        score: 1.74,
+        rating: 0.6,
+        weight: 1.95,
         flags: 169,
-        name: "Zombie".into(),
+        name: "Alice".into(),
     }
 }
 
-fn inventory() -> Inventory {
-    Inventory {
-        stacks: (0..INVENTORY_SLOTS)
-            .map(|slot| SlotStack {
-                slot,
-                stack: Stack {
-                    item: format!("core:item_{}", slot % 7),
-                    count: slot % 64 + 1,
+fn cart() -> Cart {
+    Cart {
+        lines: (0..CART_LINES)
+            .map(|position| CartLine {
+                position,
+                line: Line {
+                    sku: format!("core:sku_{}", position % 7),
+                    count: position % 64 + 1,
                     extra: "{}".into(),
                 },
             })
@@ -173,11 +173,11 @@ fn inventory() -> Inventory {
     }
 }
 
-fn area() -> Area {
-    let n = AREA_SIDE * AREA_SIDE * AREA_SIDE;
-    Area {
-        palette: vec!["core:stone".into(), "core:air".into(), "core:dirt".into()],
-        blocks: (0..n).map(|i| (i % 3) as u16).collect(),
+fn grid() -> Grid {
+    let n = GRID_SIDE * GRID_SIDE * GRID_SIDE;
+    Grid {
+        legend: vec!["core:low".into(), "core:none".into(), "core:high".into()],
+        cells: (0..n).map(|i| (i % 3) as u16).collect(),
     }
 }
 
@@ -197,11 +197,11 @@ mod raw {
         o.extend_from_slice(s.as_bytes());
     }
 
-    pub fn entity(e: &super::EntityInfo) -> Vec<u8> {
+    pub fn user(e: &super::UserInfo) -> Vec<u8> {
         let mut o = Vec::with_capacity(96);
-        str(&mut o, &e.type_id);
-        str(&mut o, &e.dimension);
-        for f in [e.pos.x, e.pos.y, e.pos.z, e.eye_height, e.width, e.height] {
+        str(&mut o, &e.role_id);
+        str(&mut o, &e.region);
+        for f in [e.home.x, e.home.y, e.home.z, e.score, e.rating, e.weight] {
             o.extend_from_slice(&f.to_le_bytes());
         }
         o.extend_from_slice(&e.flags.to_le_bytes());
@@ -209,12 +209,12 @@ mod raw {
         o
     }
 
-    pub fn area(a: &super::Area) -> Vec<u8> {
-        let mut o = Vec::with_capacity(a.blocks.len() * 2 + 64);
-        for p in &a.palette {
+    pub fn grid(a: &super::Grid) -> Vec<u8> {
+        let mut o = Vec::with_capacity(a.cells.len() * 2 + 64);
+        for p in &a.legend {
             str(&mut o, p);
         }
-        for b in &a.blocks {
+        for b in &a.cells {
             o.extend_from_slice(&b.to_le_bytes());
         }
         o
@@ -258,23 +258,23 @@ fn case<T: Schema + PartialEq + std::fmt::Debug>(
 }
 
 fn bench(c: &mut Criterion) {
-    case(c, "entity_info", &entity(), Some(raw::entity));
-    case(c, "inventory", &inventory(), None);
-    case(c, "area_32", &area(), Some(raw::area));
-    case(c, "placed_vec_10k", &Placements { items: placed() }, None);
-    let stream = PlacementStream {
-        items: placed().into_iter().collect(),
+    case(c, "user_info", &user(), Some(raw::user));
+    case(c, "cart", &cart(), None);
+    case(c, "grid_32", &grid(), Some(raw::grid));
+    case(c, "entries_vec_10k", &Entries { items: entries() }, None);
+    let stream = EntryStream {
+        items: entries().into_iter().collect(),
     };
-    case(c, "placed_stream_10k", &stream, None);
-    c.bench_function("placed_stream_10k/build from items", |b| {
+    case(c, "entries_stream_10k", &stream, None);
+    c.bench_function("entries_stream_10k/build from items", |b| {
         b.iter(|| {
-            placed()
+            entries()
                 .into_iter()
-                .collect::<substrate_data::Stream<Placed>>()
+                .collect::<substrate_data::Stream<Entry>>()
         })
     });
-    c.bench_function("placed_vec_10k/build from items", |b| b.iter(placed));
-    c.bench_function("placed_stream_10k/read all items", |b| {
+    c.bench_function("entries_vec_10k/build from items", |b| b.iter(entries));
+    c.bench_function("entries_stream_10k/read all items", |b| {
         b.iter(|| black_box(&stream).items.iter().count())
     });
     case(c, "strings_unique", &strings(MANY), None);
@@ -298,13 +298,13 @@ fn bench(c: &mut Criterion) {
         None,
     );
     // A message with a field the type doesn't know: read the slow way, to say so.
-    let mut unknown = entity().write();
+    let mut unknown = user().write();
     if let substrate_data::Value::Map(m) = &mut unknown {
         m.insert("unknown", substrate_data::Value::Int(1));
     }
     let bytes = substrate_data::binary::encode(&unknown);
     c.bench_function("unknown_field/decode (fails, says why)", |b| {
-        b.iter(|| substrate_data::read_bytes::<EntityInfo>(black_box(&bytes)).unwrap_err())
+        b.iter(|| substrate_data::read_bytes::<UserInfo>(black_box(&bytes)).unwrap_err())
     });
 }
 

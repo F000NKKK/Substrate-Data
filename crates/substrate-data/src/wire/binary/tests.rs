@@ -21,8 +21,8 @@ fn sample() -> Value {
             Value::Bool(false),
         ]),
     );
-    m.insert("mesh", Value::Ref(Ref::new("asset", "meshes/cube.mesh")));
-    m.insert("parent", Value::Ref(Ref::new("entity", "player")));
+    m.insert("logo", Value::Ref(Ref::new("file", "images/logo.png")));
+    m.insert("parent", Value::Ref(Ref::new("user", "alice")));
     m.insert("blob", Value::Bytes(vec![1, 2, 3]));
     m.insert("again", Value::Str("Ruby".into()));
     Value::Map(m)

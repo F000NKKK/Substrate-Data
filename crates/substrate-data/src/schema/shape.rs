@@ -32,7 +32,7 @@ pub enum Shape {
     /// A reference of one of these kinds (`&[]`: any kind), written `@kind:id`.
     Ref(&'static [&'static str]),
     /// A type of the format's own that tools may know by `name`
-    /// (`"color"`, `"vec3"`, `"motor"`), stored as `of`: a tool that knows
+    /// (`"color"`, `"date"`, `"money"`), stored as `of`: a tool that knows
     /// the name shows its own editor, one that doesn't edits `of`.
     Named {
         name: &'static str,

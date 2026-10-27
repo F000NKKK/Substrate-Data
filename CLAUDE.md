@@ -1,9 +1,10 @@
 # CLAUDE.md — Substrate Data (mirrors AGENTS.md)
 
-- This repository is domain-neutral. Nothing here may name a game, an
-  engine or a product: no Minecraft ids, no engine math types, no editor
-  specifics. Domain types belong in the consumer's adapter crate
-  (`impl Schema` + `Shape::Named`).
+- This repository is domain-neutral. Nothing here may name a product or
+  borrow one consumer's vocabulary — no consumer's ids, math types or
+  editor specifics, not even in examples, tests or benches (examples use
+  one neutral domain: users, docs, files, projects). Domain types belong
+  in the consumer's adapter crate (`impl Schema` + `Shape::Named`).
 - `docs/format.md` is the specification. A change to the text grammar,
   binary tags, frame layout, `Shape` description keys or diagnostic codes
   updates it in the same commit. Binary tags and frame rules only grow:

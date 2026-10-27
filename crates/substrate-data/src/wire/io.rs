@@ -1,6 +1,6 @@
 //! Messages over a byte stream — a socket, a pipe: each message a frame,
 //! its length (a little-endian `u32`) and then its binary form. What
-//! programs say to each other (an engine and its editor, a tool's service).
+//! programs say to each other (a program and its editor, a tool's service).
 
 use std::io::{self, Read, Write};
 

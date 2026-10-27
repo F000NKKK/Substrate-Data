@@ -4,7 +4,7 @@ use super::{
     Writer, is_metadata_key, typed,
 };
 
-/// What a typed value's string starts with (`@asset:…`).
+/// What a typed value's string starts with (`@file:…`).
 fn typed_mark() -> char {
     crate::names::TYPED.chars().next().unwrap_or_default()
 }

@@ -8,7 +8,7 @@
 //!   parsed with the position of every value; [`patch`] edits a document
 //!   in place, keeping its comments and layout;
 //! - [`typed`]: the one grammar of the typed values' string forms
-//!   (`@asset:meshes/cube.mesh`, `@bytes:…`);
+//!   (`@file:images/logo.png`, `@bytes:…`);
 //! - [`binary`]: the compact, self-describing tagged form;
 //! - [`frame`]: the packed form for messages whose schema both sides know;
 //! - [`Schema`] (`#[derive(Schema)]`): a format written once — read with

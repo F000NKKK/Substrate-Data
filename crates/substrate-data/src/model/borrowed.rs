@@ -18,7 +18,7 @@ pub enum ValueRef<'a> {
     Str(&'a str),
     List(&'a [ValueRef<'a>]),
     Map(MapRef<'a>),
-    /// `@asset:meshes/cube.mesh`.
+    /// `@file:images/logo.png`.
     Ref {
         kind: &'a str,
         id: &'a str,

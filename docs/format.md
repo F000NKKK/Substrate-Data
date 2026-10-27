@@ -1,9 +1,9 @@
 # Substrate Data — the format
 
 One data model with four forms, and one schema system over all of them.
-Every form carries the same values, so a scene saved as text by an editor,
-compiled to binary by a build and sent field by field to a running game
-is one value throughout.
+Every form carries the same values, so a document saved as text by an
+editor, compiled to binary by a build and sent field by field to a running
+service is one value throughout.
 
 | Form | For | Self-describing | Keeps comments |
 |---|---|---|---|
@@ -30,11 +30,11 @@ A value ([`Value`]) is one of:
 | string | `"Ruby"` | as spelled — see [Typed values](#typed-values) |
 | list | `[1, 2]` | |
 | map | `{ a: 1 }` | keys unique, **in file order** |
-| ref | `"@asset:meshes/cube.mesh"` | a reference: `kind` + opaque `id` |
+| ref | `"@file:images/logo.png"` | a reference: `kind` + opaque `id` |
 | bytes | `"@bytes:AQID"` | base64 in text, raw in binary |
 
 A reference's **kind** is lower case ASCII (`[a-z][a-z0-9_]*`): `asset`,
-`entity`, `prefab`, `material`, … — any word a format declares with
+`user`, `doc`, `file`, `project`, … — any word a format declares with
 `kind!`. Its **id** is anything but empty, whitespace or control
 characters; what it names and whether it exists is the format's business
 (a [`Resolve`] checks references while reading, and every reference met is
@@ -54,9 +54,9 @@ reads it.
 | `"@anything else"` | an error (a typo in a reference is never silent text) |
 
 A `Str` in the model holds a string *as spelled*: the parser and the binary
-decoder keep `"@mesh:x"` and `"@@x"` as they are, and the field's schema
-decides what it is (`String` reads `"@@x"` as `@x`; `Id<Mesh>` reads
-`"@mesh:x"` as `x`). Writing a `String` doubles a leading `@`, so every
+decoder keep `"@file:x"` and `"@@x"` as they are, and the field's schema
+decides what it is (`String` reads `"@@x"` as `@x`; `Id<File>` reads
+`"@file:x"` as `x`). Writing a `String` doubles a leading `@`, so every
 value round-trips through every form.
 
 ---
@@ -71,12 +71,12 @@ JSON plus what editors already understand from JSON5:
 
 ```jsonc
 {
-  // The player.
-  name: "Hero",
-  prefab: "@prefab:actors/hero",
-  components: [
-    { type: "transform", position: [0, 1.5, 0], parent: "@entity:world" },
-    { type: "renderable", mesh: "@mesh:hero.mesh", material: "@material:skin" },
+  // The release task.
+  name: "Release 1.0",
+  project: "@project:apps/notes",
+  parts: [
+    { type: "estimate", range: [1, 2, 4], parent: "@doc:guides/intro" },
+    { type: "attachment", file: "@file:images/logo.png", owner: "@user:alice" },
   ],
 }
 ```
@@ -88,7 +88,7 @@ Source-only keys are allowed in every object and ignored by schemas:
 schema finds points at its line and column, and its path:
 
 ```text
-8:33: components[1].mesh: `@material:stone` is a reference to material — this takes `@mesh:`
+8:33: parts[1].file: `@user:alice` is a reference to user — this takes `@file:`
 ```
 
 **Editing in place.** `patch::patch(text, &new_value)` rewrites only what
@@ -194,8 +194,8 @@ pipe): each message a little-endian `u32` length, then the frame.
 
 `Stream<T>` is a list kept in the binary form: items written as they come
 and read back one at a time when asked, with its own string table, so it
-can be cut out of a document whole. For the big ones: a voxel area, a
-mesh's vertices, a recording, a log.
+can be cut out of a document whole. For the big ones: a table's rows, a
+picture's pixels, a recording, a log.
 
 ---
 
@@ -204,24 +204,24 @@ mesh's vertices, a recording, a log.
 A format is a Rust type implementing [`Schema`], usually derived:
 
 ```rust
-substrate_data::kind!(Mesh = "mesh", Material = "material", Entity = "entity");
+substrate_data::kind!(File = "file", User = "user", Doc = "doc");
 
-/// Where it is.
+/// How long it takes.
 #[derive(substrate_data::Schema)]
-struct Transform {
-    /// Metres, in the parent's frame.
-    position: [f32; 3],
+struct Estimate {
+    /// Low, likely and high, in days.
+    range: [f32; 3],
     #[data(default)]
-    parent: Option<substrate_data::Id<Entity>>,
+    parent: Option<substrate_data::Id<Doc>>,
 }
 
-/// A component.
+/// A part of a task.
 #[derive(substrate_data::Schema)]
 #[data(tag = "type")]
-enum Component {
-    Transform(Transform),
-    Renderable { mesh: substrate_data::Id<Mesh>, material: Option<substrate_data::Id<Material>> },
-    Hidden,
+enum Part {
+    Estimate(Estimate),
+    Attachment { file: substrate_data::Id<File>, owner: Option<substrate_data::Id<User>> },
+    Archived,
 }
 ```
 
@@ -235,7 +235,7 @@ One schema gives:
 - **shape** — `T::shape()` describes the type (fields, docs from `///`,
   required or not, numeric ranges, enum variants), and `Shape::describe()`
   turns it into a value any tool can read: an editor builds property grids,
-  pickers (a `ref` field of kind `mesh` gets the mesh picker), completion
+  pickers (a `ref` field of kind `file` gets the file picker), completion
   and hover docs from it; docs generate their field tables from it.
 
 `#[data(...)]` options:
@@ -259,10 +259,10 @@ to the tag; one that wraps anything else keeps it under `value`.
 ### Domain types
 
 `Shape::Named { name, of }` lets a format describe a type of its own
-(`"color"`, `"vec3"`, `"motor"`) stored as plain data (`of`): a tool that
-knows the name shows its own editor (a colour picker, a gizmo), one that
-doesn't edits `of`. An engine implements `Schema` for its math types in
-its own adapter crate and returns a named shape; this crate knows nothing
+(`"color"`, `"date"`, `"money"`, `"duration"`) stored as plain data
+(`of`): a tool that knows the name shows its own editor (a colour picker,
+a calendar), one that doesn't edits `of`. A program implements `Schema`
+for its own types in its own adapter crate and returns a named shape; this crate knows nothing
 of them.
 
 A named type is stored as `of` in every form: its `write`, `encode` and
@@ -298,9 +298,8 @@ crosses a protocol like any other message.
 ## Origin
 
 Extracted from `yog-data` (Yog Mod Loader), with everything specific to
-Minecraft and Yog removed: content namespaces, tags, mod resources,
-translation keys, Yog text, image sources and colours as built-in typed
-values. Those become a domain layer over this crate. The binary tags and
+Yog removed: content namespaces, tags, mod resources, translation keys,
+Yog text, image sources and colours as built-in typed values. Those become a domain layer over this crate. The binary tags and
 magic were renumbered (`SDAT` v1); nothing reads the old `YOGD` bytes.
 
 [`Value`]: ../crates/substrate-data/src/model/value.rs

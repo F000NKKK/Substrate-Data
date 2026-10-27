@@ -16,7 +16,7 @@ const WHOLE_MAX: f64 = 1e15;
 
 /// `value` as editors write it at indent `level` (two spaces each):
 /// short lists of numbers and short objects of scalars on one line
-/// (`"uv": [0, 0, 16, 16]`), the rest one entry a line.
+/// (`"margins": [0, 0, 16, 16]`), the rest one entry a line.
 pub fn format(value: &Value, level: usize) -> String {
     if let Some(one) = inline(value) {
         return one;
@@ -67,7 +67,7 @@ fn scalar(v: &Value) -> Option<String> {
         Value::Float(f) if f.is_finite() => Some(number(*f)),
         Value::Float(_) => Some("null".into()),
         Value::List(_) | Value::Map(_) => None,
-        // As the source has it: a typed value (`@asset:…`) or an escaped `@@`, unread.
+        // As the source has it: a typed value (`@file:…`) or an escaped `@@`, unread.
         Value::Str(s) => Some(quoted(s)),
         other => Some(crate::text::to_string(other)),
     }
@@ -409,13 +409,13 @@ mod tests {
         out
     }
 
-    const FILE: &str = r#"// A block.
+    const FILE: &str = r#"// A document.
 {
-  "id": "lamp", // its id
+  "id": "intro", // its id
   /* What it is. */
-  "block": {
-    "hardness": 4.0,
-    "light": 15
+  "page": {
+    "margin": 4.0,
+    "count": 15
   },
   "states": {
     "properties": {
@@ -437,18 +437,18 @@ mod tests {
     fn what_didnt_change_keeps_its_text() {
         assert_eq!(edit(FILE, |_| {}), FILE);
         let out = edit(FILE, |m| {
-            map_at(m, "block").insert("light", Value::Int(7));
+            map_at(m, "page").insert("count", Value::Int(7));
         });
-        assert_eq!(out, FILE.replace("\"light\": 15", "\"light\": 7"));
+        assert_eq!(out, FILE.replace("\"count\": 15", "\"count\": 7"));
     }
 
     #[test]
     fn a_new_key_goes_after_the_others() {
         let out = edit(FILE, |m| {
-            map_at(m, "block").insert("sound", Value::Str("stone".into()));
+            map_at(m, "page").insert("size", Value::Str("a4".into()));
         });
         assert!(
-            out.contains("\"light\": 15,\n    \"sound\": \"stone\"\n  },"),
+            out.contains("\"count\": 15,\n    \"size\": \"a4\"\n  },"),
             "{out}"
         );
         assert!(out.contains("// its id"));
@@ -457,11 +457,11 @@ mod tests {
     #[test]
     fn a_removed_key_takes_its_comments() {
         let out = edit(FILE, |m| {
-            m.remove("block");
+            m.remove("page");
         });
         assert!(!out.contains("What it is."), "{out}");
         assert!(
-            out.contains("\"id\": \"lamp\", // its id") && out.contains("// On or off."),
+            out.contains("\"id\": \"intro\", // its id") && out.contains("// On or off."),
             "{out}"
         );
         assert_eq!(
@@ -526,9 +526,9 @@ mod tests {
 
     #[test]
     fn number_keys_keep_their_order() {
-        let text = "{\n  \"rotation\": {\n    \"0\": [0, 0, 0], // rest\n    \"0.5\": [45, 0, 0],\n    \"1\": [0, 0, 0]\n  }\n}";
+        let text = "{\n  \"levels\": {\n    \"0\": [0, 0, 0], // rest\n    \"0.5\": [45, 0, 0],\n    \"1\": [0, 0, 0]\n  }\n}";
         let out = edit(text, |m| {
-            map_at(m, "rotation").insert("0.5", parse_value("[90, 0, 0]").unwrap());
+            map_at(m, "levels").insert("0.5", parse_value("[90, 0, 0]").unwrap());
         });
         assert_eq!(out, text.replace("[45, 0, 0]", "[90, 0, 0]"));
     }
@@ -536,21 +536,22 @@ mod tests {
     #[test]
     fn json_keeps_order_and_source_strings() {
         let v =
-            parse_value(r#"{ "1": "@asset:meshes/cube.mesh", "0.5": [1.5, null, true] }"#).unwrap();
+            parse_value(r#"{ "1": "@file:images/logo.png", "0.5": [1.5, null, true] }"#).unwrap();
         assert_eq!(
             to_json(&v),
-            r#"{"1":"@asset:meshes/cube.mesh","0.5":[1.5,null,true]}"#
+            r#"{"1":"@file:images/logo.png","0.5":[1.5,null,true]}"#
         );
     }
 
     #[test]
     fn short_values_go_on_one_line() {
-        let v =
-            parse_value(r#"{ "uv": [0, 0, 16, 16.5], "faces": { "north": { "texture": "x" } } }"#)
-                .unwrap();
+        let v = parse_value(
+            r#"{ "margins": [0, 0, 16, 16.5], "sections": { "intro": { "title": "x" } } }"#,
+        )
+        .unwrap();
         assert_eq!(
             format(&v, 0),
-            "{\n  \"uv\": [0, 0, 16, 16.5],\n  \"faces\": {\n    \"north\": { \"texture\": \"x\" }\n  }\n}"
+            "{\n  \"margins\": [0, 0, 16, 16.5],\n  \"sections\": {\n    \"intro\": { \"title\": \"x\" }\n  }\n}"
         );
         assert_eq!(patch("{ oops", &Value::Int(1)), "1\n");
     }

@@ -5,14 +5,14 @@ use std::fmt;
 /// A value.
 ///
 /// The text form has no syntax of its own for the typed values (`Ref`,
-/// `Bytes`): they're written as strings (`"@asset:meshes/cube.mesh"`), so
+/// `Bytes`): they're written as strings (`"@file:images/logo.png"`), so
 /// every file stays JSON, and the schema of a field says what its string
 /// means. The binary form keeps the type.
 ///
 /// A `Str` holds a string *as spelled*: one that starts with `@` is a
 /// typed value's spelling, read by the field's schema
 /// ([`crate::typed::classify`]), and plain text starting with `@` is kept
-/// with it doubled (`"@@player"`). Text and binary forms carry it as is;
+/// with it doubled (`"@@everyone"`). Text and binary forms carry it as is;
 /// `Schema::write` of a `String` doubles the `@`, its read undoes it.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub enum Value {
@@ -24,14 +24,14 @@ pub enum Value {
     Str(String),
     List(Vec<Value>),
     Map(Map),
-    /// `@asset:meshes/cube.mesh` — something of some kind, by id.
+    /// `@file:images/logo.png` — something of some kind, by id.
     Ref(Ref),
     /// Bytes as they are — a picture, a sound — written `@bytes:<base64>` as text.
     Bytes(Vec<u8>),
 }
 
-/// A reference: its kind (`asset`, `entity`, `prefab`, or any other the
-/// format names) and id (`meshes/cube.mesh`, `core:player`). The id is
+/// A reference: its kind (`user`, `doc`, `file`, or any other the
+/// format names) and id (`images/logo.png`, `team:alice`). The id is
 /// opaque here; what it names and whether it exists is the format's
 /// business (a [`crate::Resolve`] checks it).
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]

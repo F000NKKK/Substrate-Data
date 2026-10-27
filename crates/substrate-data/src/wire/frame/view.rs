@@ -7,12 +7,12 @@
 //! ```
 //! #[derive(substrate_data::Schema)]
 //! #[data(view)]
-//! struct Area { name: String, blocks: Vec<u16> }
+//! struct Sheet { name: String, cells: Vec<u16> }
 //!
-//! let frame = substrate_data::frame::to_frame(&Area { name: "pit".into(), blocks: vec![0, 2, 1] });
-//! let area = substrate_data::frame::read_view::<Area>(&frame).unwrap();
-//! assert_eq!(area.name, "pit");
-//! assert_eq!(area.blocks.get(1), Some(2));
+//! let frame = substrate_data::frame::to_frame(&Sheet { name: "q3".into(), cells: vec![0, 2, 1] });
+//! let sheet = substrate_data::frame::read_view::<Sheet>(&frame).unwrap();
+//! assert_eq!(sheet.name, "q3");
+//! assert_eq!(sheet.cells.get(1), Some(2));
 //! ```
 
 use std::marker::PhantomData;

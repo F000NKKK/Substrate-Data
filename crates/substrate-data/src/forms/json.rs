@@ -27,7 +27,7 @@ pub fn from_json_text(text: &str) -> Option<Value> {
     serde_json::from_str(text).ok().map(|j| from_json(&j))
 }
 
-/// `v` as JSON; typed values become their string forms (`"@asset:meshes/cube.mesh"`).
+/// `v` as JSON; typed values become their string forms (`"@file:images/logo.png"`).
 pub fn to_json(v: &Value) -> serde_json::Value {
     match v {
         Value::Null => serde_json::Value::Null,

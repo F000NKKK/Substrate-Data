@@ -6,10 +6,10 @@ use substrate_data::{Schema, Value, binary};
 /// How a result is laid out (a unit enum: a frame packs it by index).
 #[derive(Schema, Debug, Clone, PartialEq)]
 enum Mode {
-    Shaped,
-    Shapeless,
-    #[data(rename = "smelt")]
-    Smelting,
+    Draft,
+    Final,
+    #[data(rename = "arch")]
+    Archived,
 }
 
 /// What a bus carries: written and read straight, without a value tree.
@@ -30,11 +30,11 @@ struct Message {
 #[test]
 fn messages_go_straight_and_as_the_value_would() {
     let m = Message {
-        name: "ruby".into(),
+        name: "report".into(),
         count: 3,
         ratio: 0.5,
         tags: vec!["a".into(), "b".into(), "a".into()],
-        mode: Mode::Smelting,
+        mode: Mode::Archived,
         note: None,
         extra: -7,
         bytes: vec![1, 2, 3],
@@ -80,41 +80,41 @@ fn messages_go_straight_and_as_the_value_would() {
 
 /// A big list kept written: items as they come, read when asked.
 #[derive(Schema, Debug, Clone, PartialEq)]
-struct Area {
+struct Folder {
     name: String,
-    palette: Vec<String>,
-    blocks: substrate_data::Stream<Placed>,
+    owners: Vec<String>,
+    entries: substrate_data::Stream<Entry>,
     after: String,
 }
 
 #[derive(Schema, Debug, Clone, PartialEq)]
-struct Placed {
+struct Entry {
     id: String,
     count: u32,
 }
 
 #[test]
 fn streams_go_whole_and_read_lazily() {
-    let blocks: substrate_data::Stream<Placed> = (0..500)
-        .map(|i| Placed {
-            id: format!("core:{}", ["stone", "dirt"][i % 2]),
+    let entries: substrate_data::Stream<Entry> = (0..500)
+        .map(|i| Entry {
+            id: format!("docs/{}", ["intro", "faq"][i % 2]),
             count: i as u32,
         })
         .collect();
     // Strings the rest of the document has too: the stream's are its own.
-    let area = Area {
-        name: "core:stone".into(),
-        palette: vec!["core:dirt".into()],
-        blocks,
-        after: "core:stone".into(),
+    let folder = Folder {
+        name: "docs/intro".into(),
+        owners: vec!["docs/faq".into()],
+        entries,
+        after: "docs/intro".into(),
     };
-    let bytes = substrate_data::to_bytes(&area);
-    let back: Area = substrate_data::read_bytes(&bytes).unwrap();
-    assert_eq!(back, area);
+    let bytes = substrate_data::to_bytes(&folder);
+    let back: Folder = substrate_data::read_bytes(&bytes).unwrap();
+    assert_eq!(back, folder);
     assert_eq!(
-        back.blocks.iter().nth(3),
-        Some(Placed {
-            id: "core:dirt".into(),
+        back.entries.iter().nth(3),
+        Some(Entry {
+            id: "docs/faq".into(),
             count: 3
         })
     );
@@ -122,20 +122,20 @@ fn streams_go_whole_and_read_lazily() {
     let value = binary::decode(&bytes).unwrap();
     assert_eq!(
         value
-            .get("blocks")
+            .get("entries")
             .and_then(|b| b.as_list())
             .map(<[Value]>::len),
         Some(500)
     );
-    let text = substrate_data::to_text(&area);
+    let text = substrate_data::to_text(&folder);
     assert_eq!(
-        substrate_data::from_text::<Area>(&text).unwrap().value,
-        area
+        substrate_data::from_text::<Folder>(&text).unwrap().value,
+        folder
     );
     // Cut short anywhere, it's an error, never a panic.
     for len in 0..bytes.len() {
         assert!(
-            substrate_data::read_bytes::<Area>(&bytes[..len]).is_err(),
+            substrate_data::read_bytes::<Folder>(&bytes[..len]).is_err(),
             "truncated at {len}"
         );
     }
@@ -175,9 +175,9 @@ mod frames {
     use substrate_data::Schema;
     use substrate_data::frame::{read_frame, to_frame};
 
-    use super::{Area, Compact, Message, Mode, Placed};
+    use super::{Compact, Entry, Folder, Message, Mode};
 
-    /// 64-bit unsigned numbers, every bit used (a block's packed position).
+    /// 64-bit unsigned numbers, every bit used (a packed timestamp and id).
     #[derive(Schema, Debug, Clone, PartialEq)]
     struct Wide {
         key: u64,
@@ -219,11 +219,11 @@ mod frames {
     #[test]
     fn every_kind_of_field_round_trips() {
         let m = Message {
-            name: "ruby".into(),
+            name: "report".into(),
             count: 3,
             ratio: 0.5,
             tags: vec!["a".into(), "b".into(), "a".into()],
-            mode: Mode::Smelting,
+            mode: Mode::Archived,
             note: Some("n".into()),
             extra: -7,
             bytes: vec![1, 2, 3],
@@ -246,19 +246,19 @@ mod frames {
         };
         assert_eq!(read_frame::<Compact>(&to_frame(&c)), Some(c));
         // A stream goes as its binary form inside the frame.
-        let blocks: substrate_data::Stream<Placed> = (0..10)
-            .map(|i| Placed {
-                id: "core:stone".into(),
+        let entries: substrate_data::Stream<Entry> = (0..10)
+            .map(|i| Entry {
+                id: "docs/intro".into(),
                 count: i,
             })
             .collect();
-        let area = Area {
+        let folder = Folder {
             name: "pit".into(),
-            palette: vec!["core:stone".into()],
-            blocks,
+            owners: vec!["docs/intro".into()],
+            entries,
             after: "x".into(),
         };
-        assert_eq!(read_frame::<Area>(&to_frame(&area)), Some(area));
+        assert_eq!(read_frame::<Folder>(&to_frame(&folder)), Some(folder));
     }
 
     /// A frame packed in the thread's reused buffers is the same frame — nested too.
@@ -277,9 +277,9 @@ mod frames {
 
     #[test]
     fn repeated_strings_are_stored_once() {
-        let tags: Vec<String> = (0..100).map(|_| "core:stone".to_owned()).collect();
+        let tags: Vec<String> = (0..100).map(|_| "docs/intro".to_owned()).collect();
         let frame = to_frame(&tags);
-        assert_eq!(frame.windows(10).filter(|w| w == b"core:stone").count(), 1);
+        assert_eq!(frame.windows(10).filter(|w| w == b"docs/intro").count(), 1);
         assert_eq!(read_frame::<Vec<String>>(&frame), Some(tags));
     }
 
@@ -343,10 +343,10 @@ mod frames {
     #[test]
     fn numbers_pack_tight() {
         // Palette indices 0..=2: two bits each.
-        let blocks: Vec<u16> = (0..32768).map(|i| (i % 3) as u16).collect();
-        let frame = to_frame(&blocks);
+        let entries: Vec<u16> = (0..32768).map(|i| (i % 3) as u16).collect();
+        let frame = to_frame(&entries);
         assert!(frame.len() < 32768 / 4 + 16, "{} bytes", frame.len());
-        assert_eq!(read_frame::<Vec<u16>>(&frame), Some(blocks));
+        assert_eq!(read_frame::<Vec<u16>>(&frame), Some(entries));
         let signed = vec![0i32, -1, 1, i32::MIN, i32::MAX];
         assert_eq!(read_frame::<Vec<i32>>(&to_frame(&signed)), Some(signed));
         let wide = vec![u64::MAX, 0, 1 << 63];
@@ -366,31 +366,34 @@ mod frames {
     fn a_frame_reads_by_its_shape_alone() {
         use substrate_data::frame::read_shaped;
         let m = Message {
-            name: "ruby".into(),
+            name: "report".into(),
             count: 3,
             ratio: 0.5,
             tags: vec!["a".into(), "b".into()],
-            mode: Mode::Smelting,
+            mode: Mode::Archived,
             note: None,
             extra: -7,
             bytes: vec![1, 2, 3],
         };
         let value = read_shaped(&to_frame(&m), &Message::shape()).unwrap();
         assert_eq!(substrate_data::read_value::<Message>(&value).unwrap(), m);
-        let blocks: substrate_data::Stream<Placed> = (0..3)
-            .map(|i| Placed {
-                id: "core:stone".into(),
+        let entries: substrate_data::Stream<Entry> = (0..3)
+            .map(|i| Entry {
+                id: "docs/intro".into(),
                 count: i,
             })
             .collect();
-        let area = Area {
+        let folder = Folder {
             name: "pit".into(),
-            palette: vec!["core:stone".into()],
-            blocks,
+            owners: vec!["docs/intro".into()],
+            entries,
             after: "x".into(),
         };
-        let value = read_shaped(&to_frame(&area), &Area::shape()).unwrap();
-        assert_eq!(substrate_data::read_value::<Area>(&value).unwrap(), area);
+        let value = read_shaped(&to_frame(&folder), &Folder::shape()).unwrap();
+        assert_eq!(
+            substrate_data::read_value::<Folder>(&value).unwrap(),
+            folder
+        );
         let c = Compact {
             name: "a".into(),
             shared: "a".into(),
@@ -437,7 +440,7 @@ mod views {
         id: String,
         count: u32,
         weights: Vec<f64>,
-        blocks: Vec<i16>,
+        entries: Vec<i16>,
         tags: Vec<String>,
         inner: Option<Inner>,
     }
@@ -451,23 +454,23 @@ mod views {
     #[test]
     fn a_view_borrows_and_reads_in_place() {
         let hit = Hit {
-            id: "core:stone".into(),
+            id: "docs/intro".into(),
             count: 7,
             weights: vec![0.5, 0.25],
-            blocks: vec![-3, 0, 900],
+            entries: vec![-3, 0, 900],
             tags: vec!["a".into(), "b".into()],
             inner: Some(Inner { name: "in".into() }),
         };
         let frame = to_frame(&hit);
         let v = read_view::<Hit>(&frame).unwrap();
-        assert_eq!(v.id, "core:stone");
+        assert_eq!(v.id, "docs/intro");
         // The string points into the frame: nothing copied.
         assert!(frame.as_ptr_range().contains(&v.id.as_ptr()));
         assert_eq!(v.count, 7);
         assert_eq!(v.weights.iter().collect::<Vec<f64>>(), [0.5, 0.25]);
-        assert_eq!(v.blocks.iter().collect::<Vec<i16>>(), [-3, 0, 900]);
-        assert_eq!(v.blocks.get(2), Some(900));
-        assert_eq!(v.blocks.get(3), None);
+        assert_eq!(v.entries.iter().collect::<Vec<i16>>(), [-3, 0, 900]);
+        assert_eq!(v.entries.get(2), Some(900));
+        assert_eq!(v.entries.get(3), None);
         // A list read lazily, item by item.
         assert_eq!(v.tags.iter().collect::<Vec<&str>>(), ["a", "b"]);
         assert_eq!(

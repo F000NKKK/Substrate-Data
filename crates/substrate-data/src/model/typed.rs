@@ -2,7 +2,7 @@
 //!
 //! | Written | Value |
 //! |---|---|
-//! | `@asset:meshes/cube.mesh`, `@entity:player` | [`Value::Ref`] |
+//! | `@file:images/logo.png`, `@user:alice` | [`Value::Ref`] |
 //! | `@bytes:iVBORw0…` (base64) | [`Value::Bytes`] |
 //! | `@@text` | the plain string `@text` |
 //!
@@ -24,11 +24,11 @@ pub fn classify(s: &str) -> Result<Value, String> {
         return Ok(Value::Str(format!("@{literal}")));
     }
     let (kind, id) = rest.split_once(':').ok_or_else(|| {
-        format!("`{s}`: a reference is `@kind:id` (`@asset:meshes/cube.mesh`); write `@@` for a literal `@`")
+        format!("`{s}`: a reference is `@kind:id` (`@file:images/logo.png`); write `@@` for a literal `@`")
     })?;
     if !is_kind(kind) {
         return Err(format!(
-            "`{s}`: `{kind}` isn't a kind (lower case letters, digits and `_`: `asset`, `entity`, ...)"
+            "`{s}`: `{kind}` isn't a kind (lower case letters, digits and `_`: `user`, `doc`, `file`, ...)"
         ));
     }
     if kind == typed::BYTES {
@@ -59,7 +59,7 @@ pub fn typed_string(v: &Value) -> Option<String> {
     })
 }
 
-/// `v` with its typed values as their strings (`@asset:x`): plain values
+/// `v` with its typed values as their strings (`@file:x`): plain values
 /// only, for a tool that knows no typed ones.
 pub fn flatten(v: &Value) -> Value {
     match v {
@@ -101,12 +101,12 @@ mod tests {
         assert_eq!(classify("plain").unwrap(), Value::Str("plain".into()));
         assert_eq!(classify("@@me").unwrap(), Value::Str("@me".into()));
         assert_eq!(
-            classify("@asset:meshes/cube.mesh").unwrap(),
-            Value::Ref(Ref::new("asset", "meshes/cube.mesh"))
+            classify("@file:images/logo.png").unwrap(),
+            Value::Ref(Ref::new("file", "images/logo.png"))
         );
         assert_eq!(
-            classify("@entity:core:player").unwrap(),
-            Value::Ref(Ref::new("entity", "core:player"))
+            classify("@user:team:alice").unwrap(),
+            Value::Ref(Ref::new("user", "team:alice"))
         );
         assert_eq!(
             classify("@bytes:AQID").unwrap(),
@@ -118,10 +118,10 @@ mod tests {
     fn rejects_typos() {
         for bad in [
             "@",
-            "@cube",
-            "@Asset:cube",
-            "@asset:",
-            "@asset:a b",
+            "@logo",
+            "@File:logo",
+            "@file:",
+            "@file:a b",
             "@bytes:!!",
         ] {
             assert!(classify(bad).is_err(), "{bad} should fail");
@@ -131,8 +131,8 @@ mod tests {
     #[test]
     fn round_trips() {
         for s in [
-            "@asset:meshes/cube.mesh",
-            "@prefab:enemy[0]",
+            "@file:images/logo.png",
+            "@doc:guides/intro[0]",
             "@bytes:AQID",
             "@@at",
             "plain",

@@ -3,7 +3,7 @@ use super::{PhantomData, Reader, Ref, Schema, Shape, Value, ValueRef, fmt, typed
 
 // ── Typed values ────────────────────────────────────────────────────────────
 
-/// A kind of thing a reference names: `asset`, `entity`, `prefab`, ... — a
+/// A kind of thing a reference names: `user`, `doc`, `file`, ... — a
 /// format declares its own with [`kind!`](crate::kind).
 pub trait Kind {
     const NAME: &'static str;
@@ -26,7 +26,7 @@ impl<A: Kind, B: Kind, C: Kind> Kinds for (A, B, C) {
     const NAMES: &'static [&'static str] = &[A::NAME, B::NAME, C::NAME];
 }
 
-/// Declares kinds: `substrate_data::kind!(Asset = "asset", Prefab = "prefab");`.
+/// Declares kinds: `substrate_data::kind!(User = "user", Doc = "doc");`.
 #[macro_export]
 macro_rules! kind {
     ($($name:ident = $kind:expr),* $(,)?) => {$(
@@ -38,7 +38,7 @@ macro_rules! kind {
     )*};
 }
 
-/// The id of something of kind `K`: written `@asset:meshes/cube.mesh`.
+/// The id of something of kind `K`: written `@file:images/logo.png`.
 pub struct Id<K> {
     pub id: String,
     kind: PhantomData<K>,

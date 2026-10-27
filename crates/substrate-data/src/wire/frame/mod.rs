@@ -35,7 +35,7 @@
 //! #[derive(substrate_data::Schema, Debug, PartialEq)]
 //! struct Hit { id: String, count: u32, ratio: f32, next: Option<Box<Hit>> }
 //!
-//! let hit = Hit { id: "core:stone".into(), count: 3, ratio: 0.5, next: None };
+//! let hit = Hit { id: "docs/intro".into(), count: 3, ratio: 0.5, next: None };
 //! let frame = substrate_data::frame::to_frame(&hit);
 //! assert_eq!(substrate_data::frame::read_frame::<Hit>(&frame), Some(hit));
 //! ```

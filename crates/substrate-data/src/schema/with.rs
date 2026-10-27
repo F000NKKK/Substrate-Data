@@ -1,27 +1,27 @@
 //! Field codecs: `#[data(with = "…")]` reads and writes a field through a
 //! type other than its own — like serde's `with`. The field keeps the plain
 //! type a program uses (`String`), the format says what it holds (a
-//! reference to an asset), checked and resolved by the [`Reader`]'s
+//! reference to a file), checked and resolved by the [`Reader`]'s
 //! [`Resolve`](crate::schema::Resolve).
 //!
 //! ```
 //! use substrate_data::with::{Opt, RefTo};
 //!
-//! substrate_data::kind!(Mesh = "mesh", Material = "material");
+//! substrate_data::kind!(File = "file", User = "user");
 //!
 //! #[derive(substrate_data::Schema)]
-//! struct Renderable {
-//!     /// `@mesh:…`, kept as the plain id.
-//!     #[data(with = "RefTo<Mesh>")]
-//!     mesh: String,
-//!     #[data(with = "Opt<RefTo<Material>>")]
-//!     material: Option<String>,
+//! struct Attachment {
+//!     /// `@file:…`, kept as the plain id.
+//!     #[data(with = "RefTo<File>")]
+//!     file: String,
+//!     #[data(with = "Opt<RefTo<User>>")]
+//!     owner: Option<String>,
 //! }
 //!
-//! let r: Renderable =
-//!     substrate_data::from_text(r#"{ mesh: "@mesh:cube" }"#).unwrap().value;
-//! assert_eq!(r.mesh, "cube");
-//! assert_eq!(r.material, None);
+//! let a: Attachment =
+//!     substrate_data::from_text(r#"{ file: "@file:images/logo.png" }"#).unwrap().value;
+//! assert_eq!(a.file, "images/logo.png");
+//! assert_eq!(a.owner, None);
 //! ```
 
 use std::collections::{BTreeMap, HashMap};
@@ -108,7 +108,7 @@ impl<K: Kinds> With<String> for RefTo<K> {
 }
 
 /// Text as it's spelled — markup's attribute, which may spell a reference
-/// (`@asset:logo.png`): a string kept as written, a typed value as its
+/// (`@file:images/logo.png`): a string kept as written, a typed value as its
 /// spelling. Nothing is checked or resolved here.
 pub struct Spelled;
 

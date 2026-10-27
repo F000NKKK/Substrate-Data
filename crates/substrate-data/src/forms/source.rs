@@ -32,12 +32,12 @@ mod tests {
 
     #[test]
     fn a_source_round_trips_through_its_binary_form() {
-        let text = "{\n  // Hard.\n  hardness: 3,\n  drop: \"@mesh:ruby\"\n}";
+        let text = "{\n  // Long.\n  pages: 3,\n  cover: \"@file:cover.png\"\n}";
         let bytes = binary(text).unwrap();
         assert!(is_binary(&bytes));
         let shown = super::text(&bytes).unwrap();
         assert!(
-            shown.contains("$hardness") && shown.contains("@mesh:ruby"),
+            shown.contains("$pages") && shown.contains("@file:cover.png"),
             "{shown}"
         );
         assert_eq!(

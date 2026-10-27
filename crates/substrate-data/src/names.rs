@@ -1,7 +1,7 @@
 //! The words the formats share, defined once: diagnostic codes, the typed
 //! value grammar's characters and words, the keys tagged enums use.
 
-/// What starts a typed value: `@asset:meshes/cube.mesh`.
+/// What starts a typed value: `@file:images/logo.png`.
 pub const TYPED: &str = "@";
 
 /// The kinds of typed value that aren't references.
@@ -27,14 +27,14 @@ pub mod problem {
     pub const SYNTAX: &str = "SD0001";
     /// A value of another type than its field's.
     pub const EXPECTED: &str = "SD0002";
-    /// A bare id where a reference goes (`@asset:…`).
+    /// A bare id where a reference goes (`@file:…`).
     pub const NOT_A_REFERENCE: &str = "SD0003";
     /// A reference to another kind than its field takes.
     pub const WRONG_KIND: &str = "SD0004";
     pub const UNKNOWN_FIELD: &str = "SD0005";
     pub const MISSING_FIELD: &str = "SD0006";
     pub const OUT_OF_RANGE: &str = "SD0007";
-    /// A string written as a typed value that isn't one (`@Asset:x`).
+    /// A string written as a typed value that isn't one (`@File:x`).
     pub const BAD_TYPED: &str = "SD0008";
     /// Binary data that won't decode.
     pub const BAD_BINARY: &str = "SD0009";

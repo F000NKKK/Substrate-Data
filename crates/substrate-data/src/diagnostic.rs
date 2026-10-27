@@ -195,11 +195,11 @@ mod tests {
 
     #[test]
     fn said_with_what_is_known_and_a_frame_reads_back() {
-        let d = Diagnostic::error("YB0002", "no model")
-            .in_file("content/ruby.yblock")
+        let d = Diagnostic::error("XY0002", "no owner")
+            .in_file("docs/intro.doc")
             .at_line(3)
-            .at_path(Path::root().key("model"));
-        assert_eq!(d.to_string(), "content/ruby.yblock:3: model: no model");
+            .at_path(Path::root().key("owner"));
+        assert_eq!(d.to_string(), "docs/intro.doc:3: owner: no owner");
         let mut bytes = Vec::new();
         crate::io::write_frame(&mut bytes, &d).unwrap();
         let back: Diagnostic = crate::io::read_frame(&mut bytes.as_slice())

@@ -87,6 +87,24 @@ pub fn read_bytes<T: Schema>(bytes: &[u8]) -> Result<T, Vec<Diagnostic>> {
     read_ref_value(&v)
 }
 
+/// [`read_bytes`] with `resolver` for the references: the binary form
+/// read through a value tree (the straight path has nowhere to ask), so
+/// references can be checked, rewritten and expanded
+/// ([`with::Expand`](crate::with::Expand)).
+///
+/// # Errors
+///
+/// The decoding error, or every problem reading it (the resolver's among them).
+pub fn from_bytes_with<T: Schema>(
+    bytes: &[u8],
+    resolver: &mut dyn Resolve,
+) -> Result<Read<T>, Vec<Diagnostic>> {
+    let arena = bumpalo::Bump::new();
+    let v = crate::binary::decode_ref(bytes, &arena)
+        .map_err(|e| vec![Diagnostic::error(Problem::BadBinary, e)])?;
+    read_with(&v, Reader::with_resolver(resolver))
+}
+
 /// `from_value`, references and texts going through `resolver`.
 ///
 /// # Errors

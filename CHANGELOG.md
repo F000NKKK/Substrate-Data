@@ -11,6 +11,13 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Added
 
+- Reference expansion: `Resolve::expand` (a reference replaced by a value;
+  default keeps it), `with::Expand<W>` (a field written as a value or as a
+  reference), `Reader::expand_ref`, `Expansion`, `MAX_EXPANSION_DEPTH`, and
+  `from_bytes_with` (the binary form read through a resolver). The frame
+  forms don't expand: a frame has no resolver, its fields hold values.
+- `schema::Dictionary`: values by kind and id, a `Schema` and a `Resolve`
+  that checks and expands the references of the kinds it holds.
 - `simd-utf8` feature: SIMD UTF-8 validation (`simdutf8`) for source files,
   the binary form and frames; results and errors are identical to the
   standard library's.

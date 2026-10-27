@@ -131,9 +131,21 @@ TOML (feature `toml`) and JSON (feature `json`) read into the same model.
 ## Binary
 
 ```text
-"SDAT" version:u8 (= 1)
+"SDAT" version:u8 (= 2)
 value
 ```
+
+**Version 2 is the only version written.** Every writer (the reference's,
+a port's) writes version 2 and nothing else: there is no version 1 writer
+and no mode that keeps a document's version. Readers read version 1 and
+version 2; any other version byte is the error `bad_version`. Reading a
+version 1 document and writing the value back upgrades it, and loses
+nothing: every version 1 document is a value of the same model, and every
+value has a version 2 form (`binary::upgrade(bytes)` is `decode` then
+`encode`). A reader that sees a tag the document's version does not have
+fails with `unknown_tag`; it never skips or guesses. Binary tags only grow:
+a tag's number is never reused, and version 1's tags (0 to 14) mean in
+version 2 what they meant.
 
 A value is a tag byte and its payload. Strings are interned on the way: a
 varint `v`; when odd, `v >> 1` bytes of UTF-8 follow and become the next
@@ -145,26 +157,81 @@ public so decoders in other languages take it from here.
 A varint is LEB128 of a `u64`: at most ten bytes, the tenth `0` or `1`. A
 longer one, or one that doesn't fit 64 bits, is malformed.
 
-| Tag | Value | Payload |
-|---:|---|---|
-| 0 | null | — |
-| 1, 2 | false, true | — |
-| 3 | int | zigzag LEB128 varint |
-| 4 | float | f64 LE |
-| 5 | string | string |
-| 6 | list | varint count, values |
-| 7 | map | varint count, (key string, value) pairs |
-| 8 | ref | kind string, id string |
-| 9 | bytes | varint length, bytes |
-| 10 | list of ints, packed | varint count, zigzag varints |
-| 11 | stream | u32 LE byte length (`binary::STREAM_LEN_BYTES` = 4), then varint count and values with their own string table |
-| 12 | float, 32-bit | f32 LE |
-| 13 | list of floats, packed | varint count, f64 LE each |
-| 14 | list of 32-bit floats, packed | varint count, f32 LE each |
+| Tag | Value | Payload | Version |
+|---:|---|---|---|
+| 0 | null | — | 1 |
+| 1, 2 | false, true | — | 1 |
+| 3 | int | zigzag LEB128 varint | 1 |
+| 4 | float | f64 LE | 1 |
+| 5 | string | string | 1 |
+| 6 | list | varint count, values | 1 |
+| 7 | map | varint count, (key string, value) pairs | 1 |
+| 8 | ref | kind string, id string | 1 |
+| 9 | bytes | varint length, bytes | 1 |
+| 10 | list of ints, packed | varint count, zigzag varints | 1 |
+| 11 | stream | u32 LE byte length (`binary::STREAM_LEN_BYTES` = 4), then varint count and values with their own string table | 1 |
+| 12 | float, 32-bit | f32 LE | 1 |
+| 13 | list of floats, packed | varint count, f64 LE each | 1 |
+| 14 | list of 32-bit floats, packed | varint count, f32 LE each | 1 |
+| 15 | map of a shape | shape, then one value per key of the shape (no keys written) | 2 |
+| 16 | list of maps of one shape | varint count, shape, then `count × width` values with no tag of their own between maps | 2 |
+| 32 to 63 | string, from the table | none: the table entry is `tag - 32` | 2 |
+| 128 to 255 | int, small | none: the int is `tag - 128 - 16` (-16 to 111) | 2 |
+
+Tags 17 to 31, 64 to 127 are unused: `unknown_tag` in both versions. In a
+version 1 document tags 15, 16, 32 to 63 and 128 to 255 are unknown too.
+
+**Shapes** (version 2). A shape is the keys of a map, in order, written
+once and named by number after that. A shape is written as a varint
+`marker`: when odd, `marker >> 1` keys follow, each a string as above
+(so the key text enters the string table, or is a reference to a table
+entry that is already there), and the shape becomes the next shape number
+(0, 1, 2, ...); when even, it names shape number `marker >> 1`, which must
+exist (`bad_shape_index` otherwise). A shape has at least one key (a
+written shape of no keys is `bad_length`; the empty map is tag 7, count
+0) and no key twice (`duplicate_key`). The shape table belongs to the
+document, or to a stream's body or a frame's tagged body, like the string
+table. A map of tag 15 has as many values as its shape has keys; a list of
+tag 16 has `count` maps of the same shape, and `count × width` values
+follow back to back. Both are checked against the bytes left before
+anything is allocated (every value is at least one byte).
+
+**What a writer of a `Value` writes** (the canonical form, the same bytes
+in every port; the conformance cases `binary_v2_is_encoded` pin it). It is
+chosen from the value alone:
+
+- an int in -16..=111 is its one-byte tag 128..=255; any other is tag 3;
+- a float whose f64 is an `f32` exactly, bit for bit (`-0.0` and the
+  infinities are; every NaN is not), is tag 12, else tag 4;
+- a string that is already table entry 0..=31 is its tag 32..=63; any other
+  is tag 5 and the string (a reference's kind and id, and keys, are always
+  the string form, never a tag);
+- a non-empty list of ints is tag 10; of floats tag 13, or tag 14 when every
+  one narrows; a non-empty list whose items are all maps with the same
+  keys in the same order (and at least one key) is tag 16; any other list
+  is tag 6;
+- a non-empty map is tag 15 with its shape, written the first time the keys
+  (as table entries) are met and named after; the empty map is tag 7;
+- strings enter the table in the order the writer meets them: a shape's
+  keys in order, then each value's strings, depth first.
+
+A writer of a typed value (`to_bytes`) may choose among the valid forms —
+for instance writing the keys of an `Option` field that is absent as a
+smaller shape — so its bytes need not equal the `Value` writer's; every
+decoder reads every valid form to the same value.
 
 Nothing is aligned. Decoding checks every count and length against the
-bytes left and nesting against `MAX_DEPTH` (256): malformed input is an
-error, never a panic or a huge allocation.
+bytes left and nesting against `MAX_DEPTH` (256; a shaped map is one
+level, a list of records two: the list and each map): malformed input is
+an error, never a panic or a huge allocation. A decoder fails loudly: it
+never drops a byte or a value without saying so.
+
+**Reading version 1.** A version 1 document is read with tags 0 to 14 only.
+It is the same model: `binary::decode` of a version 1 document and of its
+upgrade are equal values (`binary::upgrade`). The conformance suite keeps
+the version 1 vectors as read vectors (`binary` in the manifest) beside
+their version 2 forms (`binary_v2`), and says per case whether upgrading
+writes exactly the version 2 bytes (`binary_upgrades`).
 
 Two decoders: `binary::decode` builds an owned `Value`;
 `binary::decode_ref` borrows every string from the input and puts lists
@@ -211,6 +278,16 @@ absent (left out of the map, its default in a typed read); a bool byte above
 1 is an error; the string table is read on demand; the root must consume its
 whole body, so trailing bytes are an error. Ints are not range-checked against a [`Shape`]'s `min`/`max`
 when read by shape alone.
+
+A frame has no version byte. A value held "as its binary form, as bytes"
+(a tuple's items, a tagged enum) is a value body with no header: version 2
+tags, with a string table and a shape table of its own. Frames written
+before version 2 hold version 1 bodies; those still read, because a
+version 1 body is a valid version 2 body with the tags it used (tags 0 to
+14 mean the same). Frames themselves are unchanged and need no upgrade
+step: re-packing a value upgrades its bodies, and the conformance suite
+keeps the frames written before as read vectors (`frames/`) beside what the
+reference writes now (`frames_v2/`).
 
 **Evolution rule:** fields are only ever appended. A record carries its
 length, so a reader that knows fewer fields skips the rest and one that
@@ -399,7 +476,7 @@ Codes from this crate:
 | SD0006 | missing field |
 | SD0007 | number out of range |
 | SD0008 | a string written as a typed value that isn't one |
-| SD0009 | binary data that won't decode |
+| SD0009 | binary data that won't decode (kinds: `bad_magic`, `bad_version`, `unexpected_end`, `unknown_tag`, `bad_varint`, `bad_length`, `bad_utf8`, `bad_string_index`, `bad_shape_index`, `bad_reference`, `duplicate_key`, `trailing_bytes`, `too_deep`) |
 | SD0010 | a reference whose id isn't its kind's id type |
 | SD0011 | a reference the [`Resolve`] doesn't resolve or expand |
 

@@ -50,25 +50,59 @@ impl<A: Kind, B: Kind<Id = A::Id>, C: Kind<Id = A::Id>> Kinds for (A, B, C) {
     type Id = A::Id;
 }
 
-/// Declares kinds, each with its id type (`String` when none is said):
-/// `substrate_data::kind!(User = "user": u64, Doc = "doc");`.
+/// Declares kinds, each with its id type (`String` when none is said). A
+/// kind's name is a string literal or a path to a `&'static str` constant
+/// (`Mesh = ids::MESH`, for names a format keeps in one place), or a
+/// `{ block }` of one; either way it is checked when the kind compiles.
+///
+/// `substrate_data::kind!(User = "user": u64, Doc = "doc");`
+///
+/// ```
+/// mod ids {
+///     pub const FILE: &str = "file";
+/// }
+/// substrate_data::kind!(File = ids::FILE: u64, User = "user");
+/// assert_eq!(<File as substrate_data::Kind>::NAME, "file");
+/// ```
 #[macro_export]
 macro_rules! kind {
-    ($($name:ident = $kind:literal $(: $id:ty)?),* $(,)?) => {$(
-        #[doc = concat!("The `", $kind, "` kind of reference.")]
+    () => {};
+    ($name:ident = $kind:literal $(: $id:ty)? $(, $($rest:tt)*)?) => {
+        $crate::__kind_item!($name, concat!("The `", $kind, "` kind of reference."), $kind, $($id)?);
+        $crate::kind!($($($rest)*)?);
+    };
+    ($name:ident = $kind:path $(: $id:ty)? $(, $($rest:tt)*)?) => {
+        $crate::__kind_item!(
+            $name,
+            concat!("The kind named by `", stringify!($kind), "`."),
+            $kind,
+            $($id)?
+        );
+        $crate::kind!($($($rest)*)?);
+    };
+    ($name:ident = $kind:block $(: $id:ty)? $(, $($rest:tt)*)?) => {
+        $crate::__kind_item!($name, "A kind of reference.", $kind, $($id)?);
+        $crate::kind!($($($rest)*)?);
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __kind_item {
+    ($name:ident, $doc:expr, $kind:expr, $($id:ty)?) => {
+        #[doc = $doc]
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
         pub struct $name;
         impl $crate::Kind for $name {
-            const NAME: &'static str = {
-                assert!(
-                    $crate::KindName::is_valid($kind),
-                    "a kind is lower case letters, digits and `_`, starting with a letter"
-                );
-                $kind
-            };
+            const NAME: &'static str = $kind;
             type Id = $crate::__id_or_string!($($id)?);
         }
-    )*};
+        // Checked where the kind is declared, not where it is first used.
+        const _: () = assert!(
+            $crate::KindName::is_valid(<$name as $crate::Kind>::NAME),
+            "a kind is lower case letters, digits and `_`, starting with a letter"
+        );
+    };
 }
 
 #[doc(hidden)]

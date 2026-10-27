@@ -21,7 +21,9 @@
 //! | `Option` | a byte, 0 (none) or 1, then the value |
 //! | list | varint count, varint byte length (a reader steps over it), the values |
 //! | list of ints | varint count, bits each (a byte), the values bit-packed in lanes ([`lanes`]; signed ones zigzagged) |
-//! | list of floats | varint count, `f32`-exact (a byte), the values raw — 4 bytes each if they all are `f32`s |
+//! | list of `f64` | varint count, `f32`-exact (a byte), the values raw — 4 bytes each if they all are `f32`s |
+//! | list of `f32` | varint count, the values raw, 4 bytes each |
+//! | tuple | as a list, each item its binary form as bytes |
 //! | unit enum | varint variant index (variants only appended) |
 //! | anything else | its binary form ([`crate::binary`]), as bytes |
 //!

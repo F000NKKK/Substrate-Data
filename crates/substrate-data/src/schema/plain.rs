@@ -314,7 +314,7 @@ impl Schema for crate::Atom {
         plain(self.as_str())
     }
     fn encode(&self, w: &mut Writer) {
-        w.str(self.as_str());
+        put_plain(w, self.as_str());
     }
     fn decode(d: &mut Decoder<'_>) -> Option<Self> {
         d.str()
@@ -462,6 +462,13 @@ impl<T: Schema + Ord + Clone> Schema for std::collections::BTreeSet<T> {
     }
     fn decode(d: &mut Decoder<'_>) -> Option<Self> {
         Vec::<T>::decode(d).map(Self::from_iter)
+    }
+    /// In a frame it's a list, as its shape says.
+    fn pack(&self, p: &mut Packer) {
+        T::pack_list(&self.iter().cloned().collect::<Vec<_>>(), p);
+    }
+    fn unpack(u: &mut Unpacker<'_>) -> Option<Self> {
+        T::unpack_list(u).map(Self::from_iter)
     }
 }
 
@@ -640,6 +647,22 @@ macro_rules! tuples {
             }
             fn write(&self) -> Value {
                 Value::List(vec![$(self.$i.write()),+])
+            }
+            /// In a frame it's a list of any values, as its shape says:
+            /// each item in its binary form.
+            fn pack(&self, p: &mut Packer) {
+                let at = p.begin_list($n);
+                $(p.put_tagged(&self.$i);)+
+                p.end(at);
+            }
+            fn unpack(u: &mut Unpacker<'_>) -> Option<Self> {
+                let (n, end) = u.list()?;
+                if n != $n {
+                    return None;
+                }
+                let items = ($(u.get_tagged::<$t>()?,)+);
+                u.skip_to(end)?;
+                Some(items)
             }
         }
     )+};

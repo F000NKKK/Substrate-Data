@@ -254,6 +254,12 @@ impl crate::Schema for Path {
     fn write(&self) -> Value {
         self.0.write()
     }
+    fn pack(&self, p: &mut crate::frame::Packer) {
+        self.0.pack(p);
+    }
+    fn unpack(u: &mut crate::frame::Unpacker<'_>) -> Option<Self> {
+        Vec::<Seg>::unpack(u).map(Path)
+    }
 }
 
 impl fmt::Display for Path {

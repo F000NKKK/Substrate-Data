@@ -553,3 +553,60 @@ fn named_shapes_and_at_signs_survive_every_form() {
     assert_eq!(shape.get("kind"), Some(&Value::from("named")));
     assert_eq!(shape.get("name"), Some(&Value::from("vec3")));
 }
+
+#[test]
+fn an_atom_starting_with_at_round_trips_in_binary() {
+    let a = substrate_data::Atom::new("@spawn");
+    let bytes = substrate_data::to_bytes(&a);
+    assert_eq!(
+        substrate_data::read_bytes::<substrate_data::Atom>(&bytes).unwrap(),
+        a
+    );
+    assert_eq!(
+        substrate_data::binary::decode(&bytes).unwrap(),
+        Value::from("@@spawn")
+    );
+}
+
+#[derive(Schema, Debug, Clone, PartialEq)]
+struct Lists {
+    set: std::collections::BTreeSet<u32>,
+    pair: (f32, String),
+    names: substrate_data::OneOrList<String>,
+    path: substrate_data::Path,
+}
+
+#[test]
+fn list_shaped_types_pack_as_lists() {
+    let l = Lists {
+        set: [3, 1, 2].into_iter().collect(),
+        pair: (0.5, "@at".into()),
+        names: substrate_data::OneOrList(vec!["one".into()]),
+        path: substrate_data::Path::root().key("a").index(2),
+    };
+    let frame = substrate_data::frame::to_frame(&l);
+    assert_eq!(
+        substrate_data::frame::read_frame::<Lists>(&frame),
+        Some(l.clone())
+    );
+    // A tool with no code for it reads the same frame by its shape alone.
+    let seen = substrate_data::frame::read_shaped(&frame, &Lists::shape()).unwrap();
+    assert_eq!(substrate_data::read_value::<Lists>(&seen).unwrap(), l);
+}
+
+#[derive(Schema, Debug, Clone, PartialEq)]
+struct Path3 {
+    points: Vec<Vec3>,
+    end: Option<Vec3>,
+}
+
+#[test]
+fn named_shapes_read_by_shape_inside_lists_and_options() {
+    let p = Path3 {
+        points: vec![Vec3([0.0, 1.0, 2.0]), Vec3([-1.5, 0.25, 8.0])],
+        end: Some(Vec3([9.0, 9.5, 10.0])),
+    };
+    let frame = substrate_data::frame::to_frame(&p);
+    let seen = substrate_data::frame::read_shaped(&frame, &Path3::shape()).unwrap();
+    assert_eq!(substrate_data::read_value::<Path3>(&seen).unwrap(), p);
+}

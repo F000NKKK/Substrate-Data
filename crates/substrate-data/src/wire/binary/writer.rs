@@ -13,7 +13,7 @@ pub(crate) const START_BYTES: usize = 256;
 ///
 /// ```
 /// let mut w = substrate_data::binary::Writer::new();
-/// w.map(2).key("id").str("mymod:ruby").key("count").int(3);
+/// w.map(2).key("id").str("core:ruby").key("count").int(3);
 /// let v = substrate_data::binary::decode(&w.finish()).unwrap();
 /// assert_eq!(v.get("count").and_then(|c| c.as_i64()), Some(3));
 /// ```

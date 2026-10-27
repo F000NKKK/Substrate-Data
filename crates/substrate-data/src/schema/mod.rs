@@ -149,7 +149,7 @@ pub fn field_names(shape: &Shape) -> Vec<&'static str> {
 }
 
 /// `A` and `B` read from the same object — each allowing the other's
-/// fields, like serde's `flatten`: a recipe's common fields and its kind's.
+/// fields, like serde's `flatten`: a record's common fields and its kind's.
 pub fn read_both<A: Schema, B: Schema>(
     v: &ValueRef,
     cx: &mut Reader,

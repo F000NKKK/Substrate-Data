@@ -180,3 +180,21 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo test --workspace
       - run: cargo bench --workspace --no-run
+
+  # The TypeScript port: built and run against the conformance vectors.
+  port-typescript:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ports/typescript
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ports/typescript/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm test

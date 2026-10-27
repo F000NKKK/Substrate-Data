@@ -50,13 +50,13 @@ impl<'a> MapRef<'a> {
     }
 
     /// The entries, in order.
-    #[must_use]
+    #[must_use = "an iterator does nothing until it is consumed"]
     pub fn iter(self) -> impl ExactSizeIterator<Item = (&'a str, &'a ValueRef<'a>)> + 'a {
         self.0.iter().map(|(k, v)| (*k, v))
     }
 
     /// The keys, in order.
-    #[must_use]
+    #[must_use = "an iterator does nothing until it is consumed"]
     pub fn keys(self) -> impl ExactSizeIterator<Item = &'a str> + 'a {
         self.0.iter().map(|(k, _)| *k)
     }

@@ -6,9 +6,50 @@ use memchr::{memchr, memchr2, memmem};
 /// Bytes a control-character check looks at at once.
 const CHUNK: usize = 32;
 
+/// Bytes looked at a word at a time before the vector scan is worth its setup.
+const SHORT: usize = 16;
+
+/// Bytes in a word.
+const WORD: usize = 8;
+
+/// A byte repeated in every lane of a word.
+const fn lanes(b: u8) -> u64 {
+    u64::from_le_bytes([b; WORD])
+}
+
+/// A word whose lowest set high bit is on the first byte of `word` that is
+/// a `"`, a `\\` or below 0x20 (higher ones may be false alarms).
+fn stop_mask(word: u64) -> u64 {
+    let zero = |x: u64| x.wrapping_sub(lanes(0x01)) & !x & lanes(0x80);
+    let below = word.wrapping_sub(lanes(0x20)) & !word & lanes(0x80);
+    zero(word ^ lanes(b'"')) | zero(word ^ lanes(b'\\')) | below
+}
+
 /// Where a string's plain run ends in `bytes`: the first `"`, `\\` or
-/// control byte (below 0x20), or `None` when there is none.
+/// control byte (below 0x20), or `None` when there is none. A key or a
+/// short word is answered a word at a time; a long run by the vector scans.
 pub(super) fn string_stop(bytes: &[u8]) -> Option<usize> {
+    let (words, _) = bytes.as_chunks::<WORD>();
+    for (n, word) in words.iter().take(SHORT / WORD).enumerate() {
+        let mask = stop_mask(u64::from_le_bytes(*word));
+        if mask != 0 {
+            return Some(n * WORD + mask.trailing_zeros() as usize / WORD);
+        }
+    }
+    let head = bytes.len().min(SHORT);
+    if bytes.len() < SHORT {
+        // Under two words: the bytes after the whole words, one at a time.
+        let done = words.len() * WORD;
+        return bytes[done..]
+            .iter()
+            .position(|&b| b == b'"' || b == b'\\' || b < 0x20)
+            .map(|p| done + p);
+    }
+    string_stop_long(&bytes[head..]).map(|p| head + p)
+}
+
+/// [`string_stop`] by the vector scans.
+fn string_stop_long(bytes: &[u8]) -> Option<usize> {
     let quote = memchr2(b'"', b'\\', bytes);
     let head = &bytes[..quote.unwrap_or(bytes.len())];
     control(head).or(quote)

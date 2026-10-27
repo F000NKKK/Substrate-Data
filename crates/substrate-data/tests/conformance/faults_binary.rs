@@ -65,7 +65,21 @@ const HEADER_FAULTS: [Row; 1] = [(
     "unexpected end",
 )];
 
-const BODY_FAULTS: [Row; 19] = [
+const BODY_FAULTS: [Row; 21] = [
+    (
+        "binary_map_key_repeated_by_index",
+        "A map whose second key is the first one again, by its table index.",
+        &[7, 2, 3, 97, 3, 2, 0, 3, 2],
+        "duplicate_key",
+        "already set",
+    ),
+    (
+        "binary_map_key_repeated_as_text",
+        "A map whose second key spells the first one's text again as a new string.",
+        &[7, 2, 3, 97, 3, 2, 3, 97, 3, 2],
+        "duplicate_key",
+        "already set",
+    ),
     (
         "binary_cut_float",
         "A float with three of its eight bytes.",

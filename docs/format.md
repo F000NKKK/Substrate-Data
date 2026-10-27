@@ -113,7 +113,16 @@ didn't change keeps the source's spelling (`1` stays `1` for `1.0`); `-0.0`
 and `0` count as different.
 
 Writing text, a float is always spelled so it reads back as a float
-(`1.0`, `1e16`), never as an integer.
+(`1.0`, `1e16`), never as an integer. The spelling is Rust's `{:?}` for
+`f64`: the shortest digits that read back as the same bits, in positional
+form (`0.0001`, `123456789012345.0`) while `1e-4 <= |f| < 1e16`, otherwise
+in exponent form with no `+` and no padding (`1e16`, `5e-324`, `1e-7`); zero
+is `0.0` or `-0.0`. A port must produce the same text (the conformance
+vectors check it); a language's own float printer usually differs.
+
+`"@bytes:..."` is canonical standard base64: the `+/` alphabet, `=` padding
+to a multiple of four, and no stray bits in the last character. Anything
+else is a syntax error, not a lenient read.
 
 TOML (feature `toml`) and JSON (feature `json`) read into the same model.
 
@@ -194,6 +203,14 @@ record = varint length, its fields in declaration order
 | `Id<K>` (and `with::RefTo<K>`) | its id, as `K`'s id type packs (`@user:42` is one varint); the kind is the field's |
 | `Ref` (any kind) | its kind and its id, as strings |
 | anything else | its binary form, as bytes |
+
+Reading rules a port must follow: every int in a frame is zigzag-coded,
+including a numeric reference id; an absent `Option` reads as `null`, while a
+field missing from a record that is shorter than the reader's reads as
+absent (left out of the map, its default in a typed read); a bool byte above
+1 is an error; the string table is read on demand; the root must consume its
+whole body, so trailing bytes are an error. Ints are not range-checked against a [`Shape`]'s `min`/`max`
+when read by shape alone.
 
 **Evolution rule:** fields are only ever appended. A record carries its
 length, so a reader that knows fewer fields skips the rest and one that

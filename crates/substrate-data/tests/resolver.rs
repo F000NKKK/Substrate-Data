@@ -82,7 +82,7 @@ fn a_resolver_rewrites_refuses_and_misses_references() {
     let missing = Unresolved::Missing(Ref::parse("doc", "d").unwrap());
     assert_eq!(missing.to_string(), "`@doc:d`: there is no such doc");
     let as_error: &dyn std::error::Error = &missing;
-    assert!(!as_error.to_string().is_empty());
+    assert_ne!(as_error.to_string(), "");
 }
 
 #[test]

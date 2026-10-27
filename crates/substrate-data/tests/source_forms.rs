@@ -24,7 +24,7 @@ fn a_source_that_is_neither_is_a_typed_error() {
     assert!(matches!(err, ReadError::Binary(_)));
     assert!(err.to_string().starts_with("malformed binary form"));
     let as_error: &dyn std::error::Error = &err;
-    assert!(!as_error.to_string().is_empty());
+    assert_ne!(as_error.to_string(), "");
 }
 
 #[cfg(feature = "json")]
@@ -80,6 +80,6 @@ fn toml_is_read_with_its_positions() {
     let err = substrate_data::toml::parse("a = ").unwrap_err();
     assert_eq!(err.at.line, 1);
     let bad = from_toml::<u8>("a = 1").unwrap_err();
-    assert!(!bad.0.is_empty());
+    assert_ne!(bad.0, [] as [substrate_data::Diagnostic; 0]);
     assert!(text::parse("a = 1").is_err());
 }

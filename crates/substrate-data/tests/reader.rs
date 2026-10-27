@@ -104,7 +104,7 @@ fn two_structs_read_from_one_object() {
     let mut cx = Reader::new();
     let (a, c) = read_both::<Account, Contact>(&borrowed, &mut cx, &["extra"]).unwrap();
     assert_eq!((a.name.as_str(), c.email.as_str()), ("n", "e"));
-    assert!(cx.problems.is_empty());
+    assert_eq!(cx.problems, [] as [substrate_data::Diagnostic; 0]);
     let mut strict = Reader::new();
     drop(read_both::<Account, Contact>(&borrowed, &mut strict, &[]));
     assert_eq!(strict.problems.len(), 2);
@@ -112,7 +112,7 @@ fn two_structs_read_from_one_object() {
         field_names(&Account::shape()),
         ["name", "nickname", "seats"]
     );
-    assert!(field_names(&String::shape()).is_empty());
+    assert_eq!(field_names(&String::shape()), [] as [&str; 0]);
 }
 
 #[test]
@@ -123,7 +123,7 @@ fn field_names_are_checked_when_they_are_used() {
 #[test]
 #[should_panic(expected = "no such field")]
 fn a_field_that_does_not_exist_panics_where_it_is_a_compile_error() {
-    assert!(substrate_data::schema::field_name(&[("a", "a")], "b").is_empty());
+    assert_eq!(substrate_data::schema::field_name(&[("a", "a")], "b"), "");
 }
 
 #[test]

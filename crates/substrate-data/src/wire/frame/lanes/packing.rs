@@ -1,9 +1,6 @@
 //! Packing and unpacking: groups through the processor's kernels, the rest one by one.
 
-#[cfg(target_arch = "x86_64")]
-use super::avx2;
-use super::portable;
-use crate::sync::OnceLock;
+use super::Backend;
 
 /// Lanes of a group: a 256-bit vector of 32-bit words.
 pub const LANES: usize = 8;
@@ -40,24 +37,6 @@ fn split(n: usize, width: u32) -> (usize, usize) {
     }
 }
 
-/// One group packed: `src`'s numbers (each fitting `width` bits) onto
-/// `out` ([`group_bytes`] long).
-type PackFn = fn(&[u32; GROUP], u32, &mut [u8]);
-/// One group unpacked.
-type UnpackFn = fn(&[u8], u32, &mut [u32; GROUP]);
-
-/// This processor's kernels: AVX2 if it has it, chosen once.
-fn kernels() -> &'static (PackFn, UnpackFn) {
-    static KERNELS: OnceLock<(PackFn, UnpackFn)> = OnceLock::new();
-    KERNELS.get_or_init(|| {
-        #[cfg(target_arch = "x86_64")]
-        if std::arch::is_x86_feature_detected!("avx2") {
-            return (avx2::pack, avx2::unpack);
-        }
-        (portable::pack, portable::unpack)
-    })
-}
-
 /// The low 32 bits of `v` (a grouped number fits them: groups are only
 /// packed up to 32 bits wide).
 fn low_word(v: u64) -> u32 {
@@ -74,22 +53,31 @@ pub(super) fn mask(width: u32) -> u32 {
     u32::MAX >> (u32::BITS - width)
 }
 
+/// Groups a kernel call is handed at a time: enough for the widest backend's
+/// stride, small enough to stay in the cache.
+const BATCH: usize = 4;
+
 /// Packs `items` (`n` of them, each fitting `width` bits) onto `out`.
 pub fn pack(out: &mut Vec<u8>, n: usize, width: u32, items: impl Iterator<Item = u64>) {
     let (groups, rest) = split(n, width);
     let start = out.len();
     out.resize(start + packed_bytes(n, width).unwrap_or(0), 0);
     let mut items = items;
-    let (pack_group, _) = kernels();
-    let mut group = [0u32; GROUP];
+    let backend = Backend::active();
+    let size = group_bytes(width);
+    let mut batch = [[0u32; GROUP]; BATCH];
     let mut at = start;
-    for _ in 0..groups {
-        for (slot, v) in group.iter_mut().zip(items.by_ref()) {
-            *slot = low_word(v);
+    let mut left = groups;
+    while left > 0 {
+        let take = left.min(BATCH);
+        for group in &mut batch[..take] {
+            for (slot, v) in group.iter_mut().zip(items.by_ref()) {
+                *slot = low_word(v);
+            }
         }
-        let bytes = group_bytes(width);
-        pack_group(&group, width, &mut out[at..at + bytes]);
-        at += bytes;
+        backend.pack_groups(&batch[..take], width, &mut out[at..at + take * size]);
+        at += take * size;
+        left -= take;
     }
     pack_sequential(&mut out[at..], rest, width, items);
 }
@@ -117,14 +105,19 @@ fn pack_sequential(out: &mut [u8], n: usize, width: u32, items: impl Iterator<It
 /// Each of the `n` numbers in `bytes` (`width` bits each), in order, to `f`.
 pub fn unpack(bytes: &[u8], n: usize, width: u32, mut f: impl FnMut(u64)) {
     let (groups, rest) = split(n, width);
-    let (_, unpack_group) = kernels();
-    let mut group = [0u32; GROUP];
+    let backend = Backend::active();
     let size = group_bytes(width);
-    for b in 0..groups {
-        unpack_group(&bytes[b * size..(b + 1) * size], width, &mut group);
-        for &v in &group {
+    let mut batch = [[0u32; GROUP]; BATCH];
+    let mut at = 0;
+    let mut left = groups;
+    while left > 0 {
+        let take = left.min(BATCH);
+        backend.unpack_groups(&bytes[at..at + take * size], width, &mut batch[..take]);
+        for &v in batch[..take].as_flattened() {
             f(u64::from(v));
         }
+        at += take * size;
+        left -= take;
     }
     let tail = &bytes[groups * size..];
     for i in 0..rest {
@@ -205,24 +198,6 @@ mod tests {
             for n in [0, 1, 7, GROUP - 1, GROUP, GROUP + 3, 3 * GROUP + 100] {
                 roundtrip(n, width);
             }
-        }
-    }
-
-    #[test]
-    fn the_kernels_agree() {
-        let (pack_group, unpack_group) = *kernels();
-        let src: [u32; GROUP] =
-            std::array::from_fn(|i| u32::try_from(i).unwrap().wrapping_mul(2_654_435_761));
-        for width in 1..=GROUP_MAX_BITS {
-            let src = src.map(|v| v & mask(width));
-            let (mut a, mut b) = (vec![0; group_bytes(width)], vec![0; group_bytes(width)]);
-            portable::pack(&src, width, &mut a);
-            pack_group(&src, width, &mut b);
-            assert_eq!(a, b, "width {width}");
-            let (mut x, mut y) = ([0; GROUP], [0; GROUP]);
-            portable::unpack(&a, width, &mut x);
-            unpack_group(&a, width, &mut y);
-            assert_eq!((x, y), (src, src), "width {width}");
         }
     }
 }

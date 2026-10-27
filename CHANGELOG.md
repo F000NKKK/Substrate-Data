@@ -16,6 +16,11 @@ only grow: a tag is never renumbered and a frame field is never reordered.
   standard library's.
 - The text parser's string, comment and line searches use `memchr`
   (runtime-dispatched SIMD); behaviour, errors and positions are unchanged.
+- Bit-packing of integer lists runs on the best instruction set the
+  processor has, chosen once at start: SSE4.2, AVX2 or AVX-512 on x86-64, NEON
+  on AArch64, else portable code. `frame::lanes::Backend` names them
+  (`active`, `available`, `pack_groups`, `unpack_groups`). The bytes are the
+  same on every backend; kernels are specialised per bit width.
 - `binary::NEW_STRING`, `binary::STREAM_LEN_BYTES`, `schema::RESULT_OK` and
   `schema::RESULT_ERR` are public, for readers in other languages.
 

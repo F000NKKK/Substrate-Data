@@ -44,5 +44,9 @@ harness = false
 name = "messages"
 harness = false
 
+[[bench]]
+name = "lanes"
+harness = false
+
 [lints]
 workspace = true

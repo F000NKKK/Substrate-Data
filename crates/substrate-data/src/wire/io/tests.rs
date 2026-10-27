@@ -25,3 +25,13 @@ fn a_cut_or_oversized_frame_is_an_error() {
     let huge = (u32::try_from(MAX_FRAME).unwrap() + 1).to_le_bytes();
     assert!(read_frame_bytes(&mut &huge[..]).is_err());
 }
+
+#[test]
+fn a_stream_cut_inside_the_length_is_an_error_not_a_clean_end() {
+    for cut in 1..size_of::<Len>() {
+        let header = vec![7u8; cut];
+        let err = read_frame_bytes(&mut header.as_slice()).unwrap_err();
+        assert_eq!(err.kind(), std::io::ErrorKind::UnexpectedEof, "{cut} bytes");
+    }
+    assert!(read_frame_bytes(&mut [].as_slice()).unwrap().is_none());
+}

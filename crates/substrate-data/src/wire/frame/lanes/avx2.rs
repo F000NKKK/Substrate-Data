@@ -1,4 +1,8 @@
-//! The same, a row a 256-bit vector.
+//! A row as one 256-bit vector.
+#![expect(
+    clippy::inline_always,
+    reason = "the row operations must inline into the kernel compiled for the instruction set, or they run without it"
+)]
 #![expect(
     unsafe_code,
     reason = "AVX2 kernels, chosen only where the processor has AVX2"
@@ -10,93 +14,82 @@ use std::arch::x86_64::{
     _mm256_storeu_si256,
 };
 
-use super::{GROUP, ROWS, group_bytes, mask};
+use super::dispatch::{by_width, simd_kernels};
+use super::kernel;
+use super::row::Row;
 
-pub(super) fn pack(src: &[u32; GROUP], width: u32, out: &mut [u8]) {
-    assert!(out.len() >= group_bytes(width), "a group's bytes");
-    // SAFETY: `kernels` chose this only where the processor has AVX2; the
-    // buffers were checked above.
-    unsafe { pack_avx2(src, width, out) }
-}
+/// The eight lanes.
+#[derive(Clone, Copy)]
+struct Eight(__m256i);
 
-pub(super) fn unpack(src: &[u8], width: u32, out: &mut [u32; GROUP]) {
-    assert!(src.len() >= group_bytes(width), "a group's bytes");
-    // SAFETY: `kernels` chose this only where the processor has AVX2; the
-    // buffers were checked above.
-    unsafe { unpack_avx2(src, width, out) }
-}
-
+#[inline(always)]
 fn count(n: u32) -> __m128i {
     // SAFETY: SSE2 is part of x86_64.
     unsafe { _mm_cvtsi32_si128(n.cast_signed()) }
 }
 
-#[target_feature(enable = "avx2")]
-#[expect(
-    clippy::cast_ptr_alignment,
-    reason = "only the unaligned `loadu`/`storeu` read and write through it"
-)]
-unsafe fn pack_avx2(src: &[u32; GROUP], width: u32, out: &mut [u8]) {
-    let rows = src.as_ptr().cast::<__m256i>();
-    let dst = out.as_mut_ptr().cast::<__m256i>();
-    let mut acc = _mm256_setzero_si256();
-    let (mut filled, mut word) = (0u32, 0usize);
-    for r in 0..ROWS {
-        // SAFETY: in bounds: ROWS rows of LANES words; `width` words written.
-        let row = unsafe { _mm256_loadu_si256(rows.add(r)) };
-        acc = _mm256_or_si256(acc, _mm256_sll_epi32(row, count(filled)));
-        filled += width;
-        if filled >= u32::BITS {
-            // SAFETY: in bounds: `width` words written in all.
-            unsafe { _mm256_storeu_si256(dst.add(word), acc) };
-            word += 1;
-            filled -= u32::BITS;
-            acc = if filled == 0 {
-                _mm256_setzero_si256()
-            } else {
-                _mm256_srl_epi32(row, count(width - filled))
-            };
-        }
+impl Row for Eight {
+    const GROUPS: usize = 1;
+
+    #[inline(always)]
+    unsafe fn zero() -> Self {
+        // SAFETY: the trait's contract: the processor has the instructions.
+        unsafe { Self(_mm256_setzero_si256()) }
+    }
+
+    #[inline(always)]
+    unsafe fn splat(v: u32) -> Self {
+        // SAFETY: the trait's contract: the processor has the instructions.
+        unsafe { Self(_mm256_set1_epi32(v.cast_signed())) }
+    }
+
+    #[inline(always)]
+    unsafe fn load_words(p: *const u32, _stride: usize) -> Self {
+        // SAFETY: eight words readable; `loadu` takes any alignment.
+        unsafe { Self::load_bytes(p.cast(), 0) }
+    }
+
+    #[inline(always)]
+    unsafe fn load_bytes(p: *const u8, _stride: usize) -> Self {
+        // SAFETY: 32 bytes readable.
+        unsafe { Self(_mm256_loadu_si256(p.cast())) }
+    }
+
+    #[inline(always)]
+    unsafe fn store_words(self, p: *mut u32, _stride: usize) {
+        // SAFETY: as `load_words`.
+        unsafe { self.store_bytes(p.cast(), 0) }
+    }
+
+    #[inline(always)]
+    unsafe fn store_bytes(self, p: *mut u8, _stride: usize) {
+        // SAFETY: 32 bytes writable.
+        unsafe { _mm256_storeu_si256(p.cast(), self.0) }
+    }
+
+    #[inline(always)]
+    unsafe fn or(self, o: Self) -> Self {
+        // SAFETY: the trait's contract: the processor has the instructions.
+        unsafe { Self(_mm256_or_si256(self.0, o.0)) }
+    }
+
+    #[inline(always)]
+    unsafe fn and(self, o: Self) -> Self {
+        // SAFETY: the trait's contract: the processor has the instructions.
+        unsafe { Self(_mm256_and_si256(self.0, o.0)) }
+    }
+
+    #[inline(always)]
+    unsafe fn shl(self, n: u32) -> Self {
+        // SAFETY: the trait's contract: the processor has the instructions.
+        unsafe { Self(_mm256_sll_epi32(self.0, count(n))) }
+    }
+
+    #[inline(always)]
+    unsafe fn shr(self, n: u32) -> Self {
+        // SAFETY: the trait's contract: the processor has the instructions.
+        unsafe { Self(_mm256_srl_epi32(self.0, count(n))) }
     }
 }
 
-#[target_feature(enable = "avx2")]
-#[expect(
-    clippy::cast_ptr_alignment,
-    reason = "only the unaligned `loadu`/`storeu` read and write through it"
-)]
-unsafe fn unpack_avx2(src: &[u8], width: u32, out: &mut [u32; GROUP]) {
-    let words = src.as_ptr().cast::<__m256i>();
-    let rows = out.as_mut_ptr().cast::<__m256i>();
-    let m = _mm256_set1_epi32(mask(width).cast_signed());
-    // SAFETY: in bounds: `width` words read, ROWS rows written.
-    let mut cur = unsafe { _mm256_loadu_si256(words) };
-    let (mut used, mut word) = (0u32, 1usize);
-    for r in 0..ROWS {
-        let end = used + width;
-        let v = if end > u32::BITS {
-            // SAFETY: in bounds: `width` words read in all.
-            let next = unsafe { _mm256_loadu_si256(words.add(word)) };
-            word += 1;
-            let v = _mm256_or_si256(
-                _mm256_srl_epi32(cur, count(used)),
-                _mm256_sll_epi32(next, count(u32::BITS - used)),
-            );
-            cur = next;
-            used = end - u32::BITS;
-            v
-        } else {
-            let v = _mm256_srl_epi32(cur, count(used));
-            used = end;
-            if used == u32::BITS && word < width as usize {
-                // SAFETY: `word < width`: in bounds.
-                cur = unsafe { _mm256_loadu_si256(words.add(word)) };
-                word += 1;
-                used = 0;
-            }
-            v
-        };
-        // SAFETY: in bounds: ROWS rows written.
-        unsafe { _mm256_storeu_si256(rows.add(r), _mm256_and_si256(v, m)) };
-    }
-}
+simd_kernels!(Eight, "avx2");

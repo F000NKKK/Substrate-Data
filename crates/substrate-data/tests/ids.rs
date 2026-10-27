@@ -91,3 +91,34 @@ fn kind_names_are_checked() {
     assert!(KindName::new("").is_err());
     assert_eq!(KindName::new("doc").unwrap(), "doc");
 }
+
+mod named_in_one_place {
+    use substrate_data::Kind;
+
+    mod names {
+        pub(super) const MESH: &str = "mesh";
+        pub(super) const LAYER: &str = "layer";
+    }
+
+    substrate_data::kind!(
+        Mesh = names::MESH: u64,
+        Layer = names::LAYER,
+        Scene = "scene": u64,
+        Light = { "light" },
+    );
+
+    #[test]
+    fn a_kind_is_named_by_a_literal_a_constant_or_a_block() {
+        assert_eq!(Mesh::NAME, "mesh");
+        assert_eq!(Layer::NAME, "layer");
+        assert_eq!(Scene::NAME, "scene");
+        assert_eq!(Light::NAME, "light");
+        assert_eq!(Mesh::kind_name().as_str(), "mesh");
+    }
+
+    #[test]
+    fn a_constant_names_a_kind_with_its_id_type() {
+        let id = substrate_data::Id::<Mesh>::new(7_u64);
+        assert_eq!(id.to_ref().to_string(), "@mesh:7");
+    }
+}

@@ -23,6 +23,7 @@ mod forms;
 mod model;
 pub mod names;
 mod sync;
+mod utf8;
 mod wire;
 
 pub use atom::Atom;

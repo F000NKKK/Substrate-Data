@@ -16,11 +16,24 @@ only grow: a tag is never renumbered and a frame field is never reordered.
   one `write_all` per frame, no allocation per message once warm.
 - `binary::encode_into` and `to_bytes_into`: append the binary form to a
   caller's buffer.
+- `simd-utf8` feature: SIMD UTF-8 validation (`simdutf8`) for source files,
+  the binary form and frames; results and errors are identical to the
+  standard library's.
+- The text parser's string, comment and line searches use `memchr`
+  (runtime-dispatched SIMD); behaviour, errors and positions are unchanged.
+- Bit-packing of integer lists runs on the best instruction set the
+  processor has, chosen once at start: SSE4.2, AVX2 or AVX-512 on x86-64, NEON
+  on AArch64, else portable code. `frame::lanes::Backend` names them
+  (`active`, `available`, `pack_groups`, `unpack_groups`). The bytes are the
+  same on every backend; kernels are specialised per bit width.
 - `binary::NEW_STRING`, `binary::STREAM_LEN_BYTES`, `schema::RESULT_OK` and
   `schema::RESULT_ERR` are public, for readers in other languages.
 
 ### Changed
 
+- `kind!` takes a kind's name as a string literal, a path to a `&'static str`
+  constant (`Mesh = ids::MESH`) or a `{ block }`; the name is checked where
+  the kind is declared, not where it is first used.
 - Dependencies: `base64` 0.23, `toml` 1, `syn` 3, `criterion` 0.8.
 - `docs/format.md` names the public constants and the `Result` keys.
 

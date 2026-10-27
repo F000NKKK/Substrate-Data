@@ -19,10 +19,11 @@ fn load(src: &[u8], word: usize) -> [u32; LANES] {
     std::array::from_fn(|l| u32::from_le_bytes(words[l]))
 }
 
-pub(super) fn pack(src: &[u32; GROUP], width: u32, out: &mut [u8]) {
+pub(super) fn pack(src: &[u32], width: u32, out: &mut [u8]) {
+    assert!(src.len() >= GROUP, "a group's numbers");
     let mut acc = [0u32; LANES];
     let (mut filled, mut word) = (0u32, 0usize);
-    for row in src.as_chunks::<LANES>().0 {
+    for row in src[..GROUP].as_chunks::<LANES>().0 {
         for l in 0..LANES {
             acc[l] |= row[l] << filled;
         }
@@ -43,11 +44,12 @@ pub(super) fn pack(src: &[u32; GROUP], width: u32, out: &mut [u8]) {
     }
 }
 
-pub(super) fn unpack(src: &[u8], width: u32, out: &mut [u32; GROUP]) {
+pub(super) fn unpack(src: &[u8], width: u32, out: &mut [u32]) {
+    assert!(out.len() >= GROUP, "a group's numbers");
     let m = mask(width);
     let mut cur = load(src, 0);
     let (mut used, mut word) = (0u32, 1usize);
-    for row in out.as_chunks_mut::<LANES>().0 {
+    for row in out[..GROUP].as_chunks_mut::<LANES>().0 {
         let end = used + width;
         if end > u32::BITS {
             // The number runs into the next word.

@@ -17,6 +17,8 @@ substrate-data-derive = { workspace = true }
 base64 = { workspace = true }
 # Vectorised byte search (runtime-dispatched) for the text parser's scans.
 memchr = { workspace = true, features = ["std"] }
+# Shortest-digits float printer, much cheaper than `fmt`; the text form's floats.
+zmij = { workspace = true }
 # The arena borrowed values' lists and maps live in (`ValueRef`).
 bumpalo = { workspace = true }
 # TOML read into the model (`toml` feature).

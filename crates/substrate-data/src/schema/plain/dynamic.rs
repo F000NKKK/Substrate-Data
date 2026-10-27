@@ -16,6 +16,9 @@ impl Schema for Value {
     fn write(&self) -> Value {
         self.clone()
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        w.value(self);
+    }
 }
 
 impl Schema for bool {
@@ -32,6 +35,9 @@ impl Schema for bool {
         Value::Bool(*self)
     }
     fn encode(&self, w: &mut Writer) {
+        w.bool(*self);
+    }
+    fn write_text(&self, w: &mut crate::text::Writer) {
         w.bool(*self);
     }
     fn decode(d: &mut Decoder<'_>) -> Option<Self> {
@@ -56,5 +62,8 @@ impl Schema for () {
     }
     fn write(&self) -> Value {
         Value::Null
+    }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        w.null();
     }
 }

@@ -135,6 +135,14 @@ fn read_with<T: Schema>(v: &ValueRef<'_>, mut cx: Reader<'_>) -> Result<Read<T>,
 ///
 /// [`Errors`]: the text's syntax error, or every problem reading it, placed.
 pub fn from_text<T: Schema>(text: &str) -> Result<Read<T>, Errors> {
+    // The usual case, a text that's right: parsed straight to a borrowed
+    // value, no positions kept. Only a problem pays for them, by reading again
+    // the slow way, which says where.
+    let arena = bumpalo::Bump::new();
+    let v = text::parse_ref(text, &arena)?;
+    if let Ok(read) = read_with(&v, Reader::new()) {
+        return Ok(read);
+    }
     let doc = text::parse(text)?;
     from_doc(text, &doc)
 }

@@ -62,6 +62,9 @@ macro_rules! float_schema {
             fn decode(d: &mut Decoder<'_>) -> Option<Self> {
                 d.float().map(<$t as Float>::of_f64)
             }
+            fn write_text(&self, w: &mut crate::text::Writer) {
+                w.float(self.to_f64());
+            }
             fn encode_list(items: &[Self], w: &mut Writer) {
                 w.$many(items);
             }

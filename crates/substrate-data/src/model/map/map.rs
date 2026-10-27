@@ -3,6 +3,7 @@
 use std::collections::HashMap;
 use std::sync::OnceLock;
 
+use crate::model::quick_hash::QuickBuild;
 use crate::model::value::Value;
 use crate::sync::Arc;
 
@@ -22,7 +23,7 @@ pub struct Map {
 
 /// Each key's position among a map's entries.
 #[derive(Clone, Default)]
-struct KeyIndex(HashMap<Arc<str>, usize>);
+struct KeyIndex(HashMap<Arc<str>, usize, QuickBuild>);
 
 impl std::fmt::Debug for Map {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -52,6 +53,15 @@ impl Map {
         }
     }
 
+    /// A map of `entries` already known to have distinct keys — for the
+    /// parser, which checked each as it read it.
+    pub(crate) fn from_entries(entries: Vec<(Arc<str>, Value)>) -> Self {
+        Self {
+            entries,
+            index: OnceLock::new(),
+        }
+    }
+
     /// Where `key` is: by the index in a big map (made now if it isn't
     /// yet), by a scan in a small one.
     fn position(&self, key: &str) -> Option<usize> {
@@ -71,7 +81,7 @@ impl Map {
     }
 
     /// The index, if one's made: what a change keeps current.
-    fn index_mut(&mut self) -> Option<&mut HashMap<Arc<str>, usize>> {
+    fn index_mut(&mut self) -> Option<&mut HashMap<Arc<str>, usize, QuickBuild>> {
         self.index.get_mut().map(|b| &mut b.0)
     }
 

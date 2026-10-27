@@ -27,6 +27,15 @@ fn put_plain(w: &mut Writer, s: &str) {
     }
 }
 
+/// Plain text written as text, its leading `@` doubled like [`plain`]'s.
+fn put_plain_text(w: &mut crate::text::Writer, s: &str) {
+    if s.starts_with(typed_mark()) {
+        w.str(&typed::escape_at(s));
+    } else {
+        w.str(s);
+    }
+}
+
 impl Schema for String {
     fn shape() -> Shape {
         Shape::Str
@@ -58,6 +67,9 @@ impl Schema for String {
     fn write(&self) -> Value {
         plain(self)
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        put_plain_text(w, self);
+    }
     fn encode(&self, w: &mut Writer) {
         put_plain(w, self);
     }
@@ -86,6 +98,9 @@ impl Schema for std::borrow::Cow<'static, str> {
     fn write(&self) -> Value {
         plain(self)
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        put_plain_text(w, self);
+    }
     fn encode(&self, w: &mut Writer) {
         put_plain(w, self);
     }
@@ -111,6 +126,9 @@ impl Schema for std::path::PathBuf {
     fn write(&self) -> Value {
         plain(&self.to_string_lossy())
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        put_plain_text(w, &self.to_string_lossy());
+    }
     fn encode(&self, w: &mut Writer) {
         put_plain(w, &self.to_string_lossy());
     }
@@ -135,6 +153,9 @@ impl Schema for crate::Atom {
     }
     fn write(&self) -> Value {
         plain(self.as_str())
+    }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        put_plain_text(w, self.as_str());
     }
     fn encode(&self, w: &mut Writer) {
         put_plain(w, self.as_str());
@@ -162,6 +183,9 @@ impl Schema for Box<str> {
     fn write(&self) -> Value {
         plain(self)
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        put_plain_text(w, self);
+    }
     fn encode(&self, w: &mut Writer) {
         put_plain(w, self);
     }
@@ -186,6 +210,9 @@ impl Schema for crate::sync::Arc<str> {
     }
     fn write(&self) -> Value {
         plain(self)
+    }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        put_plain_text(w, self);
     }
     fn encode(&self, w: &mut Writer) {
         put_plain(w, self);

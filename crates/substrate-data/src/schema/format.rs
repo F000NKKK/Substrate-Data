@@ -35,6 +35,13 @@ pub trait Schema: Sized {
         w.value(&self.write());
     }
 
+    /// Writes itself as text, straight ([`crate::text::Writer`]) —
+    /// [`Schema::write`]'s value as text, unless the type knows better
+    /// (derived ones do): no value tree is built on the way.
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        w.value(&self.write());
+    }
+
     /// Reads itself from the binary form, straight; `None` when it isn't
     /// what [`Schema::encode`] writes — then [`read_bytes`](crate::schema::read_bytes) reads the slow
     /// way, which says what's wrong. Through a value unless the type knows

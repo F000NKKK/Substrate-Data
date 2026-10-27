@@ -7,8 +7,19 @@ use crate::codegen::Codegen;
 use crate::fields::NamedField;
 use crate::marker::Fallback;
 
-/// `fields` (bound by name) written straight as a map.
+/// `fields` (bound by name) written straight as a binary map.
 pub(crate) fn encode_fields(cg: &Codegen, fields: &[NamedField]) -> Tokens {
+    put_fields(cg, fields, &quote::format_ident!("encode"))
+}
+
+/// `fields` (bound by name) written straight as a text map.
+pub(crate) fn write_text_fields(cg: &Codegen, fields: &[NamedField]) -> Tokens {
+    put_fields(cg, fields, &quote::format_ident!("write_text"))
+}
+
+/// `fields` written as a map by `with`'s `method` (`encode` or `write_text`)
+/// to the writer `__sd_w`: its length, then each entry that isn't skipped.
+fn put_fields(cg: &Codegen, fields: &[NamedField], method: &proc_macro2::Ident) -> Tokens {
     let krate = &cg.krate;
     let written: Vec<_> = fields.iter().filter(|f| !f.skip).collect();
     let counts = written.iter().map(|f| {
@@ -20,7 +31,7 @@ pub(crate) fn encode_fields(cg: &Codegen, fields: &[NamedField]) -> Tokens {
         quote! {
             if !<#w as #krate::with::With<#ty>>::skip(#ident) {
                 __sd_w.key(#key);
-                <#w as #krate::with::With<#ty>>::encode(#ident, __sd_w);
+                <#w as #krate::with::With<#ty>>::#method(#ident, __sd_w);
             }
         }
     });

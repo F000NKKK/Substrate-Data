@@ -15,6 +15,8 @@ substrate-data = { path = "crates/substrate-data", version = "0.2.1" }
 substrate-data-derive = { path = "crates/substrate-data-derive", version = "0.2.1" }
 base64 = "0.23"
 memchr = "=2.8.3"
+# Shortest float digits (the text form's float spelling).
+zmij = "1"
 simdutf8 = "=0.1.5"
 bumpalo = { version = "3", features = ["collections"] }
 toml = { version = "1", default-features = false }

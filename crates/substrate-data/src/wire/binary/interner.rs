@@ -14,6 +14,7 @@ const RECENT: usize = 64;
 
 /// The strings written so far, by where their bytes are in the buffer the
 /// owner writes them to.
+#[derive(Debug)]
 pub(crate) struct Interner {
     /// Each string: where its bytes start, and how long.
     spans: Vec<(usize, usize)>,
@@ -22,6 +23,7 @@ pub(crate) struct Interner {
 }
 
 /// The strings of an interner that has many.
+#[derive(Debug)]
 struct Index {
     /// By hash.
     by_hash: HashMap<u64, u32, BuildHasherDefault<Fx>>,
@@ -65,7 +67,7 @@ impl Interner {
             .get(&hash(s.as_bytes()))
             .map(|&i| i as usize)
             .filter(|&i| is(&self.spans[i]))?;
-        index.recent[slot] = found as u32 + 1;
+        index.recent[slot] = slot_of(found);
         Some(found)
     }
 
@@ -75,13 +77,18 @@ impl Interner {
         self.spans.push((at, s.len()));
         match &mut self.index {
             Some(index) => {
-                index.by_hash.entry(hash(s.as_bytes())).or_insert(i as u32);
-                index.recent[recent_slot(s)] = i as u32 + 1;
+                index
+                    .by_hash
+                    .entry(hash(s.as_bytes()))
+                    .or_insert(index_of(i));
+                index.recent[recent_slot(s)] = slot_of(i);
             }
             None if self.spans.len() > LINEAR_STRINGS => {
                 let mut by_hash = HashMap::default();
-                for (n, &(at, len)) in self.spans.iter().enumerate() {
-                    by_hash.entry(hash(&buf[at..at + len])).or_insert(n as u32);
+                for (n, &(start, len)) in self.spans.iter().enumerate() {
+                    by_hash
+                        .entry(hash(&buf[start..start + len]))
+                        .or_insert(index_of(n));
                 }
                 self.index = Some(Box::new(Index {
                     by_hash,
@@ -142,4 +149,15 @@ impl Hasher for Fx {
     fn finish(&self) -> u64 {
         self.0
     }
+}
+
+/// String `i` in the hash index; past `u32` it saturates (a lookup checks
+/// the string it finds, so the worst case is a string written twice).
+fn index_of(i: usize) -> u32 {
+    u32::try_from(i).unwrap_or(u32::MAX)
+}
+
+/// String `i` in the recent cache, where 0 is empty; past `u32` it isn't cached.
+fn slot_of(i: usize) -> u32 {
+    u32::try_from(i + 1).unwrap_or(0)
 }

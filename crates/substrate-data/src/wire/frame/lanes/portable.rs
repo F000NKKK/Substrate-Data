@@ -1,5 +1,5 @@
 //! The kernels any processor runs: rows as `[u32; LANES]`.
-use super::{BLOCK, LANES, WORD_BYTES, mask};
+use super::{GROUP, LANES, WORD_BYTES, mask};
 
 fn store(out: &mut [u8], word: usize, acc: &[u32; LANES]) {
     let at = word * LANES * WORD_BYTES;
@@ -19,7 +19,7 @@ fn load(src: &[u8], word: usize) -> [u32; LANES] {
     std::array::from_fn(|l| u32::from_le_bytes(words[l]))
 }
 
-pub(super) fn pack(src: &[u32; BLOCK], width: u32, out: &mut [u8]) {
+pub(super) fn pack(src: &[u32; GROUP], width: u32, out: &mut [u8]) {
     let mut acc = [0u32; LANES];
     let (mut filled, mut word) = (0u32, 0usize);
     for row in src.as_chunks::<LANES>().0 {
@@ -43,7 +43,7 @@ pub(super) fn pack(src: &[u32; BLOCK], width: u32, out: &mut [u8]) {
     }
 }
 
-pub(super) fn unpack(src: &[u8], width: u32, out: &mut [u32; BLOCK]) {
+pub(super) fn unpack(src: &[u8], width: u32, out: &mut [u32; GROUP]) {
     let m = mask(width);
     let mut cur = load(src, 0);
     let (mut used, mut word) = (0u32, 1usize);

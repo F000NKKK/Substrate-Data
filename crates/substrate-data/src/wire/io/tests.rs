@@ -1,3 +1,5 @@
+//! Frames over a byte stream: round trips, cut and oversized frames.
+
 use super::*;
 
 #[test]
@@ -20,6 +22,6 @@ fn a_cut_or_oversized_frame_is_an_error() {
     write_frame(&mut pipe, &"hello".to_string()).unwrap();
     let cut = &pipe[..pipe.len() - 1];
     assert!(read_frame::<String>(&mut &cut[..]).is_err());
-    let huge = (MAX_FRAME as u32 + 1).to_le_bytes();
+    let huge = (u32::try_from(MAX_FRAME).unwrap() + 1).to_le_bytes();
     assert!(read_frame_bytes(&mut &huge[..]).is_err());
 }

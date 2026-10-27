@@ -1,3 +1,9 @@
+//! The kernels any processor runs, one float at a time.
+
+#[expect(
+    clippy::cast_possible_truncation,
+    reason = "narrowed to check it reads back the same"
+)]
 pub(super) fn fits(items: &[f64]) -> bool {
     items
         .iter()
@@ -5,6 +11,10 @@ pub(super) fn fits(items: &[f64]) -> bool {
 }
 use super::F32_BYTES;
 
+#[expect(
+    clippy::cast_possible_truncation,
+    reason = "called once `fits` said every float narrows exactly"
+)]
 pub(super) fn narrow(items: &[f64], out: &mut [u8]) {
     for (dst, f) in out.as_chunks_mut::<F32_BYTES>().0.iter_mut().zip(items) {
         *dst = (*f as f32).to_le_bytes();

@@ -1,9 +1,8 @@
 //! A reader-writer lock that opens whether or not it is poisoned: a thread
 //! that panicked while holding it leaves the data as it last was.
 
-use std::sync::{PoisonError, RwLockReadGuard, RwLockWriteGuard};
-
 pub(crate) use std::sync::{Arc, OnceLock};
+use std::sync::{PoisonError, RwLockReadGuard, RwLockWriteGuard};
 
 /// [`std::sync::RwLock`], its locks poison-free.
 #[derive(Debug, Default)]

@@ -10,28 +10,28 @@ socket, and describe it to an editor that builds property grids from it.
 🇺🇸 **English** | 🇷🇺 [Русский](README.ru.md)
 
 ```rust
-substrate_data::kind!(Mesh = "mesh", Material = "material");
+substrate_data::kind!(File = "file", User = "user": u64);
 
-/// Something drawn.
+/// A file attached to something.
 #[derive(substrate_data::Schema, Debug, PartialEq)]
-struct Renderable {
-    /// What it looks like.
-    mesh: substrate_data::Id<Mesh>,
+struct Attachment {
+    /// What is attached.
+    file: substrate_data::Id<File>,
     #[data(default)]
-    material: Option<substrate_data::Id<Material>>,
+    owner: Option<substrate_data::Id<User>>,
     #[data(range = "0..=16", default)]
-    lod_bias: u8,
+    priority: u8,
 }
 
-let r: Renderable = substrate_data::from_text(r#"{
-    // The crate in the corner.
-    mesh: "@mesh:props/crate.mesh",
-    material: "@material:wood",
+let r: Attachment = substrate_data::from_text(r#"{
+    // The logo for the front page.
+    file: "@file:images/logo.png",
+    owner: "@user:42",
 }"#).unwrap().value;
 
 let bytes = substrate_data::to_bytes(&r);            // compact, self-describing
 let frame = substrate_data::frame::to_frame(&r);     // packed, schema-known
-let shape = Renderable::shape().describe();          // for editors and docs
+let shape = Attachment::shape().describe();          // a typed ShapeDoc, for editors and docs
 ```
 
 ## Crates
@@ -53,16 +53,16 @@ streams, schemas and their `#[data(...)]` options, and diagnostic codes.
 
 ## Performance
 
-On a generated 4000-entity scene (1.05 MB of text, 436 KB binary), release
-build:
+On a generated task-tracker document (4000 tasks, 0.99 MB of text,
+436 KB binary), release build:
 
 | | substrate-data | serde_json |
 |---|---:|---:|
-| parse text | 14.3 ms | 18.3 ms |
-| parse text with spans | 20.4 ms | — |
-| decode binary | 4.7 ms | — |
-| write text | 7.0 ms | 2.2 ms |
-| encode binary | 2.8 ms | — |
+| parse text | 16.1 ms | 19.2 ms |
+| parse text with spans | 27.6 ms | — |
+| decode binary | 7.1 ms | — |
+| write text | 5.1 ms | 2.3 ms |
+| encode binary | 2.9 ms | — |
 
 `cargo bench` runs these (`benches/data.rs`) and the typed-message
 round trips (`benches/messages.rs`).
@@ -70,8 +70,8 @@ round trips (`benches/messages.rs`).
 ## Origin
 
 Extracted from `yog-data` in [Yog Mod Loader](https://github.com/F000NKKK/Yog-Mod-Loader)
-with everything Minecraft- and Yog-specific removed, so engines
-([Meridian](https://github.com/F000NKKK/Meridian-Engine)), tools and IDEs
+with everything Yog-specific removed, so programs such as
+[Meridian](https://github.com/F000NKKK/Meridian-Engine), tools and IDEs
 built on [Substrate Platform](https://github.com/F000NKKK/Substrate-Platform)
 can share it.
 

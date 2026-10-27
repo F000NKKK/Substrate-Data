@@ -5,12 +5,22 @@
 /// A struct with named fields (`#[derive(Schema)]`): each field's Rust name
 /// and its name in files.
 pub trait Fields {
+    /// Each field's Rust name and the key it's written as.
     const FIELDS: &'static [(&'static str, &'static str)];
 }
 
 /// `ident`'s name in files among `fields` — a compile error when it's used
 /// in a constant (as [`field!`](crate::field) does) and there's no such field.
+///
+/// # Panics
+///
+/// When `fields` has no `ident` — at compile time in a constant, which is
+/// how [`field!`](crate::field) turns a misspelt field into a compile error.
 #[must_use]
+#[expect(
+    clippy::panic,
+    reason = "a panic in a constant is the compile error `field!` gives"
+)]
 pub const fn field_name(
     fields: &'static [(&'static str, &'static str)],
     ident: &str,
@@ -40,8 +50,8 @@ const fn same(a: &str, b: &str) -> bool {
     true
 }
 
-/// Field `ident` of struct `T` as files write it: `field!(BlockProps, tool_level)`
-/// → `"tool_level"`. A field `T` hasn't got doesn't compile.
+/// Field `ident` of struct `T` as files write it: `field!(UserProfile, display_name)`
+/// → `"display_name"`. A field `T` hasn't got doesn't compile.
 #[macro_export]
 macro_rules! field {
     ($t:ty, $f:ident) => {{

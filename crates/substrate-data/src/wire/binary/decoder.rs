@@ -1,42 +1,44 @@
-//! Reading the binary form: as a [`Value`], borrowed as a [`ValueRef`], or
-//! step by step by a schema reading itself ([`crate::Schema::decode`]).
-
-use crate::sync::Arc;
-
-use bumpalo::Bump;
+//! [`Decoder`]: reads the binary form — as a [`Value`] here, borrowed as a
+//! [`ValueRef`] (`decoder_ref`), or step by step by a schema reading itself
+//! (`decoder_straight`).
 
 use super::{
     DecodeError, MAGIC, MAX_DEPTH, NEW_STRING, STREAM_LEN_BYTES, VERSION, read_varint, tag,
     unzigzag,
 };
-use crate::model::borrowed::{MapRef, ValueRef};
-use crate::model::value::{Map, Ref, Value};
+use crate::model::value::{KindName, Map, Ref, RefKey, Value};
+use crate::sync::Arc;
 
 /// Strings a decoder makes room for at once: a message's keys and values.
-const STRINGS_START: usize = 16;
+pub(super) const STRINGS_START: usize = 16;
 
 /// Bytes of a float, and of a 32-bit one.
-const F64_BYTES: usize = 8;
-const F32_BYTES: usize = 4;
+pub(super) const F64_BYTES: usize = 8;
+pub(super) const F32_BYTES: usize = 4;
 
 /// Bytes a map entry takes at least: its key and its value's tag.
-const MAP_ENTRY_MIN: usize = 2;
+pub(super) const MAP_ENTRY_MIN: usize = 2;
 
 /// Reads the binary form. The step-by-step reads ([`Decoder::int`],
 /// [`Decoder::map`] …) answer `None` for anything but what
 /// [`crate::Schema::encode`] writes there — the schema then reads the
 /// slow way, which says what's wrong.
+#[derive(Debug)]
 pub struct Decoder<'b> {
-    b: &'b [u8],
-    i: usize,
-    strings: Vec<&'b str>,
+    pub(super) b: &'b [u8],
+    pub(super) i: usize,
+    pub(super) strings: Vec<&'b str>,
     /// Map keys made so far, by table index: each key is allocated once.
-    keys: Vec<Option<Arc<str>>>,
-    depth: usize,
+    pub(super) keys: Vec<Option<Arc<str>>>,
+    pub(super) depth: usize,
 }
 
 impl<'b> Decoder<'b> {
     /// After the header: the root value next.
+    ///
+    /// # Errors
+    ///
+    /// [`DecodeError`] when the header isn't `SDAT` and this version.
     pub fn open(bytes: &'b [u8]) -> Result<Self, DecodeError> {
         let mut d = Decoder {
             b: bytes,
@@ -70,13 +72,13 @@ impl<'b> Decoder<'b> {
     }
 
     /// A stream's body: its bytes, read past.
-    fn stream_body(&mut self) -> Result<&'b [u8], DecodeError> {
+    pub(super) fn stream_body(&mut self) -> Result<&'b [u8], DecodeError> {
         let len = u32::from_le_bytes(self.fixed::<STREAM_LEN_BYTES>()?) as usize;
         self.take(len)
     }
 
     /// A stream's values, decoded as a list.
-    fn stream_values(&mut self) -> Result<Vec<Value>, DecodeError> {
+    pub(super) fn stream_values(&mut self) -> Result<Vec<Value>, DecodeError> {
         let mut d = Decoder::body(self.stream_body()?);
         d.depth = self.depth;
         let n = d.count(1)?;
@@ -89,6 +91,7 @@ impl<'b> Decoder<'b> {
     }
 
     /// Whether every byte was read.
+    #[must_use]
     pub fn at_end(&self) -> bool {
         self.i == self.b.len()
     }
@@ -101,14 +104,14 @@ impl<'b> Decoder<'b> {
         }
     }
 
-    fn error(&self, message: impl Into<String>) -> DecodeError {
+    pub(super) fn error(&self, message: impl Into<String>) -> DecodeError {
         DecodeError {
             message: message.into(),
             offset: self.i,
         }
     }
 
-    fn byte(&mut self) -> Result<u8, DecodeError> {
+    pub(super) fn byte(&mut self) -> Result<u8, DecodeError> {
         let b = *self
             .b
             .get(self.i)
@@ -117,22 +120,22 @@ impl<'b> Decoder<'b> {
         Ok(b)
     }
 
-    fn varint(&mut self) -> Result<u64, DecodeError> {
+    pub(super) fn varint(&mut self) -> Result<u64, DecodeError> {
         read_varint(self.b, &mut self.i)
             .ok_or_else(|| self.error("a varint cut short or longer than 64 bits"))
     }
 
     /// A length, checked against what's left: each of the `count` things takes at least `min` bytes.
-    fn count(&mut self, min: usize) -> Result<usize, DecodeError> {
+    pub(super) fn count(&mut self, min: usize) -> Result<usize, DecodeError> {
         let n = self.varint()?;
         let left = self.b.len() - self.i;
-        if n > (left / min.max(1)) as u64 {
-            return Err(self.error(format!("length {n} past the end ({left} bytes left)")));
+        match usize::try_from(n) {
+            Ok(n) if n <= left / min.max(1) => Ok(n),
+            _ => Err(self.error(format!("length {n} past the end ({left} bytes left)"))),
         }
-        Ok(n as usize)
     }
 
-    fn fixed<const N: usize>(&mut self) -> Result<[u8; N], DecodeError> {
+    pub(super) fn fixed<const N: usize>(&mut self) -> Result<[u8; N], DecodeError> {
         let bytes = self
             .b
             .get(self.i..self.i + N)
@@ -142,7 +145,7 @@ impl<'b> Decoder<'b> {
     }
 
     /// `len` bytes.
-    fn take(&mut self, len: usize) -> Result<&'b [u8], DecodeError> {
+    pub(super) fn take(&mut self, len: usize) -> Result<&'b [u8], DecodeError> {
         let end = self
             .i
             .checked_add(len)
@@ -154,7 +157,7 @@ impl<'b> Decoder<'b> {
     }
 
     /// A packed list of floats `N` bytes wide: each one's bytes, read in place (no alignment asked).
-    fn packed_floats<const N: usize>(
+    pub(super) fn packed_floats<const N: usize>(
         &mut self,
     ) -> Result<std::slice::Iter<'b, [u8; N]>, DecodeError> {
         let n = self.count(N)?;
@@ -163,19 +166,19 @@ impl<'b> Decoder<'b> {
     }
 
     /// A length and that many bytes.
-    fn length_bytes(&mut self) -> Result<&'b [u8], DecodeError> {
+    pub(super) fn length_bytes(&mut self) -> Result<&'b [u8], DecodeError> {
         let len =
             usize::try_from(self.varint()?).map_err(|_| self.error("a length beyond memory"))?;
         self.take(len)
     }
 
     /// A string: new (read, and added to the table) or the table's.
-    fn string(&mut self) -> Result<&'b str, DecodeError> {
+    pub(super) fn string(&mut self) -> Result<&'b str, DecodeError> {
         let i = self.string_index()?;
         Ok(self.strings[i])
     }
 
-    fn string_index(&mut self) -> Result<usize, DecodeError> {
+    pub(super) fn string_index(&mut self) -> Result<usize, DecodeError> {
         let v = self.varint()?;
         if v & NEW_STRING == 0 {
             let i = (v >> 1) as usize;
@@ -196,7 +199,7 @@ impl<'b> Decoder<'b> {
     }
 
     /// A map key: shared with every other map that has it.
-    fn shared_key(&mut self) -> Result<Arc<str>, DecodeError> {
+    pub(super) fn shared_key(&mut self) -> Result<Arc<str>, DecodeError> {
         let i = self.string_index()?;
         if self.keys.len() <= i {
             self.keys.resize(i + 1, None);
@@ -206,7 +209,25 @@ impl<'b> Decoder<'b> {
             .clone())
     }
 
-    fn deeper(&mut self) -> Result<(), DecodeError> {
+    /// A reference's kind and id, each checked: a malformed one is an error.
+    pub(super) fn reference(&mut self) -> Result<(KindName, &'b str), DecodeError> {
+        let kind_at = self.i;
+        let kind = KindName::new(self.string()?).map_err(|e| DecodeError {
+            message: e.to_string(),
+            offset: kind_at,
+        })?;
+        let id_at = self.i;
+        let id = self.string()?;
+        if !RefKey::is_valid(id) {
+            return Err(DecodeError {
+                message: format!("`{id}` isn't a reference's id"),
+                offset: id_at,
+            });
+        }
+        Ok((kind, id))
+    }
+
+    pub(super) fn deeper(&mut self) -> Result<(), DecodeError> {
         self.depth += 1;
         if self.depth > MAX_DEPTH {
             return Err(self.error(format!("nested deeper than {MAX_DEPTH} levels")));
@@ -215,6 +236,10 @@ impl<'b> Decoder<'b> {
     }
 
     /// The next value, owned.
+    ///
+    /// # Errors
+    ///
+    /// [`DecodeError`] when the bytes aren't a value.
     pub fn value(&mut self) -> Result<Value, DecodeError> {
         Ok(match self.byte()? {
             tag::NULL => Value::Null,
@@ -234,40 +259,14 @@ impl<'b> Decoder<'b> {
                     .collect(),
             ),
             tag::STR => Value::Str(self.string()?.to_owned()),
-            tag::LIST => {
-                let n = self.count(1)?;
-                self.deeper()?;
-                let mut items = Vec::with_capacity(n);
-                for _ in 0..n {
-                    items.push(self.value()?);
-                }
-                self.depth -= 1;
-                Value::List(items)
+            tag::LIST => self.list_value()?,
+            tag::MAP => self.map_value()?,
+            tag::REF => {
+                let (kind, id) = self.reference()?;
+                Value::Ref(Ref::new(kind, RefKey::spelled(id)))
             }
-            tag::MAP => {
-                let n = self.count(MAP_ENTRY_MIN)?;
-                self.deeper()?;
-                let mut map = Map::with_capacity(n);
-                for _ in 0..n {
-                    let k = self.shared_key()?;
-                    map.push_unchecked(k, self.value()?);
-                }
-                self.depth -= 1;
-                Value::Map(map)
-            }
-            tag::REF => Value::Ref(Ref {
-                kind: self.string()?.to_owned(),
-                id: self.string()?.to_owned(),
-            }),
             tag::BYTES => Value::Bytes(self.length_bytes()?.to_vec()),
-            tag::INTS => {
-                let n = self.count(1)?;
-                let mut items = Vec::with_capacity(n);
-                for _ in 0..n {
-                    items.push(Value::Int(unzigzag(self.varint()?)));
-                }
-                Value::List(items)
-            }
+            tag::INTS => self.ints_value()?,
             tag::STREAM => Value::List(self.stream_values()?),
             t => {
                 self.i -= 1;
@@ -276,264 +275,35 @@ impl<'b> Decoder<'b> {
         })
     }
 
-    /// The next value, borrowed: strings point into the bytes, lists and maps go in `arena`.
-    pub fn value_ref<'a>(&mut self, arena: &'a Bump) -> Result<ValueRef<'a>, DecodeError>
-    where
-        'b: 'a,
-    {
-        let mut stack = Vec::new();
-        self.value_ref_in(arena, &mut stack)
-    }
-
-    /// [`Decoder::value_ref`]: children gather on `stack`, then move into `arena` as one slice.
-    fn value_ref_in<'a>(
-        &mut self,
-        arena: &'a Bump,
-        stack: &mut Vec<ValueRef<'a>>,
-    ) -> Result<ValueRef<'a>, DecodeError>
-    where
-        'b: 'a,
-    {
-        Ok(match self.byte()? {
-            tag::NULL => ValueRef::Null,
-            tag::FALSE => ValueRef::Bool(false),
-            tag::TRUE => ValueRef::Bool(true),
-            tag::INT => ValueRef::Int(unzigzag(self.varint()?)),
-            tag::FLOAT => ValueRef::Float(f64::from_le_bytes(self.fixed()?)),
-            tag::FLOAT32 => ValueRef::Float(f64::from(f32::from_le_bytes(self.fixed()?))),
-            t @ (tag::FLOATS | tag::FLOATS32) => self.floats_ref(arena, t == tag::FLOATS)?,
-            tag::STR => ValueRef::Str(self.string()?),
-            tag::LIST => {
-                let n = self.count(1)?;
-                self.deeper()?;
-                let items = self.items_ref(arena, stack, n)?;
-                self.depth -= 1;
-                ValueRef::List(items)
-            }
-            tag::MAP => self.map_ref(arena, stack)?,
-            tag::REF => ValueRef::Ref {
-                kind: self.string()?,
-                id: self.string()?,
-            },
-            tag::BYTES => ValueRef::Bytes(self.length_bytes()?),
-            tag::INTS => self.ints_ref(arena)?,
-            tag::STREAM => {
-                let mut d = Decoder::body(self.stream_body()?);
-                d.depth = self.depth;
-                let n = d.count(1)?;
-                let items = d.items_ref(arena, stack, n)?;
-                d.end()?;
-                ValueRef::List(items)
-            }
-            t => {
-                self.i -= 1;
-                return Err(self.error(format!("unknown tag {t}")));
-            }
-        })
-    }
-
-    /// `n` values gathered on `stack`, then moved into `arena` as one slice.
-    fn items_ref<'a>(
-        &mut self,
-        arena: &'a Bump,
-        stack: &mut Vec<ValueRef<'a>>,
-        n: usize,
-    ) -> Result<&'a [ValueRef<'a>], DecodeError>
-    where
-        'b: 'a,
-    {
-        let start = stack.len();
-        for _ in 0..n {
-            let v = self.value_ref_in(arena, stack)?;
-            stack.push(v);
-        }
-        let items = arena.alloc_slice_copy(&stack[start..]);
-        stack.truncate(start);
-        Ok(items)
-    }
-
-    fn map_ref<'a>(
-        &mut self,
-        arena: &'a Bump,
-        stack: &mut Vec<ValueRef<'a>>,
-    ) -> Result<ValueRef<'a>, DecodeError>
-    where
-        'b: 'a,
-    {
-        let n = self.count(MAP_ENTRY_MIN)?;
+    fn list_value(&mut self) -> Result<Value, DecodeError> {
+        let n = self.count(1)?;
         self.deeper()?;
-        let mut entries = bumpalo::collections::Vec::with_capacity_in(n, arena);
+        let mut items = Vec::with_capacity(n);
         for _ in 0..n {
-            let k = self.string()?;
-            entries.push((k, self.value_ref_in(arena, stack)?));
+            items.push(self.value()?);
         }
         self.depth -= 1;
-        Ok(ValueRef::Map(MapRef(entries.into_bump_slice())))
+        Ok(Value::List(items))
     }
 
-    fn ints_ref<'a>(&mut self, arena: &'a Bump) -> Result<ValueRef<'a>, DecodeError> {
-        let n = self.count(1)?;
-        let mut items = bumpalo::collections::Vec::with_capacity_in(n, arena);
+    fn map_value(&mut self) -> Result<Value, DecodeError> {
+        let n = self.count(MAP_ENTRY_MIN)?;
+        self.deeper()?;
+        let mut map = Map::with_capacity(n);
         for _ in 0..n {
-            items.push(ValueRef::Int(unzigzag(self.varint()?)));
+            let k = self.shared_key()?;
+            map.push_unchecked(k, self.value()?);
         }
-        Ok(ValueRef::List(items.into_bump_slice()))
+        self.depth -= 1;
+        Ok(Value::Map(map))
     }
 
-    /// A list of floats: eight bytes each (`wide`) or four.
-    fn floats_ref<'a>(&mut self, arena: &'a Bump, wide: bool) -> Result<ValueRef<'a>, DecodeError> {
-        let items: Vec<ValueRef<'a>> = if wide {
-            self.packed_floats::<F64_BYTES>()?
-                .map(|f| ValueRef::Float(f64::from_le_bytes(*f)))
-                .collect()
-        } else {
-            self.packed_floats::<F32_BYTES>()?
-                .map(|f| ValueRef::Float(f64::from(f32::from_le_bytes(*f))))
-                .collect()
-        };
-        Ok(ValueRef::List(arena.alloc_slice_copy(&items)))
-    }
-
-    // ── Step by step, for a schema reading itself ───────────────────────────
-
-    /// The next tag, if it's `t`: read.
-    fn next_is(&mut self, t: u8) -> Option<()> {
-        (self.b.get(self.i) == Some(&t)).then(|| self.i += 1)
-    }
-
-    /// Whether a null is next: read if it is.
-    pub fn null(&mut self) -> bool {
-        self.next_is(tag::NULL).is_some()
-    }
-
-    pub fn bool(&mut self) -> Option<bool> {
-        match *self.b.get(self.i)? {
-            tag::FALSE | tag::TRUE => {
-                self.i += 1;
-                Some(self.b[self.i - 1] == tag::TRUE)
-            }
-            _ => None,
+    fn ints_value(&mut self) -> Result<Value, DecodeError> {
+        let n = self.count(1)?;
+        let mut items = Vec::with_capacity(n);
+        for _ in 0..n {
+            items.push(Value::Int(unzigzag(self.varint()?)));
         }
-    }
-
-    pub fn int(&mut self) -> Option<i64> {
-        self.next_is(tag::INT)?;
-        self.varint().ok().map(unzigzag)
-    }
-
-    /// A float — or an int, as a number.
-    pub fn float(&mut self) -> Option<f64> {
-        match *self.b.get(self.i)? {
-            tag::FLOAT => {
-                self.i += 1;
-                self.fixed().ok().map(f64::from_le_bytes)
-            }
-            tag::FLOAT32 => {
-                self.i += 1;
-                self.fixed().ok().map(|b| f64::from(f32::from_le_bytes(b)))
-            }
-            tag::INT => self.int().map(|n| n as f64),
-            _ => None,
-        }
-    }
-
-    pub fn str(&mut self) -> Option<&'b str> {
-        self.next_is(tag::STR)?;
-        self.string().ok()
-    }
-
-    pub fn bytes(&mut self) -> Option<&'b [u8]> {
-        self.next_is(tag::BYTES)?;
-        self.length_bytes().ok()
-    }
-
-    /// A list next: how many values; [`Decoder::leave`] after them.
-    pub fn list(&mut self) -> Option<usize> {
-        self.next_is(tag::LIST)?;
-        let n = self.count(1).ok()?;
-        self.deeper().ok()?;
-        Some(n)
-    }
-
-    /// A packed list of ints next ([`Decoder::packed_int`] each): how many.
-    pub fn ints(&mut self) -> Option<usize> {
-        self.next_is(tag::INTS)?;
-        self.count(1).ok()
-    }
-
-    /// A stream next: its body (count and values, strings its own).
-    pub fn stream(&mut self) -> Option<&'b [u8]> {
-        self.next_is(tag::STREAM)?;
-        self.stream_body().ok()
-    }
-
-    /// What's left to read.
-    pub(crate) fn rest(&self) -> &'b [u8] {
-        &self.b[self.i..]
-    }
-
-    /// A stream body's count, first thing in it.
-    pub(crate) fn stream_count(&mut self) -> Option<usize> {
-        self.count(1).ok()
-    }
-
-    /// A packed list of floats next: each one.
-    /// (Written narrow when they fit: widened back.)
-    pub fn floats(&mut self) -> Option<Vec<f64>> {
-        if self.next_is(tag::FLOATS32).is_some() {
-            return Some(crate::frame::floats::widen(
-                self.packed_floats::<F32_BYTES>()
-                    .ok()?
-                    .as_slice()
-                    .as_flattened(),
-            ));
-        }
-        self.next_is(tag::FLOATS)?;
-        Some(
-            self.packed_floats::<F64_BYTES>()
-                .ok()?
-                .map(|f| f64::from_le_bytes(*f))
-                .collect(),
-        )
-    }
-
-    /// A packed list of 32-bit floats next: each one.
-    pub fn floats32(&mut self) -> Option<Vec<f32>> {
-        self.next_is(tag::FLOATS32)?;
-        Some(
-            self.packed_floats::<F32_BYTES>()
-                .ok()?
-                .map(|f| f32::from_le_bytes(*f))
-                .collect(),
-        )
-    }
-
-    /// One int of a packed list.
-    pub fn packed_int(&mut self) -> Option<i64> {
-        self.varint().ok().map(unzigzag)
-    }
-
-    /// A map next: how many entries, each a [`Decoder::key`] and a value;
-    /// [`Decoder::leave`] after them.
-    pub fn map(&mut self) -> Option<usize> {
-        self.next_is(tag::MAP)?;
-        let n = self.count(MAP_ENTRY_MIN).ok()?;
-        self.deeper().ok()?;
-        Some(n)
-    }
-
-    /// The end of a list or map.
-    pub fn leave(&mut self) {
-        self.depth = self.depth.saturating_sub(1);
-    }
-
-    pub fn key(&mut self) -> Option<&'b str> {
-        self.string().ok()
-    }
-
-    /// The next value, read and left (its strings still join the table).
-    pub fn skip(&mut self) -> Option<()> {
-        let arena = Bump::new();
-        self.value_ref(&arena).ok().map(drop)
+        Ok(Value::List(items))
     }
 }

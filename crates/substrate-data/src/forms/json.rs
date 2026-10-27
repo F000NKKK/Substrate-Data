@@ -10,8 +10,7 @@ pub fn from_json(j: &serde_json::Value) -> Value {
         serde_json::Value::Bool(b) => Value::Bool(*b),
         serde_json::Value::Number(n) => n
             .as_i64()
-            .map(Value::Int)
-            .unwrap_or_else(|| Value::Float(n.as_f64().unwrap_or(0.0))),
+            .map_or_else(|| Value::Float(n.as_f64().unwrap_or(0.0)), Value::Int),
         serde_json::Value::String(s) => Value::Str(s.clone()),
         serde_json::Value::Array(a) => Value::List(a.iter().map(from_json).collect()),
         serde_json::Value::Object(o) => Value::Map(
@@ -23,11 +22,12 @@ pub fn from_json(j: &serde_json::Value) -> Value {
 }
 
 /// JSON text as a value, `None` if it isn't JSON.
+#[must_use]
 pub fn from_json_text(text: &str) -> Option<Value> {
     serde_json::from_str(text).ok().map(|j| from_json(&j))
 }
 
-/// `v` as JSON; typed values become their string forms (`"@asset:meshes/cube.mesh"`).
+/// `v` as JSON; typed values become their string forms (`"@file:images/logo.png"`).
 pub fn to_json(v: &Value) -> serde_json::Value {
     match v {
         Value::Null => serde_json::Value::Null,
@@ -37,10 +37,12 @@ pub fn to_json(v: &Value) -> serde_json::Value {
             .map_or(serde_json::Value::Null, serde_json::Value::Number),
         Value::Str(s) => serde_json::Value::String(s.clone()),
         Value::List(items) => serde_json::Value::Array(items.iter().map(to_json).collect()),
-        Value::Map(m) => {
-            serde_json::Value::Object(m.iter().map(|(k, v)| (k.to_string(), to_json(v))).collect())
-        }
-        typed => serde_json::Value::String(crate::typed::typed_string(typed).unwrap_or_default()),
+        Value::Map(m) => serde_json::Value::Object(
+            m.iter()
+                .map(|(k, item)| (k.to_string(), to_json(item)))
+                .collect(),
+        ),
+        typed => serde_json::Value::String(crate::typed::spelling(typed).unwrap_or_default()),
     }
 }
 

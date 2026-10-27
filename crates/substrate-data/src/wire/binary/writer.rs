@@ -13,10 +13,11 @@ pub(crate) const START_BYTES: usize = 256;
 ///
 /// ```
 /// let mut w = substrate_data::binary::Writer::new();
-/// w.map(2).key("id").str("mymod:ruby").key("count").int(3);
+/// w.map(2).key("id").str("docs/intro").key("count").int(3);
 /// let v = substrate_data::binary::decode(&w.finish()).unwrap();
 /// assert_eq!(v.get("count").and_then(|c| c.as_i64()), Some(3));
 /// ```
+#[derive(Debug)]
 pub struct Writer {
     out: Vec<u8>,
     /// The strings written, by where they are in `out`.
@@ -30,6 +31,8 @@ impl Default for Writer {
 }
 
 impl Writer {
+    /// A writer of a whole document: the header first.
+    #[must_use]
     pub fn new() -> Self {
         let mut out = Vec::with_capacity(START_BYTES);
         out.extend_from_slice(MAGIC);
@@ -40,22 +43,26 @@ impl Writer {
         }
     }
 
+    /// Null.
     pub fn null(&mut self) -> &mut Self {
         self.out.push(tag::NULL);
         self
     }
 
+    /// A bool.
     pub fn bool(&mut self, b: bool) -> &mut Self {
         self.out.push(if b { tag::TRUE } else { tag::FALSE });
         self
     }
 
+    /// An integer.
     pub fn int(&mut self, n: i64) -> &mut Self {
         self.out.push(tag::INT);
         varint(&mut self.out, zigzag(n));
         self
     }
 
+    /// A float: as an `f32` when it is one exactly.
     pub fn float(&mut self, f: f64) -> &mut Self {
         self.out.push(tag::FLOAT);
         self.out.extend_from_slice(&f.to_le_bytes());
@@ -92,6 +99,7 @@ impl Writer {
         self
     }
 
+    /// A string: its bytes the first time, its index after.
     pub fn str(&mut self, s: &str) -> &mut Self {
         self.out.push(tag::STR);
         self.string(s);
@@ -150,11 +158,13 @@ impl Writer {
         self
     }
 
+    /// A map's key.
     pub fn key(&mut self, k: &str) -> &mut Self {
         self.string(k);
         self
     }
 
+    /// A whole value.
     pub fn value(&mut self, v: &Value) -> &mut Self {
         match v {
             Value::Null => self.null(),
@@ -171,16 +181,16 @@ impl Writer {
             }
             Value::Map(map) => {
                 self.map(map.len());
-                for (k, v) in map.iter() {
-                    self.string(k);
-                    self.value(v);
+                for (key, item) in map.iter() {
+                    self.string(key);
+                    self.value(item);
                 }
                 self
             }
             Value::Ref(r) => {
                 self.out.push(tag::REF);
-                self.string(&r.kind);
-                self.string(&r.id);
+                self.string(r.kind.as_str());
+                self.string(r.id.as_str());
                 self
             }
             Value::Bytes(b) => self.bytes(b),
@@ -188,6 +198,7 @@ impl Writer {
     }
 
     /// The bytes.
+    #[must_use]
     pub fn finish(self) -> Vec<u8> {
         self.out
     }

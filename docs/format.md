@@ -1,9 +1,9 @@
 # Substrate Data — the format
 
 One data model with four forms, and one schema system over all of them.
-Every form carries the same values, so a scene saved as text by an editor,
-compiled to binary by a build and sent field by field to a running game
-is one value throughout.
+Every form carries the same values, so a document saved as text by an
+editor, compiled to binary by a build and sent field by field to a running
+service is one value throughout.
 
 | Form | For | Self-describing | Keeps comments |
 |---|---|---|---|
@@ -30,15 +30,23 @@ A value ([`Value`]) is one of:
 | string | `"Ruby"` | as spelled — see [Typed values](#typed-values) |
 | list | `[1, 2]` | |
 | map | `{ a: 1 }` | keys unique, **in file order** |
-| ref | `"@asset:meshes/cube.mesh"` | a reference: `kind` + opaque `id` |
+| ref | `"@file:images/logo.png"` | a reference: `kind` + opaque `id` |
 | bytes | `"@bytes:AQID"` | base64 in text, raw in binary |
 
 A reference's **kind** is lower case ASCII (`[a-z][a-z0-9_]*`): `asset`,
-`entity`, `prefab`, `material`, … — any word a format declares with
+`user`, `doc`, `file`, `project`, … — any word a format declares with
 `kind!`. Its **id** is anything but empty, whitespace or control
 characters; what it names and whether it exists is the format's business
 (a [`Resolve`] checks references while reading, and every reference met is
-reported with its path).
+reported with its path). In code both parts are checked newtypes,
+`KindName` (interned) and `RefKey`, made once when the reference is read.
+
+A kind declares the **type of its ids**: `kind!(User = "user": u64, Doc =
+"doc")` — `String` when none is said, else `u32`, `u64`, `i64` or `Uid`
+(128 bits, written as 32 lower-case hex digits), or any type implementing
+`RefId`. `Id<User>` holds a `u64`; `"@user:abc"` is an SD0010 problem at
+its path. The text and binary forms spell every id as text, so changing a
+kind's id type changes no file.
 
 ### Typed values
 
@@ -54,9 +62,9 @@ reads it.
 | `"@anything else"` | an error (a typo in a reference is never silent text) |
 
 A `Str` in the model holds a string *as spelled*: the parser and the binary
-decoder keep `"@mesh:x"` and `"@@x"` as they are, and the field's schema
-decides what it is (`String` reads `"@@x"` as `@x`; `Id<Mesh>` reads
-`"@mesh:x"` as `x`). Writing a `String` doubles a leading `@`, so every
+decoder keep `"@file:x"` and `"@@x"` as they are, and the field's schema
+decides what it is (`String` reads `"@@x"` as `@x`; `Id<File>` reads
+`"@file:x"` as `x`). Writing a `String` doubles a leading `@`, so every
 value round-trips through every form.
 
 ---
@@ -71,12 +79,12 @@ JSON plus what editors already understand from JSON5:
 
 ```jsonc
 {
-  // The player.
-  name: "Hero",
-  prefab: "@prefab:actors/hero",
-  components: [
-    { type: "transform", position: [0, 1.5, 0], parent: "@entity:world" },
-    { type: "renderable", mesh: "@mesh:hero.mesh", material: "@material:skin" },
+  // The release task.
+  name: "Release 1.0",
+  project: "@project:apps/notes",
+  parts: [
+    { type: "estimate", range: [1, 2, 4], parent: "@doc:guides/intro" },
+    { type: "attachment", file: "@file:images/logo.png", owner: "@user:alice" },
   ],
 }
 ```
@@ -88,14 +96,21 @@ Source-only keys are allowed in every object and ignored by schemas:
 schema finds points at its line and column, and its path:
 
 ```text
-8:33: components[1].mesh: `@material:stone` is a reference to material — this takes `@mesh:`
+8:33: parts[1].file: `@user:alice` is a reference to user — this takes `@file:`
 ```
 
 **Editing in place.** `patch::patch(text, &new_value)` rewrites only what
 changed and keeps everything else — comments, key order, number spelling,
 layout. This is what an inspector uses to write a field back to a file a
 person also edits by hand. `patch::format` writes new parts the way
-editors write them (short lists and small objects on one line).
+editors write them (short lists and small objects on one line; a float in
+the shortest spelling that reads back as exactly the same `f64` and as a
+float — `1.0`, `-0.0`, `0.1` — nothing is rounded). A number whose value
+didn't change keeps the source's spelling (`1` stays `1` for `1.0`); `-0.0`
+and `0` count as different.
+
+Writing text, a float is always spelled so it reads back as a float
+(`1.0`, `1e16`), never as an integer.
 
 TOML (feature `toml`) and JSON (feature `json`) read into the same model.
 
@@ -161,11 +176,15 @@ record = varint length, its fields in declaration order
 | string | varint index into the table |
 | bytes | varint length, bytes |
 | `Option` | a byte (0/1), then the value |
-| list | varint count, varint byte length, items |
-| list of ints | count, bit width, values bit-packed in lanes |
-| list of floats | count, `f32`-exact flag, raw values |
+| list (and set, `OneOrList`, `Stream`, `Path`) | varint count, varint byte length, items |
+| list of ints | count, bit width (a byte), values bit-packed in lanes |
+| list of `f64` | count, `f32`-exact flag (a byte), raw values (4 bytes each when the flag is set, else 8) |
+| list of `f32` | count, raw values, 4 bytes each |
+| tuple | as a list, each item its binary form as bytes |
 | unit enum | varint variant index |
 | [`Atom`] | its number in this process's table |
+| `Id<K>` (and `with::RefTo<K>`) | its id, as `K`'s id type packs (`@user:42` is one varint); the kind is the field's |
+| `Ref` (any kind) | its kind and its id, as strings |
 | anything else | its binary form, as bytes |
 
 **Evolution rule:** fields are only ever appended. A record carries its
@@ -187,8 +206,8 @@ pipe): each message a little-endian `u32` length, then the frame.
 
 `Stream<T>` is a list kept in the binary form: items written as they come
 and read back one at a time when asked, with its own string table, so it
-can be cut out of a document whole. For the big ones: a voxel area, a
-mesh's vertices, a recording, a log.
+can be cut out of a document whole. For the big ones: a table's rows, a
+picture's pixels, a recording, a log.
 
 ---
 
@@ -197,24 +216,24 @@ mesh's vertices, a recording, a log.
 A format is a Rust type implementing [`Schema`], usually derived:
 
 ```rust
-substrate_data::kind!(Mesh = "mesh", Material = "material", Entity = "entity");
+substrate_data::kind!(File = "file", User = "user", Doc = "doc");
 
-/// Where it is.
+/// How long it takes.
 #[derive(substrate_data::Schema)]
-struct Transform {
-    /// Metres, in the parent's frame.
-    position: [f32; 3],
+struct Estimate {
+    /// Low, likely and high, in days.
+    range: [f32; 3],
     #[data(default)]
-    parent: Option<substrate_data::Id<Entity>>,
+    parent: Option<substrate_data::Id<Doc>>,
 }
 
-/// A component.
+/// A part of a task.
 #[derive(substrate_data::Schema)]
 #[data(tag = "type")]
-enum Component {
-    Transform(Transform),
-    Renderable { mesh: substrate_data::Id<Mesh>, material: Option<substrate_data::Id<Material>> },
-    Hidden,
+enum Part {
+    Estimate(Estimate),
+    Attachment { file: substrate_data::Id<File>, owner: Option<substrate_data::Id<User>> },
+    Archived,
 }
 ```
 
@@ -227,8 +246,9 @@ One schema gives:
   [`Resolve`] when one is given;
 - **shape** — `T::shape()` describes the type (fields, docs from `///`,
   required or not, numeric ranges, enum variants), and `Shape::describe()`
-  turns it into a value any tool can read: an editor builds property grids,
-  pickers (a `ref` field of kind `mesh` gets the mesh picker), completion
+  turns it into a `ShapeDoc` — typed, itself a `Schema`, written
+  `{ root, defs }` — that any tool can read: an editor builds property grids,
+  pickers (a `ref` field of kind `file` gets the file picker), completion
   and hover docs from it; docs generate their field tables from it.
 
 `#[data(...)]` options:
@@ -243,6 +263,7 @@ One schema gives:
 | `with = "Codec"` | field | read/written through a codec (`with::RefTo<K>`, `with::Opt<…>`, `with::List<…>`, `with::Raw`, …) |
 | `tag = "type"` | enum | tagged by this key (the default for enums with data) |
 | `view` | struct | also generate a frame view |
+| `other` | variant | a tagged enum's catch-all: wraps a type that reads the whole object (tag included) for any tag no other variant names |
 | `crate = "path"` | struct, enum | where `substrate_data` is, for crates that re-export it |
 
 A tagged enum's variant that wraps a struct lays the struct's fields next
@@ -250,19 +271,30 @@ to the tag; one that wraps anything else keeps it under `value`.
 
 ### Domain types
 
-`Shape::Named { name, of }` lets a format describe a type of its own
-(`"color"`, `"vec3"`, `"motor"`) stored as plain data (`of`): a tool that
-knows the name shows its own editor (a colour picker, a gizmo), one that
-doesn't edits `of`. An engine implements `Schema` for its math types in
-its own adapter crate and returns a named shape; this crate knows nothing
-of them.
+A format describes a type of its own (`"color"`, `"date"`, `"money"`,
+`"duration"`) by implementing `NamedType` — its `NAME`, the `Stored` type
+it is kept as, and the conversions — and `substrate_data::named_schema!(T)`
+implements `Schema` from that. Its shape is `Shape::Named`, described
+`{ kind: "named", name, of }`: a tool that knows the name shows its own
+editor (a colour picker, a calendar), one that doesn't edits `of`. This
+crate knows nothing of the names.
+
+A named type is stored as `Stored` in every form (so `frame::read_shaped`
+reads it as `of`); a stored value `from_stored` refuses is a problem at
+its path. A list of a named type packs item by item (the default
+`pack_list`), not as a packed list of numbers.
+
+A reference's shape is `{ kind: "ref", of: [kinds], id: <id shape> }`.
 
 ---
 
 ## Diagnostics
 
 Every problem is a `Diagnostic`: a code, a severity, a message, and where
-(file, path, line and column). Codes from this crate:
+(file, path, line and column). Its code is a `Code`: `Code::Data(Problem)`
+for this crate's (each `Problem` variant has its `code()`), or
+`Code::Tool(Atom)` for a tool's own; both are written as the code's text.
+Codes from this crate:
 
 | Code | Meaning |
 |---|---|
@@ -276,6 +308,8 @@ Every problem is a `Diagnostic`: a code, a severity, a message, and where
 | SD0007 | number out of range |
 | SD0008 | a string written as a typed value that isn't one |
 | SD0009 | binary data that won't decode |
+| SD0010 | a reference whose id isn't its kind's id type |
+| SD0011 | a reference the [`Resolve`] doesn't resolve |
 
 Tools add their own codes; a `Diagnostic` is itself a `Schema`, so it
 crosses a protocol like any other message.
@@ -285,13 +319,12 @@ crosses a protocol like any other message.
 ## Origin
 
 Extracted from `yog-data` (Yog Mod Loader), with everything specific to
-Minecraft and Yog removed: content namespaces, tags, mod resources,
-translation keys, Yog text, image sources and colours as built-in typed
-values. Those become a domain layer over this crate. The binary tags and
+Yog removed: content namespaces, tags, mod resources, translation keys,
+Yog text, image sources and colours as built-in typed values. Those become a domain layer over this crate. The binary tags and
 magic were renumbered (`SDAT` v1); nothing reads the old `YOGD` bytes.
 
 [`Value`]: ../crates/substrate-data/src/model/value.rs
 [`Schema`]: ../crates/substrate-data/src/schema/mod.rs
 [`Shape`]: ../crates/substrate-data/src/schema/shape.rs
-[`Resolve`]: ../crates/substrate-data/src/schema/reader.rs
+[`Resolve`]: ../crates/substrate-data/src/schema/resolve.rs
 [`Atom`]: ../crates/substrate-data/src/model/atom.rs

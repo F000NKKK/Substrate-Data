@@ -3,6 +3,7 @@
 use bumpalo::Bump;
 
 use super::*;
+use crate::model::borrowed::ValueRef;
 use crate::model::value::{Map, Ref, Value};
 
 fn sample() -> Value {
@@ -21,11 +22,33 @@ fn sample() -> Value {
             Value::Bool(false),
         ]),
     );
-    m.insert("mesh", Value::Ref(Ref::new("asset", "meshes/cube.mesh")));
-    m.insert("parent", Value::Ref(Ref::new("entity", "player")));
+    m.insert(
+        "logo",
+        Value::Ref(Ref::parse("file", "images/logo.png").unwrap()),
+    );
+    m.insert("parent", Value::Ref(Ref::parse("user", "alice").unwrap()));
     m.insert("blob", Value::Bytes(vec![1, 2, 3]));
     m.insert("again", Value::Str("Ruby".into()));
     Value::Map(m)
+}
+
+/// Every string in `v` (keys too) onto `out`.
+fn walk<'a>(v: &ValueRef<'a>, out: &mut Vec<&'a str>) {
+    match v {
+        ValueRef::Str(s) => out.push(s),
+        ValueRef::List(l) => {
+            for x in *l {
+                walk(x, out);
+            }
+        }
+        ValueRef::Map(m) => {
+            for (k, x) in m.iter() {
+                out.push(k);
+                walk(x, out);
+            }
+        }
+        _ => {}
+    }
 }
 
 #[test]
@@ -34,7 +57,12 @@ fn bytes_round_trip_in_both_forms() {
     assert_eq!(decode(&encode(&v)).unwrap(), v);
     let text = crate::text::to_string(&v);
     assert_eq!(text, "\"@bytes:AAEC/w==\"");
-    assert_eq!(crate::typed::classify("@bytes:AAEC/w==").unwrap(), v);
+    assert_eq!(
+        crate::typed::classify("@bytes:AAEC/w==")
+            .unwrap()
+            .into_value(),
+        v
+    );
     assert!(
         decode(&[b'S', b'D', b'A', b'T', VERSION, tag::BYTES, 9]).is_err(),
         "a length past the end"
@@ -61,17 +89,6 @@ fn the_borrowed_decode_reads_the_same_without_copying() {
     // Its strings point into the bytes.
     let span = bytes.as_ptr_range();
     let mut strings = Vec::new();
-    fn walk<'a>(v: &ValueRef<'a>, out: &mut Vec<&'a str>) {
-        match v {
-            ValueRef::Str(s) => out.push(s),
-            ValueRef::List(l) => l.iter().for_each(|x| walk(x, out)),
-            ValueRef::Map(m) => m.iter().for_each(|(k, x)| {
-                out.push(k);
-                walk(x, out)
-            }),
-            _ => {}
-        }
-    }
     walk(&r, &mut strings);
     assert!(!strings.is_empty() && strings.iter().all(|s| span.contains(&s.as_ptr())));
     // Malformed bytes are errors here too.
@@ -123,6 +140,10 @@ fn malformed_bytes_are_errors() {
             .message
             .contains("past the end")
     );
+}
+
+#[test]
+fn deep_nesting_and_bad_references_are_errors() {
     let deep: Vec<u8> = b"SDAT\x01"
         .iter()
         .copied()
@@ -130,4 +151,19 @@ fn malformed_bytes_are_errors() {
         .chain([0])
         .collect();
     assert!(decode(&deep).unwrap_err().message.contains("nested deeper"));
+    // A reference's kind and id are checked as they're read.
+    assert!(
+        decode(b"SDAT\x01\x08\x09File\x03x")
+            .unwrap_err()
+            .message
+            .contains("isn't a kind")
+    );
+    assert!(
+        decode(b"SDAT\x01\x08\x09file\x03 ")
+            .unwrap_err()
+            .message
+            .contains("isn't a reference's id")
+    );
+    let arena = Bump::new();
+    assert!(decode_ref(b"SDAT\x01\x08\x09File\x03x", &arena).is_err());
 }

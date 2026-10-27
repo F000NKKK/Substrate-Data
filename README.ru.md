@@ -17,8 +17,8 @@
 | `substrate-data` | модель, текст, бинарь, кадры, схемы, диагностика |
 | `substrate-data-derive` | `#[derive(Schema)]` |
 
-Вынесен из `yog-data` (Yog Mod Loader), всё специфичное для Minecraft и
-Yog убрано, чтобы его могли использовать Meridian, инструменты и IDE на
-Substrate Platform.
+Вынесен из `yog-data` (Yog Mod Loader), всё специфичное для Yog убрано,
+чтобы его могли использовать Meridian, инструменты и IDE на Substrate
+Platform.
 
 Лицензия: Apache-2.0 или MIT на выбор.

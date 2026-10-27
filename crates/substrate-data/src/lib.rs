@@ -8,7 +8,7 @@
 //!   parsed with the position of every value; [`patch`] edits a document
 //!   in place, keeping its comments and layout;
 //! - [`typed`]: the one grammar of the typed values' string forms
-//!   (`@asset:meshes/cube.mesh`, `@bytes:…`);
+//!   (`@file:images/logo.png`, `@bytes:…`);
 //! - [`binary`]: the compact, self-describing tagged form;
 //! - [`frame`]: the packed form for messages whose schema both sides know;
 //! - [`Schema`] (`#[derive(Schema)]`): a format written once — read with
@@ -25,27 +25,26 @@ pub mod names;
 mod sync;
 mod wire;
 
+pub use atom::Atom;
+pub use bumpalo::Bump;
+pub use diagnostic::{Code, Diagnostic, Errors, Problem, Severity};
 #[cfg(feature = "json")]
 pub use forms::json;
 #[cfg(feature = "toml")]
 pub use forms::toml;
 pub use forms::{patch, source, text};
+pub use model::borrowed::{MapRef, ValueRef};
+pub use model::value::{KindName, Map, Path, Ref, RefKey, Seg, Value, ValueKind};
 pub use model::{atom, typed};
 pub use schema::with;
-pub use wire::{binary, frame, io};
-
-pub use atom::Atom;
-pub use bumpalo::Bump;
-pub use diagnostic::{Diagnostic, Errors, Severity};
-pub use model::borrowed::{MapRef, ValueRef};
-pub use model::value::{Map, Path, Ref, Seg, Value};
 pub use text::{Doc, LineCol, Span, Spans, SyntaxError};
 pub use wire::stream::{Stream, StreamWriter};
+pub use wire::{binary, frame, io};
 pub mod schema;
 
 pub use schema::{
-    Id, Kind, Kinds, OneOrList, Ordered, Read, Reader, Resolve, Schema, Shape, from_doc_with,
-    from_text, from_value, from_value_with, placed, read_bytes, read_ref_value, read_value,
-    to_bytes, to_text,
+    Expected, Id, Kind, Kinds, NamedType, OneOrList, Ordered, Read, Reader, RefId, Resolve, Schema,
+    Shape, ShapeDoc, Uid, Unresolved, from_doc_with, from_text, from_value, from_value_with,
+    placed, read_bytes, read_ref_value, read_value, to_bytes, to_text,
 };
 pub use substrate_data_derive::Schema;

@@ -3,25 +3,37 @@
 //! write it, so a line in an error is the line the editor shows. A file
 //! still in text is read as it is.
 
+pub use super::read_error::ReadError;
 use crate::binary::{self, MAGIC};
 use crate::text::SyntaxError;
 
 /// Whether `bytes` are the binary form.
+#[must_use]
 pub fn is_binary(bytes: &[u8]) -> bool {
     bytes.starts_with(MAGIC)
 }
 
 /// A source file's text: its binary form written out, or its text as it is.
-pub fn text(bytes: &[u8]) -> Result<String, String> {
+///
+/// # Errors
+///
+/// [`ReadError`] when the text isn't UTF-8 or the binary form is malformed.
+pub fn text(bytes: &[u8]) -> Result<String, ReadError> {
     if !is_binary(bytes) {
-        return String::from_utf8(bytes.to_vec()).map_err(|e| e.to_string());
+        return std::str::from_utf8(bytes)
+            .map(str::to_owned)
+            .map_err(ReadError::NotUtf8);
     }
-    let value = binary::decode(bytes).map_err(|e| e.to_string())?;
+    let value = binary::decode(bytes).map_err(ReadError::Binary)?;
     Ok(format!("{}\n", crate::patch::format(&value, 0)))
 }
 
 /// Text as a source file keeps it: binary, its comments kept as notes
 /// ([`crate::text::with_comments`]).
+///
+/// # Errors
+///
+/// [`SyntaxError`] when the text doesn't parse.
 pub fn binary(text: &str) -> Result<Vec<u8>, SyntaxError> {
     crate::text::with_comments(text).map(|v| binary::encode(&v))
 }
@@ -32,12 +44,12 @@ mod tests {
 
     #[test]
     fn a_source_round_trips_through_its_binary_form() {
-        let text = "{\n  // Hard.\n  hardness: 3,\n  drop: \"@mesh:ruby\"\n}";
+        let text = "{\n  // Long.\n  pages: 3,\n  cover: \"@file:cover.png\"\n}";
         let bytes = binary(text).unwrap();
         assert!(is_binary(&bytes));
         let shown = super::text(&bytes).unwrap();
         assert!(
-            shown.contains("$hardness") && shown.contains("@mesh:ruby"),
+            shown.contains("$pages") && shown.contains("@file:cover.png"),
             "{shown}"
         );
         assert_eq!(

@@ -1,20 +1,20 @@
 //! [`Stream`]: a list kept in the binary form — its items written as they
 //! come (no `Vec` of them on the way) and read back one at a time, when
-//! asked. For the big ones: an area of blocks, a picture's pixels, a log.
+//! asked. For the big ones: a table's rows, a picture's pixels, a log.
 //!
 //! ```
 //! use substrate_data::{Schema, Stream};
 //!
 //! #[derive(Schema)]
-//! struct Area {
+//! struct Sheet {
 //!     name: String,
-//!     blocks: Stream<u16>,
+//!     cells: Stream<u16>,
 //! }
 //!
-//! let area = Area { name: "pit".into(), blocks: (0..1000u16).map(|i| i % 3).collect() };
-//! let back: Area = substrate_data::read_bytes(&substrate_data::to_bytes(&area)).unwrap();
-//! assert_eq!(back.blocks.len(), 1000);
-//! assert_eq!(back.blocks.iter().filter(|b| *b == 2).count(), 333);
+//! let sheet = Sheet { name: "q3".into(), cells: (0..1000u16).map(|i| i % 3).collect() };
+//! let back: Sheet = substrate_data::read_bytes(&substrate_data::to_bytes(&sheet)).unwrap();
+//! assert_eq!(back.cells.len(), 1000);
+//! assert_eq!(back.cells.iter().filter(|c| *c == 2).count(), 333);
 //! ```
 
 use std::fmt;
@@ -36,6 +36,7 @@ pub struct Stream<T> {
 
 impl<T: Schema> Stream<T> {
     /// Writes items one by one ([`StreamWriter::push`]).
+    #[must_use]
     pub fn writer() -> StreamWriter<T> {
         StreamWriter {
             w: Writer::body(),
@@ -44,10 +45,14 @@ impl<T: Schema> Stream<T> {
         }
     }
 
+    /// How many items.
+    #[must_use]
     pub fn len(&self) -> usize {
         self.len
     }
 
+    /// Whether it has none.
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.len == 0
     }
@@ -59,17 +64,20 @@ impl<T: Schema> Stream<T> {
     }
 
     /// Every item, read now.
+    #[must_use]
     pub fn to_vec(&self) -> Vec<T> {
         self.iter().collect()
     }
 
     /// How many bytes it takes.
+    #[must_use]
     pub fn bytes_len(&self) -> usize {
         self.items.len()
     }
 }
 
 /// Writes a [`Stream`]'s items as they come.
+#[derive(Debug)]
 pub struct StreamWriter<T> {
     w: Writer,
     len: usize,
@@ -77,11 +85,14 @@ pub struct StreamWriter<T> {
 }
 
 impl<T: Schema> StreamWriter<T> {
+    /// Writes `item`.
     pub fn push(&mut self, item: &T) {
         item.encode(&mut self.w);
         self.len += 1;
     }
 
+    /// The stream written.
+    #[must_use]
     pub fn finish(self) -> Stream<T> {
         Stream {
             items: self.w.finish(),
@@ -144,9 +155,9 @@ impl<T: Schema> Schema for Stream<T> {
         Shape::List(T::shape)
     }
     /// The slow way (a text file, a value): read whole, then written.
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Self> {
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<Self> {
         let ValueRef::List(items) = v else {
-            cx.expected("a list", v);
+            cx.expected(crate::schema::Expected::List, v);
             return None;
         };
         let mut w = Stream::writer();

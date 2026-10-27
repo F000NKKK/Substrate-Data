@@ -32,6 +32,10 @@ const BEST_FIRST: [Backend; 5] = [
     Backend::Portable,
 ];
 
+/// The most 32-bit groups AVX-512 unpacks faster than AVX2: a copy of this many
+/// groups, in and out, still fits a first-level data cache (48 KiB).
+const COPY_AVX512_GROUPS: usize = 24;
+
 impl Backend {
     /// The backend this processor runs: the best of [`Backend::available`],
     /// found once.
@@ -86,7 +90,7 @@ impl Backend {
         let numbers = src.as_flattened();
         let mut group = 0;
         while group < src.len() {
-            let backend = self.for_groups(width, src.len() - group);
+            let backend = self.for_pack(width, src.len() - group);
             backend.pack_unchecked(&numbers[group * GROUP..], width, &mut out[group * size..]);
             group += backend.groups_per_call();
         }
@@ -106,7 +110,7 @@ impl Backend {
         let numbers = out.as_flattened_mut();
         let mut group = 0;
         while group < count {
-            let backend = self.for_groups(width, count - group);
+            let backend = self.for_unpack(width, count - group);
             backend.unpack_unchecked(&src[group * size..], width, &mut numbers[group * GROUP..]);
             group += backend.groups_per_call();
         }
@@ -120,14 +124,32 @@ impl Backend {
         }
     }
 
-    /// The backend to use for the next call of `width`-bit groups when `left`
-    /// groups remain: this one, or a narrower one where it is faster. The
-    /// 512-bit kernels take two groups at a time, so a single group left goes
-    /// to AVX2; and at 32 bits a group is a copy, which AVX2 does faster than
-    /// shuffling two rows into one register and out again (measured).
-    fn for_groups(self, width: u32, left: usize) -> Self {
+    /// The backend to use for the next call of packing `width`-bit groups when
+    /// `left` groups remain: this one, or a narrower one where it is faster
+    /// (measured, `docs/performance.md`). The 512-bit kernels take two groups
+    /// at a time, so a single group left goes to AVX2; and at 32 bits a group
+    /// is a copy, which AVX2 does 1.2 to 1.5 times faster than shuffling two
+    /// rows into one register and out again.
+    fn for_pack(self, width: u32, left: usize) -> Self {
         match self {
             Self::Avx512 if left < self.groups_per_call() || width == u32::BITS => Self::Avx2,
+            other => other,
+        }
+    }
+
+    /// As [`for_pack`](Self::for_pack), for unpacking. At 32 bits AVX-512 is
+    /// 1.6 to 2.2 times faster than AVX2 while the groups fit the first-level
+    /// cache (up to [`COPY_AVX512_GROUPS`]), and no better beyond it, where
+    /// the copy is bound by memory and the winner depends on how the buffers
+    /// fall; AVX2 is the one that is never much worse.
+    fn for_unpack(self, width: u32, left: usize) -> Self {
+        match self {
+            Self::Avx512
+                if left < self.groups_per_call()
+                    || (width == u32::BITS && left > COPY_AVX512_GROUPS) =>
+            {
+                Self::Avx2
+            }
             other => other,
         }
     }
@@ -173,5 +195,39 @@ impl fmt::Display for Backend {
             Self::Avx512 => "AVX-512",
             Self::Neon => "NEON",
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_512_bit_kernels_hand_a_lone_group_to_avx2() {
+        assert_eq!(Backend::Avx512.for_pack(7, 1), Backend::Avx2);
+        assert_eq!(Backend::Avx512.for_unpack(7, 1), Backend::Avx2);
+        assert_eq!(Backend::Avx512.for_pack(7, 2), Backend::Avx512);
+        assert_eq!(Backend::Avx512.for_unpack(7, 2), Backend::Avx512);
+    }
+
+    #[test]
+    fn a_full_width_copy_is_packed_by_avx2_and_unpacked_by_avx512_while_it_fits_l1() {
+        assert_eq!(Backend::Avx512.for_pack(32, 8), Backend::Avx2);
+        assert_eq!(
+            Backend::Avx512.for_unpack(32, COPY_AVX512_GROUPS),
+            Backend::Avx512
+        );
+        assert_eq!(
+            Backend::Avx512.for_unpack(32, COPY_AVX512_GROUPS + 1),
+            Backend::Avx2
+        );
+    }
+
+    #[test]
+    fn narrower_backends_are_never_redirected() {
+        for backend in [Backend::Portable, Backend::Avx2] {
+            assert_eq!(backend.for_pack(32, 1), backend);
+            assert_eq!(backend.for_unpack(32, 100), backend);
+        }
     }
 }

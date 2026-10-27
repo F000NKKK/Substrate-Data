@@ -61,6 +61,29 @@ fn every_available_backend_packs_the_portable_bytes_and_unpacks_them() {
     }
 }
 
+/// The group counts around every point where `Backend` hands a call to a
+/// narrower instruction set: one group left, an even and an odd count, and
+/// either side of the 32-bit unpack cut-off.
+#[test]
+fn every_backend_agrees_at_the_dispatch_edges() {
+    for backend in Backend::available() {
+        for width in [1, 17, 31, 32] {
+            let size = group_bytes(width);
+            for count in [1, 2, 3, 23, 24, 25, 26, 27, 58] {
+                let src: Vec<[u32; GROUP]> =
+                    groups(width).into_iter().cycle().take(count).collect();
+                let (mut want, mut got) = (vec![0; count * size], vec![0xAA; count * size]);
+                Backend::Portable.pack_groups(&src, width, &mut want);
+                backend.pack_groups(&src, width, &mut got);
+                assert_eq!(got, want, "{backend} packs {count} groups of width {width}");
+                let mut back = vec![[0xFFFF_FFFF; GROUP]; count];
+                backend.unpack_groups(&want, width, &mut back);
+                assert_eq!(back, src, "{backend} unpacks {count} of width {width}");
+            }
+        }
+    }
+}
+
 #[test]
 fn a_backend_reads_groups_inside_a_longer_buffer() {
     for backend in Backend::available() {

@@ -16,6 +16,8 @@ only grow: a tag is never renumbered and a frame field is never reordered.
   rmp-serde, postcard and bincode, an iai-callgrind instruction-count suite
   and `cargo run --example sizes`; see [docs/performance.md](docs/performance.md).
 - `LANES_WIDTHS` selects the widths the `lanes` bench measures.
+- `LANES_GROUPS` sets the number of groups a `lanes` bench run packs and
+  unpacks (64 by default), to see where AVX-512 hands a tail to AVX2.
 - `ports/typescript` and `ports/java`: ports of the value model, text form,
   binary form, frame reading and io streams, each passing every conformance
   vector (CI jobs `port-typescript`, `port-java`).
@@ -23,6 +25,12 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Changed
 
+- Lanes: the AVX-512 against AVX2 choice is now made per operation and width
+  from measurements (docs/performance.md, "Lanes: AVX-512 against AVX2"):
+  packing 32-bit groups stays on AVX2 (AVX-512 is 1.2 to 1.6x slower there),
+  unpacking 32-bit groups uses AVX-512 for runs of up to 24 groups (about 2x
+  faster) and AVX2 beyond. Every other width, and every group count of two or
+  more, stays on AVX-512. The bytes written and read do not change.
 - `docs/format.md` states what the ports found unspecified: the exact float
   text spelling, canonical base64 for `@bytes:`, and the frame reading rules.
 

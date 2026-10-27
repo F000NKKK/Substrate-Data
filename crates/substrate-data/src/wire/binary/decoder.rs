@@ -190,7 +190,7 @@ impl<'b> Decoder<'b> {
         }
         let len = usize::try_from(v >> 1).map_err(|_| self.error("a length beyond memory"))?;
         let at = self.i;
-        let s = std::str::from_utf8(self.take(len)?).map_err(|_| DecodeError {
+        let s = crate::utf8::from_utf8(self.take(len)?).map_err(|_| DecodeError {
             message: "a string isn't UTF-8".into(),
             offset: at,
         })?;

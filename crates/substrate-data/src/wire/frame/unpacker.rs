@@ -192,7 +192,7 @@ impl<'b> Unpacker<'b> {
                 .table_at
                 .checked_add(len)
                 .filter(|&e| e <= self.table.len())?;
-            let s = std::str::from_utf8(&self.table[self.table_at..end]).ok()?;
+            let s = crate::utf8::from_utf8(&self.table[self.table_at..end]).ok()?;
             self.table_at = end;
             self.strings.push(s);
         }

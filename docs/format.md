@@ -181,7 +181,7 @@ record = varint length, its fields in declaration order
 | bytes | varint length, bytes |
 | `Option` | a byte (0/1), then the value |
 | list (and set, `OneOrList`, `Stream`, `Path`) | varint count, varint byte length, items |
-| list of ints | count, bit width (a byte), values bit-packed in lanes |
+| list of ints | count, bit width (a byte), values bit-packed in lanes (see [Lanes](#lanes)) |
 | list of `f64` | count, `f32`-exact flag (a byte), raw values (4 bytes each when the flag is set, else 8) |
 | list of `f32` | count, raw values, 4 bytes each |
 | tuple | as a list, each item its binary form as bytes |
@@ -377,3 +377,15 @@ magic were renumbered (`SDAT` v1); nothing reads the old `YOGD` bytes.
 [`Shape`]: ../crates/substrate-data/src/schema/shape.rs
 [`Resolve`]: ../crates/substrate-data/src/schema/reader/resolve.rs
 [`Atom`]: ../crates/substrate-data/src/model/atom.rs
+
+## Lanes
+
+A list of `n` ints of `width` bits (1 to 32) is `n / 256` groups, then the
+rest packed one after another, little-endian bits. A group is 256 numbers in
+8 lanes of 32-bit words: number `j` goes to lane `j % 8`, the `j / 8`-th in
+it; a lane's numbers are packed one after another into its words, and word
+`k` of lane `l` is the group's `k * 8 + l`-th. Numbers wider than 32 bits go
+one after another with no groups. The layout is what a vector of eight
+32-bit lanes does naturally; an implementation may use any instruction set
+(this crate picks SSE4.2, AVX2, AVX-512 or NEON at run time) or none, and
+must write the same bytes.

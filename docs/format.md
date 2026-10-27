@@ -95,9 +95,11 @@ schema finds points at its line and column, and its path:
 changed and keeps everything else — comments, key order, number spelling,
 layout. This is what an inspector uses to write a field back to a file a
 person also edits by hand. `patch::format` writes new parts the way
-editors write them (short lists and small objects on one line; a whole
-float as an integer, any other in the shortest spelling that reads back
-as exactly the same `f64` — nothing is rounded).
+editors write them (short lists and small objects on one line; a float in
+the shortest spelling that reads back as exactly the same `f64` and as a
+float — `1.0`, `-0.0`, `0.1` — nothing is rounded). A number whose value
+didn't change keeps the source's spelling (`1` stays `1` for `1.0`); `-0.0`
+and `0` count as different.
 
 Writing text, a float is always spelled so it reads back as a float
 (`1.0`, `1e16`), never as an integer.

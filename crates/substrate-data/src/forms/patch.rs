@@ -10,9 +10,6 @@ use crate::text::{Spans, write_string};
 const ONE_LINE: usize = 72;
 /// One indent step.
 const INDENT: &str = "  ";
-/// Below this a whole float is written as an integer (`3`, not `3.0`):
-/// every integer up to it is a float exactly.
-const WHOLE_MAX: f64 = 1e15;
 
 /// `value` as editors write it at indent `level` (two spaces each):
 /// short lists of numbers and short objects of scalars on one line
@@ -48,15 +45,12 @@ fn quoted(s: &str) -> String {
     out
 }
 
-/// A finite float as written by hand: a whole one as an integer (`3`),
-/// any other in the shortest spelling that reads back as exactly it
-/// (`0.1`, `1e-7`, `1e20`) — nothing rounded away.
+/// A finite float in the shortest spelling that reads back as exactly it,
+/// and as a float: `1.0`, `-0.0`, `0.1`, `1e-7`, `1e20` — nothing rounded
+/// away, a whole one still a float. (An integer is a `Value::Int`, written
+/// as one; a value that didn't change keeps the source's spelling.)
 fn number(n: f64) -> String {
-    if n.fract() == 0.0 && n.abs() < WHOLE_MAX {
-        format!("{}", n as i64)
-    } else {
-        crate::text::float_string(n)
-    }
+    crate::text::float_string(n)
 }
 
 fn scalar(v: &Value) -> Option<String> {
@@ -154,7 +148,11 @@ fn json_into(value: &Value, out: &mut String) {
 pub fn same(a: &Value, b: &Value) -> bool {
     match (a, b) {
         (Value::Int(_) | Value::Float(_), Value::Int(_) | Value::Float(_)) => {
-            a.as_f64() == b.as_f64()
+            // `-0.0` is not `0`: its sign is kept.
+            match (a.as_f64(), b.as_f64()) {
+                (Some(x), Some(y)) => x == y && x.is_sign_negative() == y.is_sign_negative(),
+                _ => false,
+            }
         }
         (Value::List(x), Value::List(y)) => {
             x.len() == y.len() && x.iter().zip(y).all(|(a, b)| same(a, b))
@@ -572,16 +570,28 @@ mod tests {
             let s = number(f);
             assert_eq!(parse_value(&s).unwrap(), Value::Float(f), "{f} as {s}");
         }
-        // Whole ones stay integers, as a person writes them.
-        assert_eq!(number(3.0), "3");
-        assert_eq!(number(-42.0), "-42");
+        // A whole float stays a float, and `-0.0` keeps its sign.
+        assert_eq!(number(3.0), "3.0");
+        assert_eq!(number(-42.0), "-42.0");
+        assert_eq!(number(-0.0), "-0.0");
         assert_eq!(number(0.5), "0.5");
+        let Value::Float(z) = parse_value(&number(-0.0)).unwrap() else {
+            panic!("a float")
+        };
+        assert!(z.is_sign_negative());
         let out = edit("{\n  \"at\": [0, 0, 0],\n  \"n\": 1\n}", |m| {
             m.insert(
                 "at",
                 Value::List(vec![Value::Float(0.123_456_7), Value::Float(2.0)]),
             );
         });
-        assert!(out.contains("[0.1234567, 2]"), "{out}");
+        assert!(out.contains("[0.1234567, 2.0]"), "{out}");
+        // A zero turned negative is written so; an integer the source
+        // spells stays as it is when the number didn't change.
+        let out = edit("{\n  \"z\": 0,\n  \"n\": 1\n}", |m| {
+            m.insert("z", Value::Float(-0.0));
+            m.insert("n", Value::Float(1.0));
+        });
+        assert_eq!(out, "{\n  \"z\": -0.0,\n  \"n\": 1\n}");
     }
 }

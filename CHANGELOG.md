@@ -13,6 +13,9 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Added
 
+- `KindName` and `RefKey` read as `&str` (`Deref`, `AsRef<str>`), a
+  `RefKey` borrows as `str` (map lookups by text), and both compare with
+  `String`.
 - `io::FrameWriter` (`send` for the named form, `send_packed` for the frame
   layout) and `io::FrameReader`: frames sent and read from reusable buffers,
   one `write_all` per frame, no allocation per message once warm.

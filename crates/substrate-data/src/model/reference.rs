@@ -169,3 +169,60 @@ impl PartialEq<&str> for RefKey {
         &*self.0 == *other
     }
 }
+
+impl std::ops::Deref for KindName {
+    type Target = str;
+    fn deref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl AsRef<str> for KindName {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl PartialEq<String> for KindName {
+    fn eq(&self, other: &String) -> bool {
+        self.as_str() == other
+    }
+}
+
+impl std::ops::Deref for RefKey {
+    type Target = str;
+    fn deref(&self) -> &str {
+        &self.0
+    }
+}
+
+impl AsRef<str> for RefKey {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
+/// A map keyed by ids is looked up by a `&str`: an id hashes and orders as its text.
+impl std::borrow::Borrow<str> for RefKey {
+    fn borrow(&self) -> &str {
+        &self.0
+    }
+}
+
+impl PartialEq<String> for RefKey {
+    fn eq(&self, other: &String) -> bool {
+        &*self.0 == other
+    }
+}
+
+impl PartialEq<RefKey> for String {
+    fn eq(&self, other: &RefKey) -> bool {
+        self.as_str() == &*other.0
+    }
+}
+
+impl PartialEq<RefKey> for str {
+    fn eq(&self, other: &RefKey) -> bool {
+        self == &*other.0
+    }
+}

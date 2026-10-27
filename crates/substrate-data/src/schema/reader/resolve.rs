@@ -3,7 +3,7 @@
 
 use std::fmt;
 
-use crate::model::value::{Path, Ref, RefKey};
+use crate::model::value::{Path, Ref, RefKey, Value};
 
 /// What a tool makes of the references it reads: a build checks each one
 /// against what there is (and may rewrite its id), an editor shows them.
@@ -15,6 +15,20 @@ pub trait Resolve {
     /// [`Unresolved`] when the reference names nothing there is, or names
     /// it in a way the tool refuses.
     fn reference(&mut self, r: &Ref, path: &Path) -> Result<RefKey, Unresolved>;
+
+    /// A reference at `path` the tool replaces by a value — a word of a
+    /// dictionary, a localized text: `Some(value)` is read in its place,
+    /// `None` keeps it a reference. Asked only where a field says it takes
+    /// a value or a reference ([`with::Expand`](crate::with::Expand)); a
+    /// reference met anywhere else goes through [`Resolve::reference`].
+    ///
+    /// # Errors
+    ///
+    /// [`Unresolved`] when the reference names nothing there is, or names
+    /// it in a way the tool refuses.
+    fn expand(&mut self, _r: &Ref, _path: &Path) -> Result<Option<Value>, Unresolved> {
+        Ok(None)
+    }
 }
 
 /// Why a reference doesn't resolve.

@@ -15,6 +15,9 @@ service is one value throughout.
 The crate is `substrate-data`; `#[derive(Schema)]` comes from
 `substrate-data-derive`, re-exported as `substrate_data::Schema`.
 
+Golden test vectors for ports in other languages — exact bytes of every
+tag, frame and malformed input — are in [`conformance/`](../conformance/README.md).
+
 ---
 
 ## Model
@@ -202,8 +205,31 @@ struct generates a zero-copy view (`frame::View`) over a frame's bytes.
 for a tool that has no code for the message (an editor's message
 inspector).
 
-`io::write_frame` / `read_frame` put frames on a byte stream (a socket, a
-pipe): each message a little-endian `u32` length, then the frame.
+`io::write_frame` / `read_frame` put messages on a byte stream (a socket, a
+pipe): each a little-endian `u32` length (at most `io::MAX_FRAME`), then the
+message's named binary form (`SDAT`, `to_bytes`). A stream ends cleanly only
+between frames; one cut inside a length or a body is `UnexpectedEof`.
+
+`io::FrameWriter` and `io::FrameReader` do the same from buffers they keep,
+so a stream of messages allocates nothing per message once the buffers have
+grown to the biggest one. A send writes the length and the body in one
+`write_all`, then flushes; a frame over `MAX_FRAME` is refused
+(`InvalidInput`) before anything is written.
+
+- `FrameWriter::send_packed` writes the packed frame layout above (the
+  length, then the frame): the zero-allocation path. The frame is packed
+  in the writer's `Packer`, then copied once after the length.
+- `FrameWriter::send` writes the named `SDAT` form, the same bytes
+  `write_frame` writes, from a reused writer. It allocates nothing either
+  once warm, except for a field written through a `Stream` (its body is
+  built apart).
+- `FrameReader::read_bytes` returns the frame's bytes, valid until the next
+  read (the buffer grows as bytes arrive, not by the length a peer
+  claims); `read::<T>()` decodes a named frame.
+
+`binary::encode_into` and `to_bytes_into` append a whole document to a
+caller's `Vec<u8>` (what `encode` and `to_bytes` build on); the buffer is
+reused, the string index inside the call is not.
 
 ---
 
@@ -291,6 +317,50 @@ its path. A list of a named type packs item by item (the default
 
 A reference's shape is `{ kind: "ref", of: [kinds], id: <id shape> }`.
 
+### Resolving references to values
+
+A reference can stand for a **value**: a word of a vocabulary, a localized
+text, a row of a table. The format says where (a field written as a value
+*or* as `@kind:id`); the tool says what the names mean.
+
+- `Resolve::expand(&Ref, &Path) -> Result<Option<Value>, Unresolved>` — the
+  value to read in the reference's place, `None` to keep it a reference
+  (the default), `Err` for a name it won't take (SD0011, at the field's
+  path). It is asked only for fields that opt in; `Resolve::reference`
+  keeps its job (check or rewrite an id) for every other reference.
+- `with::Expand<W>` — the field codec: a value that is a reference (a
+  `Ref`, or a string spelling one) is expanded and `W` reads the result as
+  if it had been written there; anything else, or no resolver, or a
+  resolver that keeps it, is read by `W` as it stands. It composes with
+  `Opt`, `List` and `Values`. A problem with the expanded value is reported
+  at the reference's path; the reference is listed among the references
+  met. An expanded value may itself hold fields that expand;
+  `MAX_EXPANSION_DEPTH` (32) bounds a value that expands into itself.
+- `Dictionary` — a ready resolver: values by kind and id, in the order
+  added, written `{ <kind>: { <id>: <value>, … }, … }` (a `Schema`, so it is
+  read from text, a value or binary like any document; notes keys are
+  skipped). It checks references of the kinds it holds (a missing id is
+  SD0011), expands them, and leaves other kinds alone. A string in it is
+  *as spelled* like any `Value::Str`.
+
+Which forms expand: the ones read **through a value**, with a resolver —
+`from_value_with`, `from_doc_with`, `from_bytes_with` (the binary form
+decoded borrowed, then read). `read_bytes` and `read_value` take no
+resolver, and a frame is read with no `Reader` at all (`unpack`, views):
+its schema is fixed on both sides, so a field holds its value, never a
+name for one. Writing, `encode` and `pack` of an `Expand` field are the
+inner codec's: the value, not the reference.
+
+#### String tables
+
+Repeated names already cost one number in the forms that carry a table:
+the binary form interns every string (keys, kinds, ids and values) on the
+way, a frame has one table at its end its strings index into, and a
+`Stream` has its own. A process's `Atom` is a name kept once and sent in a
+frame as its number (text and the tagged binary form carry its text). A
+dictionary's words are ordinary strings: nothing beyond these tables is
+needed to share them, and no new tag or frame field exists for it.
+
 ---
 
 ## Diagnostics
@@ -314,7 +384,7 @@ Codes from this crate:
 | SD0008 | a string written as a typed value that isn't one |
 | SD0009 | binary data that won't decode |
 | SD0010 | a reference whose id isn't its kind's id type |
-| SD0011 | a reference the [`Resolve`] doesn't resolve |
+| SD0011 | a reference the [`Resolve`] doesn't resolve or expand |
 
 Tools add their own codes; a `Diagnostic` is itself a `Schema`, so it
 crosses a protocol like any other message.
@@ -331,7 +401,7 @@ magic were renumbered (`SDAT` v1); nothing reads the old `YOGD` bytes.
 [`Value`]: ../crates/substrate-data/src/model/value.rs
 [`Schema`]: ../crates/substrate-data/src/schema/mod.rs
 [`Shape`]: ../crates/substrate-data/src/schema/shape.rs
-[`Resolve`]: ../crates/substrate-data/src/schema/resolve.rs
+[`Resolve`]: ../crates/substrate-data/src/schema/reader/resolve.rs
 [`Atom`]: ../crates/substrate-data/src/model/atom.rs
 
 ## Lanes

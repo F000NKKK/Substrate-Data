@@ -26,7 +26,7 @@ mod tests;
 mod varint;
 pub(crate) mod writer;
 
-pub use codec::{decode, decode_ref, encode};
+pub use codec::{decode, decode_ref, encode, encode_into};
 pub use decode_error::DecodeError;
 pub use decoder::Decoder;
 pub use layout::{MAGIC, MAX_DEPTH, NEW_STRING, STREAM_LEN_BYTES, VERSION};

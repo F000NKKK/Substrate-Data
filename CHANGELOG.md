@@ -11,6 +11,21 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Added
 
+- `io::FrameWriter` (`send` for the named form, `send_packed` for the frame
+  layout) and `io::FrameReader`: frames sent and read from reusable buffers,
+  one `write_all` per frame, no allocation per message once warm.
+- `binary::encode_into` and `to_bytes_into`: append the binary form to a
+  caller's buffer.
+- Reference expansion: `Resolve::expand` (a reference replaced by a value;
+  default keeps it), `with::Expand<W>` (a field written as a value or as a
+  reference), `Reader::expand_ref`, `Expansion`, `MAX_EXPANSION_DEPTH`, and
+  `from_bytes_with` (the binary form read through a resolver). The frame
+  forms don't expand: a frame has no resolver, its fields hold values.
+- `schema::Dictionary`: values by kind and id, a `Schema` and a `Resolve`
+  that checks and expands the references of the kinds it holds.
+- `conformance/`: language-neutral golden vectors (a JSON manifest and the
+  raw bytes) for ports in other languages, and a test that fails when the
+  implementation drifts from them (`CONFORMANCE_BLESS=1` regenerates).
 - `simd-utf8` feature: SIMD UTF-8 validation (`simdutf8`) for source files,
   the binary form and frames; results and errors are identical to the
   standard library's.
@@ -34,6 +49,8 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Fixed
 
+- `frame::Packer` no longer allocates to write the length of a record or
+  list over 127 bytes.
 - The binary decoders refuse a map with a repeated key (`binary::decode`,
   `decode_ref`), as the text parser already did; before, both entries were kept.
 - A stream cut inside a frame's length is an error, not a clean end

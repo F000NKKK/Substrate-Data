@@ -11,3 +11,5 @@ pub(super) const LENGTH_RESERVED: usize = 1;
 pub(super) const ONE_BYTE_MAX: usize = 0x7F;
 /// Strings a reader keeps in itself before it needs the heap.
 pub(super) const INLINE_STRINGS: usize = 16;
+/// The most bytes a `u64` takes as a varint.
+pub(super) const VARINT_MAX_BYTES: usize = 10;

@@ -31,7 +31,7 @@
 | Схемы | [`substrate-data`](crates/substrate-data) | формат как тип: чтение с путём каждой проблемы, запись, описание для редакторов |
 | Derive | [`substrate-data-derive`](crates/substrate-data-derive) | `#[derive(Schema)]` |
 
-Спецификация формата: [docs/format.md](docs/format.md) (на английском).
+Спецификация формата: [docs/format.md](docs/format.md) (на английском). Независимые от языка тестовые векторы для портов: [conformance/](conformance/README.md).
 
 ## 🚀 Подключение
 

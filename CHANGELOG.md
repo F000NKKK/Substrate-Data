@@ -23,6 +23,35 @@ only grow: a tag is never renumbered and a frame field is never reordered.
   vector (CI jobs `port-typescript`, `port-java`).
 - Conformance: the `duplicate_key` binary fault class, with two vectors.
 
+### Added (text form)
+
+- `text::parse_ref(text, &arena)`: parses straight to a `ValueRef` (no
+  `Spans`, strings borrowed from the text).
+- `text::Writer`: the text form written piece by piece, compact or pretty,
+  without a `Value` (`map(n)`, `key`, `list(n)`, scalars, `reference`,
+  `bytes`; containers close by themselves).
+- `Schema::write_text` and `With::write_text` (default: through `write`);
+  derived structs, newtypes and unit enums, the plain types, `Vec`, `Option`,
+  maps and the `with` codecs write straight. `to_text` uses it.
+
+### Changed (text form)
+
+- Text performance, same grammar and byte-identical output (instruction
+  counts, millions, `--all-features`, large samples): parse `config`
+  51.2 to 29.0, `records` 48.5 to 24.0, `deep` 68.3 to 35.7; write `numbers`
+  44.1 to 18.1, `refs` 24.4 to 13.8, `blobs` 10.5 to 3.4; typed `to_text`
+  (`docs_large`) 54.6 to 13.9, `from_text` 82.1 to 30.8, `numbers_large`
+  49.6 to 18.6 and 43.5 to 27.0.
+- Floats are spelled from the `zmij` crate's shortest digits (new
+  dependency, no dependencies of its own) in the same `{:?}` spelling.
+- Breaking: `Schema` and `With` gain a provided method (`write_text`), so
+  nothing to migrate unless a type implements both by hand and wants the fast
+  path. `text::parser` internals moved; `MAX_DEPTH`, `parse`, `parse_value`
+  are unchanged.
+- `Map`'s index uses a seeded multiply-rotate hasher instead of SipHash
+  (hash-flooding is still not predictable: the seed is random per table);
+  keys of a parsed `Value` are shared between maps.
+
 ### Changed
 
 - Lanes: the AVX-512 against AVX2 choice is now made per operation and width

@@ -161,13 +161,18 @@ Value trees, text and binary:
 
 | sample | text parse | text write | binary encode | binary decode |
 |---|---:|---:|---:|---:|
-| config_large | 51.2 | 16.2 | 11.9 | 22.8 |
-| records_large | 48.5 | 15.0 | 11.0 | 19.1 |
-| numbers_large | 26.6 | 44.1 | 3.3 | 5.4 |
-| strings_large | 6.7 | 7.0 | 2.8 | 2.3 |
-| deep_large | 68.3 | 16.2 | 11.4 | 27.4 |
-| refs_large | 40.3 | 24.4 | 16.4 | 25.7 |
-| blobs_large | 1.7 | 10.5 | 0.4 | 0.4 |
+| config_large | 29.0 | 12.7 | 11.9 | 22.8 |
+| records_large | 24.0 | 12.5 | 11.0 | 19.1 |
+| numbers_large | 21.6 | 18.1 | 3.3 | 5.4 |
+| strings_large | 6.2 | 3.6 | 2.8 | 2.3 |
+| deep_large | 35.7 | 16.3 | 11.4 | 27.4 |
+| refs_large | 22.2 | 13.8 | 16.4 | 25.7 |
+| blobs_large | 1.7 | 3.4 | 0.4 | 0.4 |
+
+(Text parse and write before the text work, same samples: 51.2 / 16.2,
+48.5 / 15.0, 26.6 / 44.1, 6.7 / 7.0, 68.3 / 16.2, 40.3 / 24.4, 1.7 / 10.5.
+`text::parse_ref`, the parse to a borrowed value that `from_text` uses:
+17.5, 16.7, 20.8 and 22.6 on config, records, numbers and deep.)
 
 The same value trees through other formats (millions of instructions):
 
@@ -192,18 +197,19 @@ Typed documents through every form (`docs_large`, `numbers_large`; millions):
 | msgpack (named) | 5.7 | 11.7 | 2.73 | 3.37 |
 | cbor | 4.9 | 22.6 | 5.5 | 9.2 |
 | json | 7.8 | 19.3 | 6.4 | 13.8 |
-| sd_text | 54.5 | 79.3 | 49.6 | 43.8 |
+| sd_text | 13.8 | 31.1 | 18.6 | 27.3 |
 
 Other typed paths, `docs_large` (millions): `write` to a `Value` 25.2,
-`read_value` 13.7, `to_text` 54.6, `from_text` 82.1, `to_frame` 5.1,
-`read_frame` 6.5.
+`read_value` 13.7, `to_text` 13.9, `from_text` 30.8, `to_frame` 5.1,
+`read_frame` 6.5. (`to_text` was 54.6 and `from_text` 82.1 before they
+stopped going through the `Value` tree.)
 
 Read it as: the frame is the cheapest of the crate's own forms on both sizes
 and on numbers it is the cheapest of all formats to decode (0.58 M against
 postcard's 1.38 M); on string-heavy documents the compact serde formats
 encode two to five times cheaper than `to_bytes`, which does an interner
-lookup per string. The text form costs ten times the binary on the way out
-and eight times on the way in.
+lookup per string. The text form costs about one and a half times the binary on the way out
+and three times on the way in.
 
 ### Sizes (bytes, `cargo run --example sizes`)
 
@@ -373,20 +379,24 @@ Percentages are of the instructions of that benchmark.
    is its own `String`/`Arc<str>`. `decode_ref` into an arena is already 2.3x
    faster (184 against 81 MiB/s); reading typed documents straight from
    borrowed bytes, and a shared string pool per decode, remove most of it.
-3. **Text parse: `Parser::value` and allocation.** `Parser::value` is 20 %,
-   malloc and free about 22 %, whitespace skipping (`ws`) 11 %, `string` 8 %,
-   `string_stop` 6 %, `Map::position` and `push_unchecked` 6 %. Text parse
-   costs 3 to 7x the binary decode of the same value.
-4. **Typed text goes through the `Value` tree.** `to_text` and `from_text`
-   are 54.6 M and 82.1 M on `docs_large` against 8.9 M and 9.8 M for binary:
-   `Map::insert` is 4 %, malloc and free about 35 %. Writing and parsing
-   typed documents without the intermediate tree would cut the largest gap in
-   the table.
-5. **Float formatting in text write.** On `numbers_large` text write is 44 M
-   against 15 M for records of the same size; about 60 % is float formatting
-   (grisu or dragon plus the `fmt` machinery). A shortest-round-trip printer
-   without `fmt` (Ryu-style) would approach the binary cost. `write_string`
-   is 39 % and `Layout::value` 19 % of the rest.
+3. **Text parse** (done in part). The parser builds through one trait, so
+   `from_text` parses straight to a `ValueRef` in an arena (strings point into
+   the text, lists and maps are sized exactly, no `Spans`), and the owned
+   parse shares keys and sizes lists exactly: `config_large` 51.2 M to 29.0 M,
+   `records_large` 48.5 M to 24.0 M. What is left is spread thin: `Parser::value`
+   with the inlined scans, key hashing, and `malloc` for the owned tree.
+4. **Typed text goes through the `Value` tree** (done). `Schema::write_text`
+   writes typed values straight (`to_text` 54.6 M to 13.9 M on `docs_large`);
+   `from_text` reads through `parse_ref` (82.1 M to 30.8 M). Reading still
+   goes through `ValueRef` and the `Reader`; a reader straight over the text
+   would drop another 15 M or so but cannot give the placed problems the
+   tree gives, so only the problem path re-parses.
+5. **Float formatting in text write** (done). Digits come from `zmij`
+   (Schubfach), re-placed by the specification's thresholds; the two
+   spellings differ only on exact halfway cases (a widened `f32` is often
+   one), which are rewritten to `fmt`'s rounding. `numbers_large` text write
+   44.1 M to 18.1 M; output is byte-identical to `{:?}` (checked on 100 M
+   generated values).
 6. **Binary decode of refs.** `RefKey::is_valid` is 10 % and
    `atom::local::intern` with std SipHash `hash_one` about 11 % of the refs
    decode; `SeenKeys::insert` is 9 % on records. A faster hasher (FxHash or

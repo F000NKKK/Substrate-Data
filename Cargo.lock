@@ -584,6 +584,7 @@ dependencies = [
  "simdutf8",
  "substrate-data-derive",
  "toml",
+ "zmij",
 ]
 
 [[package]]

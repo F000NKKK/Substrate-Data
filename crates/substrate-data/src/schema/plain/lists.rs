@@ -6,6 +6,17 @@ use crate::model::borrowed::ValueRef;
 use crate::model::value::{Seg, Value};
 use crate::schema::{Expected, Reader, Schema, Shape};
 
+/// `items` as a text list, each written straight.
+fn write_items<'a, T: Schema + 'a>(
+    items: impl ExactSizeIterator<Item = &'a T>,
+    w: &mut crate::text::Writer,
+) {
+    w.list(items.len());
+    for item in items {
+        item.write_text(w);
+    }
+}
+
 impl<T: Schema> Schema for Vec<T> {
     fn shape() -> Shape {
         Shape::List(T::shape)
@@ -27,6 +38,9 @@ impl<T: Schema> Schema for Vec<T> {
     }
     fn write(&self) -> Value {
         Value::List(self.iter().map(T::write).collect())
+    }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        write_items(self.iter(), w);
     }
     fn encode(&self, w: &mut Writer) {
         T::encode_list(self, w);
@@ -52,6 +66,9 @@ impl<T: Schema + Ord + Clone> Schema for std::collections::BTreeSet<T> {
     }
     fn write(&self) -> Value {
         Value::List(self.iter().map(T::write).collect())
+    }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        write_items(self.iter(), w);
     }
     fn encode(&self, w: &mut Writer) {
         // As a list of them is written (numbers packed).
@@ -82,6 +99,9 @@ impl<T: Schema> Schema for Box<[T]> {
     fn write(&self) -> Value {
         Value::List(self.iter().map(T::write).collect())
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        write_items(self.iter(), w);
+    }
     fn encode(&self, w: &mut Writer) {
         T::encode_list(self, w);
     }
@@ -110,6 +130,9 @@ impl<T: Schema, const N: usize> Schema for [T; N] {
     }
     fn write(&self) -> Value {
         Value::List(self.iter().map(T::write).collect())
+    }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        write_items(self.iter(), w);
     }
     fn encode(&self, w: &mut Writer) {
         T::encode_list(self, w);

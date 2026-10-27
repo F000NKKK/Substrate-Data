@@ -214,7 +214,17 @@ fn text_with_comments(text: &'static str) -> Value {
     black_box(text::with_comments(text).unwrap())
 }
 
+#[library_benchmark]
+#[bench::config_large(args = (Topic::Config, Size::Large), setup = sample)]
+#[bench::records_large(args = (Topic::Records, Size::Large), setup = sample)]
+#[bench::numbers_large(args = (Topic::Numbers, Size::Large), setup = sample)]
+#[bench::deep_large(args = (Topic::Deep, Size::Large), setup = sample)]
+fn text_parse_ref(s: &'static Sample) -> usize {
+    let arena = Bump::new();
+    black_box(text::parse_ref(&s.text, &arena).unwrap().kind() as usize)
+}
+
 library_benchmark_group!(
     name = whole_documents;
-    benchmarks = text_parse_value, text_to_string, binary_encode, binary_decode, text_parse_with_spans, text_to_string_pretty, text_parse_pretty, binary_decode_ref_to_value, source_text_from_binary, source_binary_from_text, patch_format, patch_edit, text_with_comments
+    benchmarks = text_parse_value, text_parse_ref, text_to_string, binary_encode, binary_decode, text_parse_with_spans, text_to_string_pretty, text_parse_pretty, binary_decode_ref_to_value, source_text_from_binary, source_binary_from_text, patch_format, patch_edit, text_with_comments
 );

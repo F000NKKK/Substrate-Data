@@ -56,6 +56,11 @@ pub trait With<F> {
     fn encode(f: &F, w: &mut Writer) {
         w.value(&Self::write(f));
     }
+    /// The field as text, straight: its value as text unless the codec
+    /// knows better (see [`Schema::write_text`]).
+    fn write_text(f: &F, w: &mut crate::text::Writer) {
+        w.value(&Self::write(f));
+    }
     /// The field from the binary form, straight; `None` sends the read the
     /// slow way (see [`Schema::decode`]).
     fn decode(d: &mut Decoder<'_>) -> Option<F> {
@@ -97,6 +102,9 @@ impl<K: Kinds> With<K::Id> for RefTo<K> {
             crate::model::value::RefKey::spelled(&crate::schema::RefId::spell(f)),
         ))
     }
+    fn write_text(f: &K::Id, w: &mut crate::text::Writer) {
+        w.reference(K::first().as_str(), &crate::schema::RefId::spell(f));
+    }
     fn pack(f: &K::Id, p: &mut Packer) {
         f.pack(p);
     }
@@ -128,6 +136,9 @@ impl With<String> for Spelled {
     fn write(f: &String) -> Value {
         Value::Str(f.clone())
     }
+    fn write_text(f: &String, w: &mut crate::text::Writer) {
+        w.str(f);
+    }
 }
 
 /// An optional field through `W`.
@@ -147,6 +158,14 @@ impl<F, W: With<F>> With<Option<F>> for Opt<W> {
     }
     fn write(f: &Option<F>) -> Value {
         f.as_ref().map_or(Value::Null, W::write)
+    }
+    fn write_text(f: &Option<F>, w: &mut crate::text::Writer) {
+        match f {
+            Some(f) => W::write_text(f, w),
+            None => {
+                w.null();
+            }
+        }
     }
     fn absent() -> Option<Option<F>> {
         Some(None)
@@ -182,6 +201,12 @@ impl<F, W: With<F>> With<Vec<F>> for List<W> {
     fn write(f: &Vec<F>) -> Value {
         Value::List(f.iter().map(W::write).collect())
     }
+    fn write_text(f: &Vec<F>, w: &mut crate::text::Writer) {
+        w.list(f.len());
+        for item in f {
+            W::write_text(item, w);
+        }
+    }
 }
 
 /// An object of any keys, each value through `W`.
@@ -197,6 +222,13 @@ impl<F, W: With<F>> With<BTreeMap<String, F>> for Values<W> {
     }
     fn write(f: &BTreeMap<String, F>) -> Value {
         write_values::<F, W>(f.iter())
+    }
+    fn write_text(f: &BTreeMap<String, F>, w: &mut crate::text::Writer) {
+        w.map(f.len());
+        for (k, v) in f {
+            w.key(k);
+            W::write_text(v, w);
+        }
     }
 }
 
@@ -259,6 +291,9 @@ impl<F: Schema> With<F> for Plain {
     fn skip(f: &F) -> bool {
         f.skip()
     }
+    fn write_text(f: &F, w: &mut crate::text::Writer) {
+        f.write_text(w);
+    }
     fn encode(f: &F, w: &mut Writer) {
         f.encode(w);
     }
@@ -304,6 +339,9 @@ impl With<Vec<u8>> for Raw {
     }
     fn write(f: &Vec<u8>) -> Value {
         Value::Bytes(f.clone())
+    }
+    fn write_text(f: &Vec<u8>, w: &mut crate::text::Writer) {
+        w.bytes(f);
     }
     fn encode(f: &Vec<u8>, w: &mut Writer) {
         w.bytes(f);

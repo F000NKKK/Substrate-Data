@@ -41,6 +41,13 @@ impl<T: Schema> Schema for BTreeMap<String, T> {
     fn write(&self) -> Value {
         Value::Map(self.iter().map(|(k, v)| (k.clone(), v.write())).collect())
     }
+    fn write_text(&self, w: &mut crate::text::Writer) {
+        w.map(self.len());
+        for (k, v) in self {
+            w.key(k);
+            v.write_text(w);
+        }
+    }
 }
 
 impl<T: Schema, S: BuildHasher + Default> Schema for HashMap<String, T, S> {

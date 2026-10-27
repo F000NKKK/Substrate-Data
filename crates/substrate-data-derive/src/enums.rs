@@ -81,6 +81,9 @@ fn unit_value(cg: &Codegen, names: &[(&Ident, &String)]) -> Tokens {
         fn encode(&self, w: &mut #krate::binary::Writer) {
             w.str(match self { #(#writes)* });
         }
+        fn write_text(&self, w: &mut #krate::text::Writer) {
+            w.str(match self { #(#writes)* });
+        }
         fn decode(d: &mut #krate::binary::Decoder<'_>) -> ::std::option::Option<Self> {
             match d.str()? {
                 #(#reads)*

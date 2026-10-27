@@ -10,7 +10,7 @@ use crate::marker::Fallback;
 /// Most fields a struct's keys are found again by a bit each ([`encode_fields`]).
 const MASKED_MAX: usize = 64;
 
-/// `fields` (bound by name) written straight as a map: its keys as a
+/// `fields` (bound by name) written straight as a binary map: its keys as a
 /// shape (written once, named after), then each value.
 pub(crate) fn encode_fields(cg: &Codegen, fields: &[NamedField]) -> Tokens {
     let krate = &cg.krate;
@@ -33,6 +33,30 @@ pub(crate) fn encode_fields(cg: &Codegen, fields: &[NamedField]) -> Tokens {
     };
     quote! {
         #record
+        #(#puts)*
+    }
+}
+
+/// `fields` (bound by name) written straight as a text map: its length,
+/// then each entry that isn't skipped.
+pub(crate) fn write_text_fields(cg: &Codegen, fields: &[NamedField]) -> Tokens {
+    let krate = &cg.krate;
+    let written: Vec<_> = fields.iter().filter(|f| !f.skip).collect();
+    let counts = written.iter().map(|f| {
+        let (ident, ty, w) = (&f.ident, &f.ty, &f.with);
+        quote! { + usize::from(!<#w as #krate::with::With<#ty>>::skip(#ident)) }
+    });
+    let puts = written.iter().map(|f| {
+        let (ident, key, ty, w) = (&f.ident, &f.key, &f.ty, &f.with);
+        quote! {
+            if !<#w as #krate::with::With<#ty>>::skip(#ident) {
+                __sd_w.key(#key);
+                <#w as #krate::with::With<#ty>>::write_text(#ident, __sd_w);
+            }
+        }
+    });
+    quote! {
+        __sd_w.map(0 #(#counts)*);
         #(#puts)*
     }
 }

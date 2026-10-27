@@ -6,6 +6,8 @@
 
 mod convert;
 mod description;
+mod dictionary;
+mod expand;
 mod fields;
 mod format;
 mod named_type;
@@ -19,17 +21,18 @@ pub mod with;
 #[cfg(feature = "toml")]
 pub use convert::from_toml;
 pub use convert::{
-    field_names, from_doc, from_doc_with, from_text, from_value, from_value_with, placed,
-    read_both, read_bytes, read_ref_value, read_value, to_bytes, to_bytes_into, to_text,
+    field_names, from_bytes_with, from_doc, from_doc_with, from_text, from_value, from_value_with,
+    placed, read_both, read_bytes, read_ref_value, read_value, to_bytes, to_bytes_into, to_text,
 };
 pub use description::{DefinitionDoc, FieldDoc, ShapeDoc, ShapeNode, VariantDoc};
+pub use dictionary::Dictionary;
 pub use fields::{Fields, field_name};
 pub use format::Schema;
 pub use named_type::{NamedShape, NamedType, read_named};
 pub use plain::{OneOrList, Ordered, RESULT_ERR, RESULT_OK};
 pub use reader::{
-    COMMENT_KEY, Expected, Found, META_PREFIX, Numbers, PRIVATE_PREFIX, Read, Reader, Resolve,
-    Unresolved, is_metadata_key,
+    COMMENT_KEY, Expansion, Expected, Found, MAX_EXPANSION_DEPTH, META_PREFIX, Numbers,
+    PRIVATE_PREFIX, Read, Reader, Resolve, Unresolved, is_metadata_key,
 };
 pub use refs::{Id, Kind, Kinds, RefId, Uid, read_id, read_ref, ref_shape};
 pub use shape::{EnumShape, Field, Shape, ShapeFn, StructShape, Variant};

@@ -1,5 +1,6 @@
 //! Reading a value against a schema: its problems, with their paths.
 
+mod expand;
 mod expected;
 mod found;
 mod keys;
@@ -13,6 +14,7 @@ mod reader;
 mod resolve;
 mod suggest;
 
+pub use expand::{Expansion, MAX_EXPANSION_DEPTH};
 pub use expected::Expected;
 pub use found::Found;
 pub use keys::{COMMENT_KEY, META_PREFIX, PRIVATE_PREFIX, is_metadata_key};

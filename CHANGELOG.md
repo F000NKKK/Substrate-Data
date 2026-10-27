@@ -16,6 +16,15 @@ only grow: a tag is never renumbered and a frame field is never reordered.
   rmp-serde, postcard and bincode, an iai-callgrind instruction-count suite
   and `cargo run --example sizes`; see [docs/performance.md](docs/performance.md).
 - `LANES_WIDTHS` selects the widths the `lanes` bench measures.
+- `ports/typescript` and `ports/java`: ports of the value model, text form,
+  binary form, frame reading and io streams, each passing every conformance
+  vector (CI jobs `port-typescript`, `port-java`).
+- Conformance: the `duplicate_key` binary fault class, with two vectors.
+
+### Changed
+
+- `docs/format.md` states what the ports found unspecified: the exact float
+  text spelling, canonical base64 for `@bytes:`, and the frame reading rules.
 
 ## [0.2.1] - 2026-10-27
 

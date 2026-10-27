@@ -147,6 +147,7 @@ stream's body is relative to that body). What must agree is the class:
 | `bad_utf8` | a string that is not UTF-8 |
 | `bad_string_index` | an index not yet in the string table |
 | `bad_reference` | a reference whose kind or id is not valid |
+| `duplicate_key` | a map with a key that is already in it (compared by text, however the string was written) |
 | `trailing_bytes` | bytes after the root value (or after a stream's items) |
 | `too_deep` | nesting beyond `MAX_DEPTH` (256) |
 

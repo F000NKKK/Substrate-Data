@@ -1,20 +1,20 @@
 //! The same, a row a 256-bit vector.
 
-use super::{BLOCK, ROWS, block_bytes, mask};
+use super::{GROUP, ROWS, group_bytes, mask};
 use std::arch::x86_64::{
     __m128i, __m256i, _mm_cvtsi32_si128, _mm256_and_si256, _mm256_loadu_si256, _mm256_or_si256,
     _mm256_set1_epi32, _mm256_setzero_si256, _mm256_sll_epi32, _mm256_srl_epi32,
     _mm256_storeu_si256,
 };
 
-pub(super) fn pack(src: &[u32; BLOCK], width: u32, out: &mut [u8]) {
-    assert!(out.len() >= block_bytes(width), "a block's bytes");
+pub(super) fn pack(src: &[u32; GROUP], width: u32, out: &mut [u8]) {
+    assert!(out.len() >= group_bytes(width), "a group's bytes");
     // `kernels` chose this only where the processor has AVX2.
     unsafe { pack_avx2(src, width, out) }
 }
 
-pub(super) fn unpack(src: &[u8], width: u32, out: &mut [u32; BLOCK]) {
-    assert!(src.len() >= block_bytes(width), "a block's bytes");
+pub(super) fn unpack(src: &[u8], width: u32, out: &mut [u32; GROUP]) {
+    assert!(src.len() >= group_bytes(width), "a group's bytes");
     unsafe { unpack_avx2(src, width, out) }
 }
 
@@ -23,7 +23,7 @@ fn count(n: u32) -> __m128i {
 }
 
 #[target_feature(enable = "avx2")]
-unsafe fn pack_avx2(src: &[u32; BLOCK], width: u32, out: &mut [u8]) {
+unsafe fn pack_avx2(src: &[u32; GROUP], width: u32, out: &mut [u8]) {
     let rows = src.as_ptr().cast::<__m256i>();
     let dst = out.as_mut_ptr().cast::<__m256i>();
     let mut acc = _mm256_setzero_si256();
@@ -47,7 +47,7 @@ unsafe fn pack_avx2(src: &[u32; BLOCK], width: u32, out: &mut [u8]) {
 }
 
 #[target_feature(enable = "avx2")]
-unsafe fn unpack_avx2(src: &[u8], width: u32, out: &mut [u32; BLOCK]) {
+unsafe fn unpack_avx2(src: &[u8], width: u32, out: &mut [u32; GROUP]) {
     let words = src.as_ptr().cast::<__m256i>();
     let rows = out.as_mut_ptr().cast::<__m256i>();
     let m = _mm256_set1_epi32(mask(width) as i32);

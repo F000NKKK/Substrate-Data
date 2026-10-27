@@ -99,15 +99,15 @@ fn comments(gap: &str) -> Option<String> {
             let end = line.find('\n').unwrap_or(line.len());
             lines.push(line[..end].trim().to_string());
             rest = &line[end..];
-        } else if let Some(block) = after.strip_prefix('*') {
-            let end = block.find("*/").unwrap_or(block.len());
+        } else if let Some(body) = after.strip_prefix('*') {
+            let end = body.find("*/").unwrap_or(body.len());
             lines.extend(
-                block[..end]
+                body[..end]
                     .lines()
                     .map(|l| l.trim().trim_start_matches('*').trim().to_string())
                     .filter(|l| !l.is_empty()),
             );
-            rest = block.get(end + 2..).unwrap_or_default();
+            rest = body.get(end + 2..).unwrap_or_default();
         } else {
             rest = after;
         }

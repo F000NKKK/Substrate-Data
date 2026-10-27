@@ -198,7 +198,7 @@ pub enum Seg {
     Index(usize),
 }
 
-/// Where a value is in a document: `entities[2].components.transform`.
+/// Where a value is in a document: `tasks[2].parts[0].owner`.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub struct Path(Vec<Seg>);
 

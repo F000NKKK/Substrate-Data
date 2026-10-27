@@ -6,7 +6,7 @@ rust-version = { workspace = true }
 authors = { workspace = true }
 license = { workspace = true }
 repository = { workspace = true }
-readme = "../../README.md"
+readme = "README.md"
 documentation = "https://docs.rs/substrate-data-derive"
 keywords = ["serialization", "schema", "derive"]
 categories = ["encoding"]

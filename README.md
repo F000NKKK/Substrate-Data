@@ -1,81 +1,111 @@
-# Substrate Data
+<div align="center">
 
-One data model, one text syntax, one binary form, packed frames and one
-schema system — for a program's files, saves, caches and wire messages
-alike. Write a format once as a Rust type; read it from hand-edited text
-with the line and path of every problem, edit it in place without losing
-comments, compile it to compact binary, send it field by field over a
-socket, and describe it to an editor that builds property grids from it.
+<a id="top"></a>
+
+# 🧱 Substrate Data
+
+### One data model, text, binary, frames and schemas: for a program's files, saves and messages
+
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE-MIT)
+[![Rust 1.92+](https://img.shields.io/badge/Rust-1.92%2B-orange.svg)](Cargo.toml)
+[![crates.io](https://img.shields.io/crates/v/substrate-data.svg)](https://crates.io/crates/substrate-data)
 
 🇺🇸 **English** | 🇷🇺 [Русский](README.ru.md)
 
+[Overview](#-overview) • [Getting Started](#-getting-started) • [Architecture](#-architecture) • [Development](#-development) • [License](#-license)
+
+</div>
+
+---
+
+## 📖 Overview
+
+Write a format once as a Rust type. Read it from hand-edited text with the line and path of every problem, edit it in place without losing comments, compile it to compact binary, send it field by field over a socket, and describe it to an editor that builds property grids from it. The library knows no product: domain types (users, docs, files, projects) live in the code of whoever uses it.
+
+| Part | Where | What it gives you |
+|---|---|---|
+| Model | [`substrate-data`](crates/substrate-data) | JSON's values plus typed references `@kind:id` and bytes |
+| Text | [`substrate-data`](crates/substrate-data) | JSON with comments, trailing commas and unquoted keys; the position of every value; in-place edits |
+| Binary | [`substrate-data`](crates/substrate-data) | the compact, self-describing form |
+| Frames | [`substrate-data`](crates/substrate-data) | the packed form for messages whose schema both sides know |
+| Schema | [`substrate-data`](crates/substrate-data) | a format as a type: read with the path of every problem, written, described for editors |
+| Derive | [`substrate-data-derive`](crates/substrate-data-derive) | `#[derive(Schema)]` |
+
+The format specification: [docs/format.md](docs/format.md).
+
+## 🚀 Getting Started
+
+```toml
+# Cargo.toml
+[dependencies]
+substrate-data = "0.1"
+```
+
+Features of `substrate-data`: `json` (JSON ⇄ the model), `toml` (TOML read into the model with spans).
+
 ```rust
+use substrate_data::{Id, Schema};
+
 substrate_data::kind!(File = "file", User = "user": u64);
 
 /// A file attached to something.
-#[derive(substrate_data::Schema, Debug, PartialEq)]
+#[derive(Schema, Debug, PartialEq)]
 struct Attachment {
     /// What is attached.
-    file: substrate_data::Id<File>,
+    file: Id<File>,
     #[data(default)]
-    owner: Option<substrate_data::Id<User>>,
+    owner: Option<Id<User>>,
     #[data(range = "0..=16", default)]
     priority: u8,
 }
 
-let r: Attachment = substrate_data::from_text(r#"{
+let attachment: Attachment = substrate_data::from_text(r#"{
     // The logo for the front page.
     file: "@file:images/logo.png",
     owner: "@user:42",
-}"#).unwrap().value;
+}"#)
+.unwrap()
+.value;
+assert_eq!(attachment.priority, 0);
 
-let bytes = substrate_data::to_bytes(&r);            // compact, self-describing
-let frame = substrate_data::frame::to_frame(&r);     // packed, schema-known
-let shape = Attachment::shape().describe();          // a typed ShapeDoc, for editors and docs
+let bytes = substrate_data::to_bytes(&attachment); // compact, self-describing
+let frame = substrate_data::frame::to_frame(&attachment); // packed, schema-known
+let shape = Attachment::shape().describe(); // a typed ShapeDoc, for editors and docs
 ```
 
-## Crates
+## 🏛️ Architecture
 
-| Crate | What it is |
-|---|---|
-| [`substrate-data`](crates/substrate-data) | the model, text/binary/frame forms, schemas, diagnostics |
-| [`substrate-data-derive`](crates/substrate-data-derive) | `#[derive(Schema)]` |
+Both crates are the shared kernel (context `data`): they depend on no other crate of the project.
 
-Features of `substrate-data`: `json` (JSON ⇄ the model), `toml` (TOML read
-into the model with spans).
+```text
+substrate-data-derive   #[derive(Schema)]: parses a type, generates the impl
+        ▲
+substrate-data          model → text / binary / frames → schemas and diagnostics
+```
 
-## The format
+`substrate-data` is built from the model outwards: text, binary and frames read and write the same model, and a schema on top gives typed reads with diagnostics. The details (the text grammar, binary tags, frame layout, shape description keys, diagnostic codes) are in [docs/format.md](docs/format.md).
 
-[docs/format.md](docs/format.md) is the specification: the model, typed
-values (`@kind:id`), the text syntax (JSON + comments, trailing commas,
-unquoted keys), the binary layout, frames and their evolution rule,
-streams, schemas and their `#[data(...)]` options, and diagnostic codes.
+## 🛠️ Development
 
-## Performance
+```sh
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --all-features
+cargo bench --no-run
+python3 <craftbook>/tools/craftcheck check . --baseline .craftcheck-baseline
+python3 <craftbook>/tools/craftcheck deps . --baseline .craftcheck-deps-baseline
+```
 
-On a generated task-tracker document (4000 tasks, 0.99 MB of text,
-436 KB binary), release build:
+Engineering standard: [Craftbook](https://github.com/F000NKKK/craftbook). Changes: [CHANGELOG.md](CHANGELOG.md).
 
-| | substrate-data | serde_json |
-|---|---:|---:|
-| parse text | 16.1 ms | 19.2 ms |
-| parse text with spans | 27.6 ms | — |
-| decode binary | 7.1 ms | — |
-| write text | 5.1 ms | 2.3 ms |
-| encode binary | 2.9 ms | — |
+## 📄 License
 
-`cargo bench` runs these (`benches/data.rs`) and the typed-message
-round trips (`benches/messages.rs`).
+Licensed under either of [Apache License 2.0](LICENSE-APACHE) or [MIT license](LICENSE-MIT) at your option.
 
-## Origin
+---
 
-Extracted from `yog-data` in [Yog Mod Loader](https://github.com/F000NKKK/Yog-Mod-Loader)
-with everything Yog-specific removed, so programs such as
-[Meridian](https://github.com/F000NKKK/Meridian-Engine), tools and IDEs
-built on [Substrate Platform](https://github.com/F000NKKK/Substrate-Platform)
-can share it.
+<div align="center">
 
-## License
+**[⬆ Back to Top](#top)**
 
-Licensed under either of [Apache License 2.0](LICENSE-APACHE) or
-[MIT license](LICENSE-MIT) at your option.
+</div>

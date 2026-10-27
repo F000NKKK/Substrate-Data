@@ -9,7 +9,9 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ## [Unreleased]
 
-First release: `substrate-data` and `substrate-data-derive` 0.1.0.
+## [0.1.0] - 2026-10-27
+
+First release of `substrate-data` and `substrate-data-derive`.
 
 ### Added
 
@@ -25,3 +27,6 @@ First release: `substrate-data` and `substrate-data-derive` 0.1.0.
   (`Kind`, `Id<K>`, `Resolve`) and diagnostics (`SD0000`–`SD0011`) that carry
   line, column and path.
 - Optional `toml` and `json` features.
+
+[Unreleased]: https://github.com/F000NKKK/Substrate-Data/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/F000NKKK/Substrate-Data/releases/tag/v0.1.0

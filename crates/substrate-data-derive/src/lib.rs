@@ -47,3 +47,7 @@ pub fn derive_schema(input: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+struct CrateReadmeDoctests;

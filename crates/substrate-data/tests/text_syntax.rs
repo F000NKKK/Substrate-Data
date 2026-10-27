@@ -202,3 +202,41 @@ fn comments_are_kept_as_notes() {
     );
     assert!(parse("/* x */ 1").is_ok());
 }
+
+#[test]
+fn long_strings_comments_and_errors_are_exact_at_every_alignment() {
+    for pad in 0..70 {
+        let body = format!("{}日本 é\\n\\u00e9\\\"", "x".repeat(pad));
+        let want = format!("{}日本 é\n\u{e9}\"", "x".repeat(pad));
+        let doc = format!("// c\n/* b */ {{ \"k\": \"{body}\" /* tail */ }}");
+        assert_eq!(
+            parse_value(&doc).unwrap().get("k").and_then(Value::as_str),
+            Some(want.as_str()),
+            "pad {pad}"
+        );
+
+        let plain = "x".repeat(pad);
+        let unclosed = format!("\"{plain}日本");
+        let e1 = parse_value(&unclosed).unwrap_err();
+        assert_eq!(e1.offset, 0, "pad {pad}");
+        assert!(e1.message.starts_with("unclosed string"));
+
+        let control = format!("\"{plain}日\u{1}x\"");
+        let e2 = parse_value(&control).unwrap_err();
+        assert_eq!(e2.offset, 1 + pad + 3, "pad {pad}");
+        assert!(e2.message.starts_with("control character"));
+
+        let newline = format!("[\n\"{plain}\n\"]");
+        let e3 = parse_value(&newline).unwrap_err();
+        assert_eq!(
+            (e3.at.line, e3.at.col),
+            (2, u32::try_from(pad + 2).unwrap())
+        );
+        assert!(e3.message.starts_with("line break"));
+
+        let e4 = parse_value(&format!("[1, /* {plain} *")).unwrap_err();
+        assert_eq!(e4.offset, 4, "pad {pad}");
+        assert!(e4.message.starts_with("unclosed `/*` comment"));
+        assert!(parse_value(&format!("1 // {plain}")).is_ok());
+    }
+}

@@ -45,6 +45,10 @@ let shape = Attachment::shape().describe(); // a typed ShapeDoc, for editors and
 |---|---|
 | `json` | JSON read into and written from the model |
 | `toml` | TOML read into the model, with spans |
+| `simd-utf8` | SIMD UTF-8 validation (`simdutf8`, runtime-dispatched) where bytes become text: source files, the binary form, frames. Errors and results are identical; it pays on long strings and blobs |
+
+The text parser's scans (string bodies, comments, line starts) always use
+`memchr`, which picks SSE2/AVX2/NEON at run time.
 
 ## Depends on / used by
 

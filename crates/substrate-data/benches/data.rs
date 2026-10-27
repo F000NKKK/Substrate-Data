@@ -18,6 +18,12 @@ use criterion::{Criterion, criterion_group, criterion_main};
 /// Tasks in the generated document.
 const TASKS: usize = 4000;
 
+/// Strings in the long-string document.
+const LONG_STRINGS: usize = 300;
+
+/// Words in each of them.
+const LONG_STRING_WORDS: usize = 400;
+
 /// A tracker's tasks as an editor would save them: every task with an
 /// estimate, most with an attached file and owner, some with a review;
 /// ids and names repeat.
@@ -48,6 +54,44 @@ fn tasks() -> String {
     }
     out.push_str("  ]\n}\n");
     out
+}
+
+/// Documents of long strings (notes, logs, embedded blobs): a few hundred
+/// strings of several kilobytes each, with comments between them.
+fn long_strings() -> String {
+    let mut out = String::from("{\n");
+    for i in 0..LONG_STRINGS {
+        out.push_str(&format!("  // note {i}\n  /* a block comment, {i} */\n"));
+        out.push_str(&format!("  \"note_{i}\": \""));
+        for w in 0..LONG_STRING_WORDS {
+            out.push_str(&format!("word{} naïve — 日本語 ", (i + w) % 97));
+        }
+        out.push_str("\",\n");
+    }
+    out.push_str("}\n");
+    out
+}
+
+fn bench_long(c: &mut Criterion) {
+    let text = long_strings();
+    let value = substrate_data::text::parse_value(&text).unwrap();
+    let bytes = substrate_data::binary::encode(&value);
+    eprintln!(
+        "long strings: text {} bytes, binary {} bytes",
+        text.len(),
+        bytes.len()
+    );
+    let mut g = c.benchmark_group("parse_long_strings");
+    g.bench_function("substrate_data text", |b| {
+        b.iter(|| substrate_data::text::parse_value(black_box(&text)).unwrap());
+    });
+    g.bench_function("substrate_data binary", |b| {
+        b.iter(|| substrate_data::binary::decode(black_box(&bytes)).unwrap());
+    });
+    g.bench_function("source text (from bytes)", |b| {
+        b.iter(|| substrate_data::source::text(black_box(text.as_bytes())).unwrap());
+    });
+    g.finish();
 }
 
 fn bench(c: &mut Criterion) {
@@ -90,5 +134,5 @@ fn bench(c: &mut Criterion) {
     g.finish();
 }
 
-criterion_group!(benches, bench);
+criterion_group!(benches, bench, bench_long);
 criterion_main!(benches);

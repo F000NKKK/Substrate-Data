@@ -1,6 +1,6 @@
 //! The parser: text to a value, with the spans of its parts when asked.
 
-use super::{Doc, LineCol, Span, Spans, SyntaxError};
+use super::{Doc, LineCol, Span, Spans, SyntaxError, scan};
 use crate::model::value::{Map, Value};
 
 /// `\\u` escapes are hexadecimal.
@@ -90,12 +90,11 @@ impl<const SPANS: bool> Parser<'_, SPANS> {
             }
             match self.src.get(self.i + 1) {
                 Some(b'/') => {
-                    let line = &self.src[self.i..];
-                    self.i += line.iter().position(|&b| b == b'\n').unwrap_or(line.len());
+                    self.i += scan::line_end(&self.src[self.i..]);
                 }
                 Some(b'*') => {
                     let start = self.i;
-                    match self.text[self.i + 2..].find("*/") {
+                    match scan::block_comment_end(&self.src[self.i + 2..]) {
                         Some(end) => self.i += 2 + end + 2,
                         None => return Err(self.error_at(start, "unclosed `/*` comment")),
                     }
@@ -247,11 +246,7 @@ impl<const SPANS: bool> Parser<'_, SPANS> {
         self.i += 1;
         let mut out = String::new();
         loop {
-            let rest = &self.src[self.i..];
-            let Some(n) = rest
-                .iter()
-                .position(|&b| b == b'"' || b == b'\\' || b < 0x20)
-            else {
+            let Some(n) = scan::string_stop(&self.src[self.i..]) else {
                 return Err(self.error_at(open, "unclosed string"));
             };
             out.push_str(&self.text[self.i..self.i + n]);

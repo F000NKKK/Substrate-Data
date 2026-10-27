@@ -77,6 +77,13 @@ fn every_kind_of_field_is_read_in_place() {
         [Some(1), None, Some(3)]
     );
     assert_eq!(v.nested, 500);
+}
+
+#[test]
+fn packed_integer_lists_are_read_in_place() {
+    let x = sample();
+    let frame = to_frame(&x);
+    let v = read_view::<Everything>(&frame).unwrap();
     assert_eq!(v.bytes.iter().collect::<Vec<_>>(), x.bytes);
     assert_eq!(v.words.iter().collect::<Vec<_>>(), x.words);
     assert_eq!(v.longs.iter().collect::<Vec<_>>(), x.longs);
@@ -86,6 +93,13 @@ fn every_kind_of_field_is_read_in_place() {
     assert_eq!(v.signed32.iter().collect::<Vec<_>>(), x.signed32);
     assert_eq!(v.signed64.iter().collect::<Vec<_>>(), x.signed64);
     assert_eq!(v.sizes.iter().collect::<Vec<_>>(), x.sizes);
+}
+
+#[test]
+fn packed_float_lists_are_read_in_place() {
+    let x = sample();
+    let frame = to_frame(&x);
+    let v = read_view::<Everything>(&frame).unwrap();
     assert_eq!(v.narrow.iter().collect::<Vec<_>>(), x.narrow);
     assert_eq!(v.exact.iter().collect::<Vec<f64>>(), x.exact);
     assert_eq!(v.fine.iter().collect::<Vec<f64>>(), x.fine);

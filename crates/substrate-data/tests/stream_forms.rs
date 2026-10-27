@@ -72,12 +72,14 @@ fn a_stream_with_a_wrong_item_names_its_place() {
     let mut v = table().write();
     let Value::Map(m) = &mut v else { panic!() };
     m.insert("rows", Value::List(vec![Value::Int(1)]));
-    let problems = read_value::<Table>(&v).unwrap_err();
-    assert_eq!(problems[0].path.to_string(), "rows[0]");
-    let Value::Map(m) = &mut v else { panic!() };
-    m.insert("rows", Value::Int(1));
-    let problems = read_value::<Table>(&v).unwrap_err();
-    assert!(problems[0].message.contains("expected a list"));
+    let item = read_value::<Table>(&v).unwrap_err();
+    assert_eq!(item[0].path.to_string(), "rows[0]");
+    let Value::Map(entries) = &mut v else {
+        panic!()
+    };
+    entries.insert("rows", Value::Int(1));
+    let whole = read_value::<Table>(&v).unwrap_err();
+    assert!(whole[0].message.contains("expected a list"));
 }
 
 #[test]

@@ -20,3 +20,7 @@ proc-macro-crate = { workspace = true }
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+# What the derive expands against; the dependency cycle is dev-only.
+substrate-data = { path = "../substrate-data" }

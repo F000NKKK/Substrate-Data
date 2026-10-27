@@ -8,10 +8,10 @@ use substrate_data::text::{
 use substrate_data::{Diagnostic, Errors, Path, Problem, Value};
 
 fn error_of(text: &str) -> String {
-    match parse(text) {
-        Ok(doc) => panic!("parsed {:?}", doc.value),
-        Err(e) => e.to_string(),
-    }
+    parse(text)
+        .map(|_| ())
+        .expect_err("text that doesn't parse")
+        .to_string()
 }
 
 #[test]
@@ -79,15 +79,14 @@ fn syntax_errors_say_what_and_where() {
     }
     let deep = "[".repeat(MAX_DEPTH + 1);
     assert!(error_of(&deep).contains("nested deeper than"));
-    assert!(error_of(&format!("{{\n  a: [1,\n  ?]}}")).starts_with("3:3:"));
+    assert!(error_of("{\n  a: [1,\n  ?]}").starts_with("3:3:"));
 }
 
 #[test]
 fn duplicate_keys_are_found_in_big_objects_too() {
-    let mut text = String::from("{");
-    for i in 0..40 {
-        text.push_str(&format!("k{i}: {i}, "));
-    }
+    let text: String = std::iter::once("{".to_owned())
+        .chain((0..40).map(|i| ["k", &i.to_string(), ": ", &i.to_string(), ", "].concat()))
+        .collect();
     assert!(parse_value(&format!("{text}}}")).is_ok());
     let dup = format!("{text}k3: 0}}");
     assert!(error_of(&dup).contains("`k3` is already set"));
@@ -133,7 +132,7 @@ fn spans_say_where_every_part_is() {
     assert_eq!(Span::new(usize::MAX, usize::MAX).start, u32::MAX);
     let empty = Doc {
         value: Value::Null,
-        spans: Default::default(),
+        spans: substrate_data::text::Spans::default(),
     };
     assert_eq!(empty.spans_at(&Path::root().key("x")).span, Span::default());
 }

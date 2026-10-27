@@ -9,25 +9,29 @@ use std::sync::Arc;
 
 use substrate_data::frame::{read_frame, read_shaped, to_frame};
 use substrate_data::{
-    Atom, KindName, OneOrList, Ordered, Ref, Schema, ShapeDoc, Uid, Value, from_text, read_bytes,
-    read_value, to_bytes, to_text,
+    Atom, KindName, Map, OneOrList, Ordered, Ref, Schema, ShapeDoc, Uid, Value, from_text,
+    read_bytes, read_value, to_bytes, to_text,
 };
 
 /// `x` out of every form it's written in, equal to itself.
 fn through_every_form<T: Schema + PartialEq + Debug>(x: &T) {
     let value = x.write();
-    assert_eq!(&read_value::<T>(&value).unwrap(), x, "value");
+    assert_eq!(&read_value::<T>(&value).expect("value"), x, "value");
     let text = to_text(x);
-    assert_eq!(&from_text::<T>(&text).unwrap().value, x, "text {text}");
-    assert_eq!(&read_bytes::<T>(&to_bytes(x)).unwrap(), x, "binary");
+    assert_eq!(
+        &from_text::<T>(&text).expect("text").value,
+        x,
+        "text {text}"
+    );
+    assert_eq!(&read_bytes::<T>(&to_bytes(x)).expect("binary"), x, "binary");
     let frame = to_frame(x);
     assert_eq!(read_frame::<T>(&frame).as_ref(), Some(x), "frame");
     let seen = read_shaped(&frame, &T::shape());
     if let Some(seen) = seen {
-        assert_eq!(&read_value::<T>(&seen).unwrap(), x, "shaped");
+        assert_eq!(&read_value::<T>(&seen).expect("shaped"), x, "shaped");
     }
     // Describing the shape never fails.
-    let _ = ShapeDoc::of(&T::shape()).write();
+    drop(ShapeDoc::of(&T::shape()).write());
 }
 
 #[test]
@@ -96,52 +100,74 @@ fn collections() {
     through_every_form(&Err::<u8, String>("no".into()));
 }
 
-fn problem_of<T: Schema + Debug>(v: Value) -> String {
-    read_value::<T>(&v)
-        .map(|x| panic!("read {x:?}"))
-        .unwrap_err()
+fn problem_of<T: Schema + Debug>(v: &Value) -> String {
+    let problems = read_value::<T>(v).expect_err("a value that doesn't read");
+    problems
         .iter()
         .map(|d| d.message.clone())
         .collect::<Vec<_>>()
         .join("; ")
 }
 
+/// Reading `$value` as `$t` is a problem that says `$says`.
+macro_rules! says {
+    ($t:ty, $value:expr, $says:expr) => {
+        let said = problem_of::<$t>(&$value);
+        assert!(said.contains($says), "{said:?} doesn't say {:?}", $says);
+    };
+}
+
 #[test]
-fn a_wrong_value_is_a_problem_not_a_panic() {
+fn a_value_of_the_wrong_case_is_a_problem_not_a_panic() {
     assert_eq!(
-        problem_of::<bool>(Value::Int(1)),
+        problem_of::<bool>(&Value::Int(1)),
         "expected true or false, found 1"
     );
     assert_eq!(
-        problem_of::<String>(Value::Int(1)),
+        problem_of::<String>(&Value::Int(1)),
         "expected a string, found 1"
     );
-    assert!(problem_of::<String>(Value::from("@file:x")).contains("expected plain text"));
-    assert!(problem_of::<String>(Value::from("@nokind")).contains("a reference is `@kind:id`"));
-    assert!(problem_of::<u8>(Value::Int(300)).contains("300 is out of range"));
-    assert!(problem_of::<u8>(Value::Int(-1)).contains("out of range"));
-    assert!(problem_of::<u8>(Value::from("x")).contains("expected an integer"));
-    assert!(problem_of::<f32>(Value::from("x")).contains("expected a number"));
-    assert!(problem_of::<Vec<u8>>(Value::Int(1)).contains("expected a list"));
-    assert!(problem_of::<BTreeMap<String, u8>>(Value::Int(1)).contains("expected an object"));
-    assert!(problem_of::<Ordered<u8>>(Value::Int(1)).contains("expected an object"));
-    assert!(problem_of::<OneOrList<u8>>(Value::List(vec![])).contains("an empty list"));
-    assert!(problem_of::<(u8, u8)>(Value::Int(1)).contains("a list of 2"));
-    assert!(
-        problem_of::<(u8, u8, u8)>(Value::List(vec![Value::Int(1)]))
-            .contains("expected 3 items, found 1")
+    says!(u8, Value::from("x"), "expected an integer");
+    says!(f32, Value::from("x"), "expected a number");
+    says!(Vec<u8>, Value::Int(1), "expected a list");
+    says!(BTreeMap<String, u8>, Value::Int(1), "expected an object");
+    says!(Ordered<u8>, Value::Int(1), "expected an object");
+    says!(Atom, Value::Int(1), "expected a string");
+}
+
+#[test]
+fn text_that_is_not_plain_or_not_valid_is_a_problem() {
+    says!(String, Value::from("@file:x"), "expected plain text");
+    says!(String, Value::from("@nokind"), "a reference is `@kind:id`");
+    says!(Uid, Value::from("zz"), "not a valid uid");
+    says!(Ref, Value::from("plain"), "a reference `@kind:id`");
+    says!(KindName, Value::Int(1), "a name");
+    says!(KindName, Value::from("Bad"), "isn't a kind");
+}
+
+#[test]
+fn numbers_out_of_range_and_lists_of_the_wrong_size_are_problems() {
+    says!(u8, Value::Int(300), "300 is out of range");
+    says!(u8, Value::Int(-1), "out of range");
+    says!(OneOrList<u8>, Value::List(vec![]), "an empty list");
+    says!((u8, u8), Value::Int(1), "a list of 2");
+    says!(
+        (u8, u8, u8),
+        Value::List(vec![Value::Int(1)]),
+        "expected 3 items, found 1"
     );
-    assert!(problem_of::<Result<u8, u8>>(Value::Int(1)).contains("{ ok } or { err }"));
-    assert!(
-        problem_of::<Result<u8, u8>>(Value::Map(Default::default())).contains("{ ok } or { err }")
-    );
-    assert!(problem_of::<Atom>(Value::Int(1)).contains("expected a string"));
-    assert!(problem_of::<Uid>(Value::from("zz")).contains("not a valid uid"));
-    assert!(problem_of::<Ref>(Value::from("plain")).contains("a reference `@kind:id`"));
-    assert!(problem_of::<KindName>(Value::Int(1)).contains("a name"));
-    assert!(problem_of::<KindName>(Value::from("Bad")).contains("isn't a kind"));
+}
+
+#[test]
+fn a_result_is_an_ok_or_an_err_object() {
+    says!(Result<u8, u8>, Value::Int(1), "{ ok } or { err }");
+    says!(Result<u8, u8>, Value::Map(Map::new()), "{ ok } or { err }");
+}
+
+#[test]
+fn a_problem_in_an_item_names_the_items_place() {
     let map = Value::Map([("a".to_owned(), Value::from("x"))].into_iter().collect());
-    let problems = read_value::<BTreeMap<String, u8>>(&map).unwrap_err();
+    let problems = read_value::<BTreeMap<String, u8>>(&map).expect_err("a bad item");
     assert_eq!(problems[0].path.to_string(), "a");
 }
 

@@ -6,7 +6,7 @@ use substrate_data::text::parse_value;
 use substrate_data::{Map, Ref, Value};
 
 fn value(text: &str) -> Value {
-    parse_value(text).unwrap()
+    parse_value(text).expect("a document")
 }
 
 #[test]
@@ -67,15 +67,30 @@ fn values_are_the_same_however_a_number_is_spelled() {
 
 const FILE: &str = "// A project.\n{\n  \"name\": \"docs\", // its name\n  /* Members. */\n  \"members\": [\n    \"ann\", // first\n    \"bob\",\n  ],\n  \"nested\": { \"a\": [1, 2], \"b\": {} },\n}\n";
 
+fn members_of(m: &mut Map) -> &mut Vec<Value> {
+    match m.get_mut("members") {
+        Some(Value::List(l)) => Some(l),
+        _ => None,
+    }
+    .expect("members")
+}
+
+fn nested_of(m: &mut Map) -> &mut Map {
+    match m.get_mut("nested") {
+        Some(Value::Map(n)) => Some(n),
+        _ => None,
+    }
+    .expect("nested")
+}
+
+/// `FILE` patched after `change` to its value, which the patch must read back as.
 fn edit(change: impl FnOnce(&mut Map)) -> String {
-    let Value::Map(mut v) = value(FILE) else {
-        panic!("a map")
-    };
-    change(&mut v);
-    let next = Value::Map(v);
-    let out = patch(FILE, &next);
-    assert!(same(&parse_value(&out).unwrap(), &next), "{out}");
-    out
+    let mut map = value(FILE).as_map().expect("a map").clone();
+    change(&mut map);
+    let next = Value::Map(map);
+    let patched = patch(FILE, &next);
+    assert!(same(&value(&patched), &next), "{patched}");
+    patched
 }
 
 #[test]
@@ -86,88 +101,73 @@ fn an_unchanged_document_is_returned_as_it_was() {
 
 #[test]
 fn list_items_are_added_and_removed_in_place() {
-    let out = edit(|m| {
-        let Some(Value::List(l)) = m.get_mut("members") else {
-            panic!()
-        };
-        l.push(Value::from("cy"));
-    });
-    assert!(out.contains("// first") && out.contains("\"cy\""), "{out}");
-    let out = edit(|m| {
-        let Some(Value::List(l)) = m.get_mut("members") else {
-            panic!()
-        };
-        l.remove(0);
-    });
-    assert!(out.contains("\"bob\"") && !out.contains("\"ann\""), "{out}");
-    let out = edit(|m| {
-        let Some(Value::List(l)) = m.get_mut("members") else {
-            panic!()
-        };
-        l[1] = Value::from("dee");
-    });
-    assert!(out.contains("// first") && out.contains("dee"), "{out}");
-    let out = edit(|m| {
-        let Some(Value::List(l)) = m.get_mut("members") else {
-            panic!()
-        };
-        l.clear();
-    });
-    assert!(
-        !out.contains("ann") && out.contains("/* Members. */"),
-        "{out}"
+    assert_eq!(
+        edit(|m| members_of(m).push(Value::from("cy"))),
+        FILE.replace("\"bob\",\n", "\"bob\",\n    \"cy\",\n")
+    );
+    assert_eq!(
+        edit(|m| {
+            members_of(m).remove(0);
+        }),
+        FILE.replace("    \"ann\", // first\n", "")
+    );
+    assert_eq!(
+        edit(|m| members_of(m)[1] = Value::from("dee")),
+        FILE.replace("bob", "dee")
+    );
+    assert_eq!(
+        edit(|m| members_of(m).clear()),
+        FILE.replace("    \"ann\", // first\n    \"bob\",\n", "")
     );
 }
 
 #[test]
 fn keys_are_added_removed_and_replaced() {
-    let out = edit(|m| {
-        m.remove("name");
-    });
-    assert!(!out.contains("docs"), "{out}");
-    let out = edit(|m| {
-        m.insert("name", Value::Int(3));
-        m.insert("extra", Value::List(vec![Value::Null]));
-    });
-    assert!(
-        out.contains("// its name") || out.contains("\"extra\""),
-        "{out}"
+    assert_eq!(
+        edit(|m| {
+            m.remove("name");
+        }),
+        FILE.replace("  \"name\": \"docs\", // its name\n", "")
     );
-    let out = edit(|m| {
-        m.insert("nested", Value::from("flat"));
-    });
-    assert!(out.contains("\"flat\""), "{out}");
-    let out = edit(|m| {
-        let Some(Value::Map(n)) = m.get_mut("nested") else {
-            panic!()
-        };
-        n.insert("b", Value::Map(Map::new()));
-        n.insert("c", Value::Bool(true));
-        n.remove("a");
-    });
-    assert!(out.contains("\"c\""), "{out}");
-    let out = edit(|m| {
-        let Some(Value::Map(n)) = m.get_mut("nested") else {
-            panic!()
-        };
-        let all: Vec<_> = n.keys().map(str::to_owned).collect();
-        for k in all {
-            n.remove(&k);
-        }
-    });
-    assert!(out.contains("{}"), "{out}");
+    assert_eq!(
+        edit(|m| {
+            m.insert("name", Value::Int(3));
+            m.insert("extra", Value::List(vec![Value::Null]));
+        }),
+        FILE.replace("\"docs\"", "3")
+            .replace("},\n}\n", "},\n  \"extra\": [\n    null\n  ],\n}\n")
+    );
+    assert_eq!(
+        edit(|m| {
+            m.insert("nested", Value::from("flat"));
+        }),
+        FILE.replace("{ \"a\": [1, 2], \"b\": {} }", "\"flat\"")
+    );
+}
+
+#[test]
+fn nested_objects_are_edited_entry_by_entry() {
+    assert_eq!(
+        edit(|m| {
+            let n = nested_of(m);
+            n.insert("c", Value::Bool(true));
+            n.remove("a");
+        }),
+        FILE.replace(
+            "{ \"a\": [1, 2], \"b\": {} }",
+            "{\n    \"b\": {},\n    \"c\": true\n  }"
+        )
+    );
+    assert_eq!(
+        edit(|m| nested_of(m).retain(|_, _| false)),
+        FILE.replace("{ \"a\": [1, 2], \"b\": {} }", "{}")
+    );
 }
 
 #[test]
 fn a_document_of_another_shape_is_written_fresh() {
-    let next = value("[1, 2]");
-    assert_eq!(parse_value(&patch(FILE, &next)).unwrap(), next);
-    let out = patch("/* c */ 5 // x", &Value::Int(6));
-    assert!(out.contains('6'), "{out}");
-    let out = patch("[1, /* two */ 2]", &value("[1, 3]"));
-    assert!(out.contains("/* two */") || out.contains('3'), "{out}");
-    assert_eq!(
-        parse_value(&patch("not json", &Value::Int(1))).unwrap(),
-        Value::Int(1)
-    );
+    assert_eq!(patch(FILE, &value("[1, 2]")), "// A project.\n[1, 2]\n");
+    assert_eq!(patch("/* c */ 5 // x", &Value::Int(6)), "/* c */ 6 // x");
+    assert_eq!(patch("[1, /* two */ 2]", &value("[1, 3]")), "[1, 3]");
+    assert_eq!(patch("not json", &Value::Int(1)), "1\n");
 }

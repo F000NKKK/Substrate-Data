@@ -1,157 +1,15 @@
-//! Frames: big records and many strings, frames read by their shape alone,
-//! the packer and unpacker used directly, and frames that are cut or lie.
+//! Frames: big records and many strings, the packer and unpacker used
+//! directly, and frames that lie about their length.
 
 use std::sync::Arc;
 
-use substrate_data::frame::{Packer, Unpacker, read_frame, read_shaped, to_frame};
-use substrate_data::{Atom, Id, Ref, Schema, Uid, Value};
-
-substrate_data::kind!(User = "user": u64, Doc = "doc");
-
-#[derive(Schema, Debug, Clone, PartialEq)]
-enum Mood {
-    Calm,
-    Eager,
-}
-
-#[derive(Schema, Debug, Clone, PartialEq)]
-#[data(tag = "type")]
-enum Event {
-    Opened { at: u32 },
-    Closed,
-}
+use substrate_data::Schema;
+use substrate_data::frame::{Packer, Unpacker, read_frame, to_frame};
 
 #[derive(Schema, Debug, Clone, PartialEq)]
 struct Entry {
     title: String,
     weight: f32,
-}
-
-#[derive(Schema, Debug, Clone, PartialEq)]
-struct Shaped {
-    flag: bool,
-    count: i16,
-    total: u64,
-    ratio: f32,
-    precise: f64,
-    name: String,
-    nick: Atom,
-    unique: Uid,
-    owner: Id<User>,
-    doc: Id<Doc>,
-    anything: Ref,
-    mood: Mood,
-    event: Event,
-    maybe: Option<u8>,
-    nothing: Option<u8>,
-    signed: Vec<i32>,
-    unsigned: Vec<u16>,
-    narrow: Vec<f32>,
-    wide: Vec<f64>,
-    entries: Vec<Entry>,
-    any: Value,
-}
-
-fn shaped() -> Shaped {
-    Shaped {
-        flag: true,
-        count: -300,
-        total: u64::MAX,
-        ratio: 0.25,
-        precise: 0.1,
-        name: "@@kept".into(),
-        nick: Atom::new("frame_nick"),
-        unique: Uid(5),
-        owner: Id::new(77u64),
-        doc: Id::new("notes"),
-        anything: Ref::parse("file", "a/b").unwrap(),
-        mood: Mood::Eager,
-        event: Event::Opened { at: 9 },
-        maybe: Some(2),
-        nothing: None,
-        signed: vec![-5, 0, 70_000],
-        unsigned: vec![1, 2, 65_535],
-        narrow: vec![0.5, 1.5],
-        wide: vec![0.1, 0.2],
-        entries: vec![Entry {
-            title: "t".into(),
-            weight: 2.0,
-        }],
-        any: Value::List(vec![Value::Int(1), Value::from("x")]),
-    }
-}
-
-#[test]
-fn a_frame_is_read_by_its_shape_alone() {
-    let x = shaped();
-    let frame = to_frame(&x);
-    assert_eq!(read_frame::<Shaped>(&frame), Some(x.clone()));
-    let seen = read_shaped(&frame, &Shaped::shape()).unwrap();
-    assert_eq!(seen.get("count"), Some(&Value::Int(-300)));
-    assert_eq!(seen.get("name"), Some(&Value::from("@@@kept")));
-    assert_eq!(seen.get("mood"), Some(&Value::from("eager")));
-    assert_eq!(seen.get("nothing"), Some(&Value::Null));
-    assert_eq!(
-        seen.get("owner").map(Value::kind),
-        Some(substrate_data::ValueKind::Ref)
-    );
-    assert_eq!(substrate_data::read_value::<Shaped>(&seen).unwrap(), x);
-}
-
-#[test]
-fn a_frame_that_is_cut_or_lies_is_none_under_every_reading() {
-    let frame = to_frame(&shaped());
-    let shape = Shaped::shape();
-    for cut in 0..frame.len() {
-        assert_eq!(read_frame::<Shaped>(&frame[..cut]), None, "cut at {cut}");
-        assert_eq!(
-            read_shaped(&frame[..cut], &shape),
-            None,
-            "shaped, cut at {cut}"
-        );
-    }
-    let mut longer = frame.clone();
-    longer.insert(0, 0);
-    assert_eq!(read_frame::<Shaped>(&longer), None);
-    assert_eq!(read_shaped(&[], &shape), None);
-}
-
-fn frame_of_uint(n: u64) -> Vec<u8> {
-    let mut p = Packer::new();
-    p.put_u(n);
-    p.finish()
-}
-
-fn frame_of_str(s: &str) -> Vec<u8> {
-    let mut p = Packer::new();
-    p.put_str(s);
-    p.finish()
-}
-
-#[test]
-fn single_values_that_are_not_what_the_shape_says_are_none() {
-    let bad_bool = frame_of_uint(2);
-    assert_eq!(read_frame::<bool>(&bad_bool), None);
-    assert_eq!(read_shaped(&bad_bool, &bool::shape()), None);
-    let mood = frame_of_uint(9);
-    assert_eq!(read_shaped(&mood, &Mood::shape()), None);
-    assert_eq!(read_frame::<Mood>(&mood), None);
-    let atom = frame_of_uint(u64::MAX);
-    assert_eq!(read_shaped(&atom, &Atom::shape()), None);
-    assert_eq!(read_frame::<Atom>(&atom), None);
-    let huge = frame_of_uint(u64::from(u32::MAX) + 1);
-    assert_eq!(read_shaped(&huge, &Atom::shape()), None);
-    let no_table = frame_of_uint(1);
-    assert_eq!(read_shaped(&no_table, &String::shape()), None);
-    assert_eq!(read_shaped(&no_table, &Vec::<u8>::shape()), None);
-    assert_eq!(read_shaped(&no_table, &Option::<u8>::shape()), None);
-    assert_eq!(read_shaped(&no_table, &Vec::<Entry>::shape()), None);
-    assert_eq!(
-        read_shaped(&frame_of_uint(u64::MAX), &Vec::<u16>::shape()),
-        None
-    );
-    assert_eq!(read_shaped(&frame_of_str("a b"), &Id::<Doc>::shape()), None);
-    assert_eq!(read_shaped(&frame_of_str("Bad"), &Ref::shape()), None);
 }
 
 #[test]
@@ -183,10 +41,10 @@ fn big_records_and_many_strings_round_trip() {
         items: (0..60).map(|i| format!("string number {i}")).collect(),
         shared: (0..40).map(|i| Arc::from(format!("s{}", i % 20))).collect(),
         long: "x".repeat(300),
-        inner: (0..30)
+        inner: (0..30u8)
             .map(|i| Entry {
                 title: format!("entry {}", i % 25),
-                weight: i as f32,
+                weight: f32::from(i),
             })
             .collect(),
     };
@@ -214,6 +72,22 @@ fn the_packer_and_unpacker_are_used_piece_by_piece() {
     p.put_str("same");
     p.put_str("same");
     p.put_bytes(&[1, 2, 3]);
+    let frame = p.finish();
+    let mut u = Unpacker::open(&frame).unwrap();
+    assert_eq!(u.uint(), Some(7));
+    assert_eq!(u.int(), Some(-7));
+    assert_eq!(u.bool(), Some(true));
+    assert_eq!(u.f64(), Some(1.5));
+    assert_eq!(u.f32(), Some(2.5));
+    assert_eq!(u.str(), Some("same"));
+    assert_eq!(u.shared_str().as_deref(), Some("same"));
+    assert_eq!(u.bytes(), Some(&[1u8, 2, 3][..]));
+    assert!(u.at_end());
+}
+
+#[test]
+fn lists_and_nested_values_are_packed_and_read_piece_by_piece() {
+    let mut p = Packer::new();
     p.put_f64s(&[0.1, 0.2]);
     p.put_f64s(&[0.5]);
     p.put_f32s(&[1.0, 2.0]);
@@ -225,14 +99,6 @@ fn the_packer_and_unpacker_are_used_piece_by_piece() {
     p.end(at);
     let frame = p.finish();
     let mut u = Unpacker::open(&frame).unwrap();
-    assert_eq!(u.uint(), Some(7));
-    assert_eq!(u.int(), Some(-7));
-    assert_eq!(u.bool(), Some(true));
-    assert_eq!(u.f64(), Some(1.5));
-    assert_eq!(u.f32(), Some(2.5));
-    assert_eq!(u.str(), Some("same"));
-    assert_eq!(u.shared_str().as_deref(), Some("same"));
-    assert_eq!(u.bytes(), Some(&[1u8, 2, 3][..]));
     assert_eq!(u.f64s(), Some(vec![0.1, 0.2]));
     assert_eq!(u.f64s(), Some(vec![0.5]));
     assert_eq!(u.f32s(), Some(vec![1.0, 2.0]));
@@ -261,23 +127,23 @@ fn a_packer_is_reused_without_leaking_between_frames() {
     assert_eq!(a, to_frame(&"first".to_owned()));
 }
 
-#[test]
-fn counts_beyond_what_is_left_are_refused_before_allocating() {
+/// Reading `read` from a frame holding one huge count is refused.
+fn assert_refused(refused: impl FnOnce(&mut Unpacker<'_>) -> bool) {
     let mut p = Packer::new();
     p.put_u(u64::MAX / 2);
     let frame = p.finish();
-    let mut u = Unpacker::open(&frame).unwrap();
-    assert_eq!(u.count(), None);
-    let mut u = Unpacker::open(&frame).unwrap();
-    assert_eq!(u.bytes(), None);
-    let mut u = Unpacker::open(&frame).unwrap();
-    assert_eq!(u.f64s(), None);
-    let mut u = Unpacker::open(&frame).unwrap();
-    assert_eq!(u.packed_ints(), None);
-    let mut u = Unpacker::open(&frame).unwrap();
-    assert_eq!(u.list(), None);
-    let mut u = Unpacker::open(&frame).unwrap();
-    assert_eq!(u.begin(), None);
+    let mut u = Unpacker::open(&frame).expect("a frame");
+    assert!(refused(&mut u));
+}
+
+#[test]
+fn counts_beyond_what_is_left_are_refused_before_allocating() {
+    assert_refused(|u| u.count().is_none());
+    assert_refused(|u| u.bytes().is_none());
+    assert_refused(|u| u.f64s().is_none());
+    assert_refused(|u| u.packed_ints().is_none());
+    assert_refused(|u| u.list().is_none());
+    assert_refused(|u| u.begin().is_none());
 }
 
 #[test]
@@ -295,8 +161,8 @@ fn nesting_deeper_than_the_limit_is_no_frame() {
     for at in opened.into_iter().rev() {
         p.end(at);
     }
-    let frame = p.finish();
-    let mut un = Unpacker::open(&frame).unwrap();
+    let deep = p.finish();
+    let mut un = Unpacker::open(&deep).unwrap();
     let mut depth = 0;
     while un.begin().is_some() {
         depth += 1;

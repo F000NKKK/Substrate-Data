@@ -66,7 +66,7 @@ fn a_codec_field_names_its_problems_with_their_paths() {
     let problems: Vec<String> = read_value::<Codecs>(&v)
         .unwrap_err()
         .iter()
-        .map(|d| format!("{}: {}", d.path, d.message))
+        .map(|d| [d.path.to_string(), d.message.clone()].join(": "))
         .collect();
     assert_eq!(
         problems,
@@ -110,8 +110,10 @@ fn raw_bytes_read_from_text_and_reject_other_text() {
     m.insert("payload", Value::from("@bytes:AAEC"));
     assert_eq!(read_value::<Codecs>(&v).unwrap().payload, [0, 1, 2]);
     for bad in ["plain", "@bytes:***", "@file:x"] {
-        let Value::Map(m) = &mut v else { panic!() };
-        m.insert("payload", Value::from(bad));
+        let Value::Map(entries) = &mut v else {
+            panic!()
+        };
+        entries.insert("payload", Value::from(bad));
         let problems = read_value::<Codecs>(&v).unwrap_err();
         assert_eq!(problems[0].path.to_string(), "payload", "{bad}");
     }

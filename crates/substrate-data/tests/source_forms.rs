@@ -64,7 +64,7 @@ fn toml_is_read_with_its_positions() {
     let src = "name = \"docs\"\ncount = 0x10\nbig = 99999999999999999999\nratio = 1.5\ninf = inf\non = true\nwhen = 2024-01-02\ntags = [\"a\", \"b\"]\n\n[owner]\nid = 7\n";
     let doc = substrate_data::toml::parse(src).unwrap();
     assert_eq!(doc.value.get("count"), Some(&Value::Int(16)));
-    assert_eq!(doc.value.get("big").and_then(|b| b.as_f64()), Some(1e20));
+    assert_eq!(doc.value.get("big").and_then(Value::as_f64), Some(1e20));
     assert_eq!(doc.value.get("ratio"), Some(&Value::Float(1.5)));
     assert_eq!(doc.value.get("when"), Some(&Value::from("2024-01-02")));
     assert_eq!(doc.value.get("on"), Some(&Value::Bool(true)));

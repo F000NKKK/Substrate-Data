@@ -40,14 +40,14 @@ pub fn write_frame_bytes(w: &mut impl Write, bytes: &[u8]) -> io::Result<()> {
 ///
 /// # Errors
 ///
-/// The reader's I/O error; [`io::ErrorKind::InvalidData`] for a length over [`MAX_FRAME`].
+/// The reader's I/O error; [`io::ErrorKind::UnexpectedEof`] when the stream
+/// ends inside a length or a frame; [`io::ErrorKind::InvalidData`] for a
+/// length over [`MAX_FRAME`].
 pub fn read_frame_bytes(r: &mut impl Read) -> io::Result<Option<Vec<u8>>> {
-    let mut len = [0; size_of::<Len>()];
-    match r.read_exact(&mut len) {
-        Err(e) if e.kind() == io::ErrorKind::UnexpectedEof => return Ok(None),
-        other => other?,
-    }
-    let len = Len::from_le_bytes(len) as usize;
+    let Some(len) = read_len(r)? else {
+        return Ok(None);
+    };
+    let len = len as usize;
     if len > MAX_FRAME {
         return Err(io::Error::new(io::ErrorKind::InvalidData, "frame too long"));
     }
@@ -68,4 +68,20 @@ pub fn read_frame<T: Schema>(r: &mut impl Read) -> io::Result<Option<T>> {
     crate::read_bytes(&bytes)
         .map(Some)
         .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, crate::Errors(e)))
+}
+
+/// A frame's length; `None` only when the stream ends before its first byte
+/// (between frames), an error when it ends inside the length.
+fn read_len(r: &mut impl Read) -> io::Result<Option<Len>> {
+    let mut len = [0; size_of::<Len>()];
+    loop {
+        match r.read(&mut len[..1]) {
+            Ok(0) => return Ok(None),
+            Ok(_) => break,
+            Err(e) if e.kind() == io::ErrorKind::Interrupted => {}
+            Err(e) => return Err(e),
+        }
+    }
+    r.read_exact(&mut len[1..])?;
+    Ok(Some(Len::from_le_bytes(len)))
 }

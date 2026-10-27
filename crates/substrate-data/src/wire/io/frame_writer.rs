@@ -52,9 +52,9 @@ impl FrameWriter {
     /// The writer's I/O error; [`io::ErrorKind::InvalidInput`] for a frame
     /// over [`super::MAX_FRAME`] (nothing is written).
     pub fn send<T: Schema>(&mut self, w: &mut impl Write, message: &T) -> io::Result<()> {
-        self.named.restart(size_of::<Len>());
-        message.encode(&mut self.named);
-        put_frame(w, self.named.buffer_mut())
+        let frame = self.named_frame(message)?;
+        w.write_all(frame)?;
+        w.flush()
     }
 
     /// Sends `message` in the packed frame layout, and flushes.
@@ -64,20 +64,33 @@ impl FrameWriter {
     /// The writer's I/O error; [`io::ErrorKind::InvalidInput`] for a frame
     /// over [`super::MAX_FRAME`] (nothing is written).
     pub fn send_packed<T: Schema>(&mut self, w: &mut impl Write, message: &T) -> io::Result<()> {
+        let frame = self.packed_frame(message)?;
+        w.write_all(frame)?;
+        w.flush()
+    }
+
+    /// `message` in the named form with its length in front, ready to write
+    /// in one piece; valid until the next call.
+    pub(super) fn named_frame<T: Schema>(&mut self, message: &T) -> io::Result<&[u8]> {
+        self.named.restart(size_of::<Len>());
+        message.encode(&mut self.named);
+        with_len(self.named.buffer_mut())
+    }
+
+    /// `message` in the packed layout with its length in front.
+    pub(super) fn packed_frame<T: Schema>(&mut self, message: &T) -> io::Result<&[u8]> {
         let packed = &mut self.packed;
         packed.clear();
         packed.extend_from_slice(&[0; size_of::<Len>()]);
         self.packer
             .with_frame(message, |frame| packed.extend_from_slice(frame));
-        put_frame(w, packed)
+        with_len(packed)
     }
 }
 
-/// `buf` (room for a length, then a body) with its length filled in, written
-/// in one piece and flushed.
-fn put_frame(w: &mut impl Write, buf: &mut [u8]) -> io::Result<()> {
+/// `buf` (room for a length, then a body) with its length filled in.
+fn with_len(buf: &mut [u8]) -> io::Result<&[u8]> {
     let (len, body) = buf.split_at_mut(size_of::<Len>());
     len.copy_from_slice(&frame_len(body.len())?.to_le_bytes());
-    w.write_all(buf)?;
-    w.flush()
+    Ok(buf)
 }

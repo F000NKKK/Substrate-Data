@@ -291,7 +291,10 @@ reference writes now (`frames_v2/`).
 
 **Evolution rule:** fields are only ever appended. A record carries its
 length, so a reader that knows fewer fields skips the rest and one that
-knows more takes their defaults. Variants are only ever appended too.
+knows more takes the defaults of the fields the record ends before: a field
+with `default`, `None` for an `Option`; any other missing field makes the
+frame unreadable. Variants are only ever appended too. What else may change,
+and what each form does with it, is in [evolution.md](evolution.md).
 
 `frame::to_frame` / `read_frame` for owned values; `#[data(view)]` on a
 struct generates a zero-copy view (`frame::View`) over a frame's bytes.
@@ -320,6 +323,20 @@ grown to the biggest one. A send writes the length and the body in one
 - `FrameReader::read_bytes` returns the frame's bytes, valid until the next
   read (the buffer grows as bytes arrive, not by the length a peer
   claims); `read::<T>()` decodes a named frame.
+
+With the `tokio` feature, `io::asynchronous` reads and writes the same
+frames over `AsyncRead`/`AsyncWrite` streams: `read_frame`,
+`read_frame_bytes`, `write_frame`, `write_frame_bytes`, and the buffer-keeping
+`FrameReader` and `FrameWriter`. The wire format, `MAX_FRAME` and the end
+rules are the blocking ones, byte for byte (a stream cut inside a length
+or a frame is `UnexpectedEof`, a length over `MAX_FRAME` is `InvalidData`
+before anything is allocated for it); the async functions exist only
+because a socket or a pipe waits, and encoding and decoding stay
+synchronous. Cancellation: `FrameReader::read_bytes` and `read` are cancel
+safe (what has arrived stays in the reader, so a dropped read loses
+nothing, as long as the next call reads the same stream); the free
+`read_*` functions keep nothing and are not; no write is cancel safe, since
+a dropped write leaves a partial frame, so close the stream after one.
 
 `binary::encode_into` and `to_bytes_into` append a whole document to a
 caller's `Vec<u8>` (what `encode` and `to_bytes` build on); the buffer is

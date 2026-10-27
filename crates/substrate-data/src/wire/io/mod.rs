@@ -2,6 +2,8 @@
 //! its length (a little-endian `u32`) and then its binary form. What
 //! programs say to each other (a program and its editor, a tool's service).
 
+#[cfg(feature = "tokio")]
+pub mod asynchronous;
 mod frame_reader;
 mod frame_writer;
 mod framing;

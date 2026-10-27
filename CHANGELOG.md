@@ -23,6 +23,29 @@ only grow: a tag is never renumbered and a frame field is never reordered.
   vector (CI jobs `port-typescript`, `port-java`).
 - Conformance: the `duplicate_key` binary fault class, with two vectors.
 
+### Added (async io, feature `tokio`)
+
+- `io::asynchronous` (feature `tokio`, off by default; the dependency is
+  tokio's `io-util` alone): `FrameReader`, `FrameWriter`, `read_frame`,
+  `read_frame_bytes`, `write_frame`, `write_frame_bytes` over
+  `AsyncRead`/`AsyncWrite`. Same wire format, `MAX_FRAME` and end rules as
+  the blocking functions (tested on the same bytes); a length is checked
+  before anything is allocated and the buffer grows only with the bytes
+  that arrive. `FrameReader` reads are cancel safe; writes are not (see
+  the module docs).
+- `benches/io_async.rs` (needs the feature); see
+  [docs/performance.md](docs/performance.md).
+
+### Added (schema evolution)
+
+- [docs/evolution.md](docs/evolution.md): what a derived type may change
+  between versions, per form, as a matrix written from the
+  `tests/evolution` rows (the test fails when the page is stale).
+  Documents, with tests, that frames skip appended fields but do not detect
+  a reorder or a retype, that the named forms refuse unknown fields, that
+  records inside tagged enums and tuples are not skipped by length, and that
+  a `Stream`'s items are checked only when read.
+
 ### Added (text form)
 
 - `text::parse_ref(text, &arena)`: parses straight to a `ValueRef` (no

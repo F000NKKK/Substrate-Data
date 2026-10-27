@@ -26,6 +26,8 @@ syn = { version = "3", features = ["full", "extra-traits"] }
 quote = "1"
 proc-macro2 = "1"
 proc-macro-crate = "3"
+# Async frames (`tokio` feature of substrate-data): the I/O traits only.
+tokio = { version = "1", default-features = false }
 criterion = { version = "0.8", default-features = false }
 # Benchmarks only: the formats the comparison bench measures against, and the
 # instruction-count harness (its runner: `cargo install iai-callgrind-runner`).

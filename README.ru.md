@@ -31,7 +31,7 @@
 | Схемы | [`substrate-data`](crates/substrate-data) | формат как тип: чтение с путём каждой проблемы, запись, описание для редакторов |
 | Derive | [`substrate-data-derive`](crates/substrate-data-derive) | `#[derive(Schema)]` |
 
-Спецификация формата: [docs/format.md](docs/format.md) (на английском). Независимые от языка тестовые векторы для портов: [conformance/](conformance/README.md).
+Спецификация формата: [docs/format.md](docs/format.md) (на английском). Что можно менять в типе между версиями (проверено тестами): [docs/evolution.md](docs/evolution.md) (на английском). Независимые от языка тестовые векторы для портов: [conformance/](conformance/README.md).
 
 ## 🚀 Подключение
 
@@ -41,7 +41,7 @@
 substrate-data = "0.2"
 ```
 
-Признаки `substrate-data`: `json` (JSON ⇄ модель), `toml` (чтение TOML в модель с позициями).
+Признаки `substrate-data`: `json` (JSON ⇄ модель), `toml` (чтение TOML в модель с позициями), `tokio` (кадры поверх асинхронных потоков, `io::asynchronous`).
 
 ```rust
 use substrate_data::{Id, Schema};

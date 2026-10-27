@@ -28,8 +28,11 @@ serde_spanned = { workspace = true, optional = true }
 simdutf8 = { workspace = true, features = ["std"], optional = true }
 # JSON ⇄ the model (`json` feature).
 serde_json = { workspace = true, optional = true }
+# Async frames over tokio streams (`tokio` feature): only the I/O traits.
+tokio = { workspace = true, features = ["io-util"], optional = true }
 
 [features]
+tokio = ["dep:tokio"]
 toml = ["dep:toml", "dep:serde_spanned"]
 json = ["dep:serde_json"]
 simd-utf8 = ["dep:simdutf8"]
@@ -46,6 +49,8 @@ postcard = { workspace = true }
 bincode = { workspace = true }
 # The UTF-8 benchmark measures the validator itself next to the standard library's.
 simdutf8 = { workspace = true, features = ["std"] }
+# The async tests and bench drive a runtime (`tokio` feature).
+tokio = { workspace = true, features = ["rt", "macros", "io-util", "time"] }
 # Instruction counts under valgrind (`benches/iai.rs`).
 iai-callgrind = { workspace = true }
 
@@ -76,6 +81,11 @@ harness = false
 [[bench]]
 name = "io"
 harness = false
+
+[[bench]]
+name = "io_async"
+harness = false
+required-features = ["tokio"]
 
 [[bench]]
 name = "schema"

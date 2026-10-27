@@ -88,7 +88,7 @@ impl Writer {
         self
     }
 
-    /// A float: as an `f32` when it is one exactly.
+    /// A float, eight bytes ([`Writer::float32`] writes four).
     pub fn float(&mut self, f: f64) -> &mut Self {
         self.out.push(tag::FLOAT);
         self.out.extend_from_slice(&f.to_le_bytes());

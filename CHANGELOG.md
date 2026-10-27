@@ -9,6 +9,25 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-27
+
+### Fixed
+
+- An integer outside its type's range (`300` as `i8`, `-1` as `u8`) is
+  reported as `SD0007` (number out of range), as the range checks of fields
+  already did; it was `SD0000`.
+- A frame list of `u64` or `usize` holding a value above `i64::MAX` could not
+  be read as a `Value` (`frame::read_shaped` gave `None`); it now reads as the
+  bits `write` makes (`u64::MAX` is `Int(-1)`), and the typed read was already
+  right.
+- `Writer::float` documented a narrowing it never did; the docs say what it
+  writes (eight bytes).
+
+### Changed
+
+- `docs/format.md` no longer carries a section about where the crate came
+  from, and says how a `u64` above `i64::MAX` is carried in an int.
+
 ## [0.2.0] - 2026-10-27
 
 ### Added

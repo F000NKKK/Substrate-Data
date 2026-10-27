@@ -35,6 +35,17 @@ simd-utf8 = ["dep:simdutf8"]
 [dev-dependencies]
 criterion = { workspace = true, features = ["cargo_bench_support"] }
 serde_json = { workspace = true }
+# The comparison bench (`benches/compare.rs`) and the size table (`examples/sizes.rs`).
+serde = { workspace = true }
+serde_bytes = { workspace = true }
+ciborium = { workspace = true }
+rmp-serde = { workspace = true }
+postcard = { workspace = true }
+bincode = { workspace = true }
+# The UTF-8 benchmark measures the validator itself next to the standard library's.
+simdutf8 = { workspace = true, features = ["std"] }
+# Instruction counts under valgrind (`benches/iai.rs`).
+iai-callgrind = { workspace = true }
 
 [[bench]]
 name = "data"
@@ -46,6 +57,51 @@ harness = false
 
 [[bench]]
 name = "lanes"
+harness = false
+
+[[bench]]
+name = "text"
+harness = false
+
+[[bench]]
+name = "binary"
+harness = false
+
+[[bench]]
+name = "frame"
+harness = false
+
+[[bench]]
+name = "io"
+harness = false
+
+[[bench]]
+name = "schema"
+harness = false
+
+[[bench]]
+name = "model"
+harness = false
+
+[[bench]]
+name = "names"
+harness = false
+
+[[bench]]
+name = "reader"
+harness = false
+
+[[bench]]
+name = "scan"
+harness = false
+
+[[bench]]
+name = "compare"
+harness = false
+
+# Instruction counts, not time: needs valgrind and `iai-callgrind-runner`.
+[[bench]]
+name = "iai"
 harness = false
 
 [lints]

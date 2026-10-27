@@ -1,16 +1,32 @@
 //! Bit-packing of lists of numbers: every instruction set this processor has,
 //! group by group, and the whole `pack`/`unpack` through the active one.
+//!
+//! Widths: a representative ten by default; `LANES_WIDTHS=all` for 1..=32,
+//! or `LANES_WIDTHS=3,17,24` for a list. Criterion's own filter works too
+//! (`cargo bench --bench lanes -- lanes/unpack/avx2/17`).
 
 use std::hint::black_box;
+use std::time::Duration;
 
 use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
 use substrate_data::frame::lanes::{self, Backend, GROUP};
 
-/// Widths a list of ids, counters, indices and flags tends to have.
-const WIDTHS: [u32; 32] = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-    27, 28, 29, 30, 31, 32,
-];
+/// Widths a list of ids, counters, indices and flags tends to have: the
+/// byte-aligned ones, and the ones next to them.
+const DEFAULT_WIDTHS: [u32; 10] = [1, 2, 4, 7, 8, 12, 16, 17, 24, 32];
+
+/// The widths to run: `LANES_WIDTHS` (`all`, or a comma-separated list), else the default ten.
+fn widths() -> Vec<u32> {
+    match std::env::var("LANES_WIDTHS") {
+        Ok(v) if v == "all" => (1..=32).collect(),
+        Ok(v) => v
+            .split(',')
+            .filter_map(|w| w.trim().parse().ok())
+            .filter(|w| (1..=32).contains(w))
+            .collect(),
+        Err(_) => DEFAULT_WIDTHS.to_vec(),
+    }
+}
 /// Groups per run: 64 × 256 numbers, 16 K numbers.
 const GROUPS: usize = 64;
 
@@ -30,9 +46,16 @@ fn numbers(width: u32) -> Vec<[u32; GROUP]> {
 }
 
 fn groups(c: &mut Criterion) {
+    c.bench_function("lanes/is_available_all", |b| {
+        b.iter(|| {
+            Backend::available()
+                .filter(|backend| black_box(*backend).is_available())
+                .count()
+        });
+    });
     let mut pack = c.benchmark_group("lanes/pack");
     pack.throughput(Throughput::Elements((GROUPS * GROUP) as u64));
-    for width in WIDTHS {
+    for width in widths() {
         let src = numbers(width);
         for backend in Backend::available() {
             let mut out = vec![0; GROUPS * lanes::group_bytes(width)];
@@ -47,7 +70,7 @@ fn groups(c: &mut Criterion) {
 
     let mut unpack = c.benchmark_group("lanes/unpack");
     unpack.throughput(Throughput::Elements((GROUPS * GROUP) as u64));
-    for width in WIDTHS {
+    for width in widths() {
         let src = numbers(width);
         let mut bytes = vec![0; GROUPS * lanes::group_bytes(width)];
         Backend::Portable.pack_groups(&src, width, &mut bytes);
@@ -68,7 +91,7 @@ fn whole(c: &mut Criterion) {
     let n = GROUPS * GROUP;
     let mut g = c.benchmark_group("lanes/whole");
     g.throughput(Throughput::Elements(n as u64));
-    for width in WIDTHS {
+    for width in widths() {
         let items: Vec<u64> = numbers(width)
             .iter()
             .flatten()
@@ -94,5 +117,45 @@ fn whole(c: &mut Criterion) {
     g.finish();
 }
 
-criterion_group!(benches, groups, whole);
+/// The small calls: a group's size, a list's size, one element out of a packed list.
+fn small(c: &mut Criterion) {
+    let mut g = c.benchmark_group("lanes/small");
+    g.bench_function("group_bytes_packed_bytes", |b| {
+        b.iter(|| {
+            (1..=32u32)
+                .map(|w| {
+                    lanes::group_bytes(black_box(w)) + lanes::packed_bytes(1000, w).unwrap_or(0)
+                })
+                .sum::<usize>()
+        });
+    });
+    for width in widths() {
+        let n = GROUPS * GROUP;
+        let items: Vec<u64> = numbers(width)
+            .iter()
+            .flatten()
+            .map(|&v| u64::from(v))
+            .collect();
+        let mut packed = Vec::new();
+        lanes::pack(&mut packed, n, width, items.iter().copied());
+        g.bench_with_input(BenchmarkId::new("get_one", width), &width, |b, &w| {
+            b.iter(|| lanes::get(black_box(&packed), n, w, n / 2));
+        });
+    }
+    g.finish();
+}
+
+/// Few, short runs: there are hundreds of them. `--measurement-time 3` for steadier ones.
+fn quick() -> Criterion {
+    Criterion::default()
+        .sample_size(20)
+        .warm_up_time(Duration::from_millis(200))
+        .measurement_time(Duration::from_millis(500))
+}
+
+criterion_group! {
+    name = benches;
+    config = quick();
+    targets = groups, whole, small
+}
 criterion_main!(benches);

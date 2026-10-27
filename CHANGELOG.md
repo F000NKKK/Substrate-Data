@@ -11,6 +11,11 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Added
 
+- Benchmarks for every public path (one criterion group per area), a shared
+  neutral corpus, `benches/compare.rs` against serde_json, ciborium,
+  rmp-serde, postcard and bincode, an iai-callgrind instruction-count suite
+  and `cargo run --example sizes`; see [docs/performance.md](docs/performance.md).
+- `LANES_WIDTHS` selects the widths the `lanes` bench measures.
 - `ports/typescript` and `ports/java`: ports of the value model, text form,
   binary form, frame reading and io streams, each passing every conformance
   vector (CI jobs `port-typescript`, `port-java`).

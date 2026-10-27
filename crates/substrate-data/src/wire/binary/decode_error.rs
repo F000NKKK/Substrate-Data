@@ -11,6 +11,16 @@ pub struct DecodeError {
     pub offset: usize,
 }
 
+impl DecodeError {
+    /// A map's key that was already set, found at `offset`.
+    pub(super) fn duplicate_key(key: &str, offset: usize) -> Self {
+        DecodeError {
+            message: format!("`{key}` is already set in this map"),
+            offset,
+        }
+    }
+}
+
 impl fmt::Display for DecodeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "byte {}: {}", self.offset, self.message)

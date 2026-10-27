@@ -152,3 +152,42 @@ fn every_cut_of_a_document_is_an_error_never_a_panic() {
         );
     }
 }
+
+fn map_bytes(keys: &[&[u8]]) -> Vec<u8> {
+    let mut bytes = b"SDAT\x01".to_vec();
+    bytes.extend([tag::MAP, u8::try_from(keys.len()).expect("a few keys")]);
+    for key in keys {
+        bytes.extend_from_slice(key);
+        bytes.extend([tag::INT, 2]);
+    }
+    bytes
+}
+
+#[test]
+fn a_repeated_key_is_an_error_in_both_decoders() {
+    // The second key is the first again: by table index, then as new text.
+    for second in [&[0][..], &[3, b'a'][..]] {
+        let bytes = map_bytes(&[&[3, b'a'], second]);
+        let err = decode(&bytes).unwrap_err();
+        assert_eq!(err.message, "`a` is already set in this map");
+        let at = 11;
+        assert_eq!(err.offset, at);
+        assert_eq!(decode_ref(&bytes, &Bump::new()).unwrap_err(), err);
+    }
+}
+
+#[test]
+fn a_repeated_key_in_a_big_map_is_an_error() {
+    let names: Vec<Vec<u8>> = (0..40u8)
+        .map(|i| vec![7, b'k', b'0' + i / 10, b'0' + i % 10])
+        .collect();
+    let mut keys: Vec<&[u8]> = names.iter().map(Vec::as_slice).collect();
+    assert!(decode(&map_bytes(&keys)).is_ok());
+    keys.push(&names[3]);
+    let bytes = map_bytes(&keys);
+    assert_eq!(
+        decode(&bytes).unwrap_err().message,
+        "`k03` is already set in this map"
+    );
+    assert!(decode_ref(&bytes, &Bump::new()).is_err());
+}

@@ -19,6 +19,7 @@ mod decoder_ref;
 mod decoder_straight;
 pub(crate) mod interner;
 mod layout;
+mod seen_keys;
 pub mod tag;
 #[cfg(test)]
 mod tests;

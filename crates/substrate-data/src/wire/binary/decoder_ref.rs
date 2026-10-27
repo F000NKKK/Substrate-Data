@@ -4,6 +4,7 @@
 use bumpalo::Bump;
 
 use super::decoder::{F32_BYTES, F64_BYTES, MAP_ENTRY_MIN};
+use super::seen_keys::SeenKeys;
 use super::{DecodeError, Decoder, tag, unzigzag};
 use crate::model::borrowed::{MapRef, ValueRef};
 
@@ -99,8 +100,13 @@ impl<'b> Decoder<'b> {
         let n = self.count(MAP_ENTRY_MIN)?;
         self.deeper()?;
         let mut entries = bumpalo::collections::Vec::with_capacity_in(n, arena);
+        let mut seen = SeenKeys::default();
         for _ in 0..n {
+            let at = self.i;
             let k = self.string()?;
+            if !seen.insert(k) {
+                return Err(DecodeError::duplicate_key(k, at));
+            }
             entries.push((k, self.value_ref_in(arena, stack)?));
         }
         self.depth -= 1;

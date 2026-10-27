@@ -51,6 +51,8 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 - `frame::Packer` no longer allocates to write the length of a record or
   list over 127 bytes.
+- The binary decoders refuse a map with a repeated key (`binary::decode`,
+  `decode_ref`), as the text parser already did; before, both entries were kept.
 - A stream cut inside a frame's length is an error, not a clean end
   (`io::read_frame_bytes`).
 - The benches no longer carry a `missing_docs` expectation that

@@ -299,12 +299,10 @@ fn tagged_write(cg: &Codegen, v: &Variant, tag: &str) -> Tokens {
             }
         },
         VariantKind::Named(fields) => {
-            let idents: Vec<_> = fields.iter().map(|f| &f.ident).collect();
+            let bindings: Vec<_> = fields.iter().map(NamedField::binding).collect();
             let puts = write_fields(cg, fields);
             quote! {
-                // A skipped field is bound and not written.
-                #[allow(unused_variables, reason = "a skipped field is bound and not used")]
-                Self::#ident { #(#idents),* } => {
+                Self::#ident { #(#bindings),* } => {
                     m.insert(#tag, #krate::Value::from(#key));
                     #puts
                 }

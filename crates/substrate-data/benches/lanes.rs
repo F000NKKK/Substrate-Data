@@ -1,6 +1,8 @@
 //! Bit-packing of lists of numbers: every instruction set this processor has,
 //! group by group, and the whole `pack`/`unpack` through the active one.
 //!
+//! Groups per run: 64 by default, `LANES_GROUPS=3` for another count.
+//!
 //! Widths: a representative ten by default; `LANES_WIDTHS=all` for 1..=32,
 //! or `LANES_WIDTHS=3,17,24` for a list. Criterion's own filter works too
 //! (`cargo bench --bench lanes -- lanes/unpack/avx2/17`).
@@ -27,13 +29,21 @@ fn widths() -> Vec<u32> {
         Err(_) => DEFAULT_WIDTHS.to_vec(),
     }
 }
-/// Groups per run: 64 × 256 numbers, 16 K numbers.
-const GROUPS: usize = 64;
+/// Groups per run: `LANES_GROUPS`, else 64 × 256 numbers, 16 K numbers. A
+/// short run (1 to 5) shows where a backend hands the tail to a narrower one.
+fn group_count() -> usize {
+    std::env::var("LANES_GROUPS")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .filter(|&n| n >= 1)
+        .unwrap_or(64)
+}
 
 fn numbers(width: u32) -> Vec<[u32; GROUP]> {
+    let groups = group_count();
     let mask = u32::MAX >> (u32::BITS - width);
     let mut x = 0x9E37_79B9_u32;
-    (0..GROUPS)
+    (0..groups)
         .map(|_| {
             std::array::from_fn(|_| {
                 x ^= x << 13;
@@ -46,6 +56,7 @@ fn numbers(width: u32) -> Vec<[u32; GROUP]> {
 }
 
 fn groups(c: &mut Criterion) {
+    let count = group_count();
     c.bench_function("lanes/is_available_all", |b| {
         b.iter(|| {
             Backend::available()
@@ -54,11 +65,11 @@ fn groups(c: &mut Criterion) {
         });
     });
     let mut pack = c.benchmark_group("lanes/pack");
-    pack.throughput(Throughput::Elements((GROUPS * GROUP) as u64));
+    pack.throughput(Throughput::Elements((count * GROUP) as u64));
     for width in widths() {
         let src = numbers(width);
         for backend in Backend::available() {
-            let mut out = vec![0; GROUPS * lanes::group_bytes(width)];
+            let mut out = vec![0; count * lanes::group_bytes(width)];
             pack.bench_with_input(
                 BenchmarkId::new(backend.to_string(), width),
                 &width,
@@ -69,13 +80,13 @@ fn groups(c: &mut Criterion) {
     pack.finish();
 
     let mut unpack = c.benchmark_group("lanes/unpack");
-    unpack.throughput(Throughput::Elements((GROUPS * GROUP) as u64));
+    unpack.throughput(Throughput::Elements((count * GROUP) as u64));
     for width in widths() {
         let src = numbers(width);
-        let mut bytes = vec![0; GROUPS * lanes::group_bytes(width)];
+        let mut bytes = vec![0; count * lanes::group_bytes(width)];
         Backend::Portable.pack_groups(&src, width, &mut bytes);
         for backend in Backend::available() {
-            let mut out = vec![[0; GROUP]; GROUPS];
+            let mut out = vec![[0; GROUP]; count];
             unpack.bench_with_input(
                 BenchmarkId::new(backend.to_string(), width),
                 &width,
@@ -88,7 +99,7 @@ fn groups(c: &mut Criterion) {
 
 /// The whole path a frame takes: an iterator in, bytes out, and back.
 fn whole(c: &mut Criterion) {
-    let n = GROUPS * GROUP;
+    let n = group_count() * GROUP;
     let mut g = c.benchmark_group("lanes/whole");
     g.throughput(Throughput::Elements(n as u64));
     for width in widths() {
@@ -130,7 +141,7 @@ fn small(c: &mut Criterion) {
         });
     });
     for width in widths() {
-        let n = GROUPS * GROUP;
+        let n = group_count() * GROUP;
         let items: Vec<u64> = numbers(width)
             .iter()
             .flatten()

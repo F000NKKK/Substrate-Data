@@ -20,7 +20,7 @@ pub mod with;
 pub use convert::from_toml;
 pub use convert::{
     field_names, from_doc, from_doc_with, from_text, from_value, from_value_with, placed,
-    read_both, read_bytes, read_ref_value, read_value, to_bytes, to_text,
+    read_both, read_bytes, read_ref_value, read_value, to_bytes, to_bytes_into, to_text,
 };
 pub use description::{DefinitionDoc, FieldDoc, ShapeDoc, ShapeNode, VariantDoc};
 pub use fields::{Fields, field_name};

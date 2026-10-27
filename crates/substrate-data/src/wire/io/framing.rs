@@ -24,10 +24,7 @@ pub fn write_frame<T: Schema>(w: &mut impl Write, message: &T) -> io::Result<()>
 ///
 /// The writer's I/O error; [`io::ErrorKind::InvalidInput`] for a frame over [`MAX_FRAME`].
 pub fn write_frame_bytes(w: &mut impl Write, bytes: &[u8]) -> io::Result<()> {
-    let len = Len::try_from(bytes.len())
-        .ok()
-        .filter(|_| bytes.len() <= MAX_FRAME)
-        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "frame too long"))?;
+    let len = frame_len(bytes.len())?;
     // One write: a reader never sees a length without its body behind it.
     let mut frame = Vec::with_capacity(size_of::<Len>() + bytes.len());
     frame.extend_from_slice(&len.to_le_bytes());
@@ -65,14 +62,26 @@ pub fn read_frame<T: Schema>(r: &mut impl Read) -> io::Result<Option<T>> {
     let Some(bytes) = read_frame_bytes(r)? else {
         return Ok(None);
     };
-    crate::read_bytes(&bytes)
-        .map(Some)
+    decode_frame(&bytes).map(Some)
+}
+
+/// A frame body's length as written; [`io::ErrorKind::InvalidInput`] over [`MAX_FRAME`].
+pub(super) fn frame_len(len: usize) -> io::Result<Len> {
+    Len::try_from(len)
+        .ok()
+        .filter(|_| len <= MAX_FRAME)
+        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "frame too long"))
+}
+
+/// A frame body read as a `T`; [`io::ErrorKind::InvalidData`] when it isn't one.
+pub(super) fn decode_frame<T: Schema>(bytes: &[u8]) -> io::Result<T> {
+    crate::read_bytes(bytes)
         .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, crate::Errors(e)))
 }
 
 /// A frame's length; `None` only when the stream ends before its first byte
 /// (between frames), an error when it ends inside the length.
-fn read_len(r: &mut impl Read) -> io::Result<Option<Len>> {
+pub(super) fn read_len(r: &mut impl Read) -> io::Result<Option<Len>> {
     let mut len = [0; size_of::<Len>()];
     loop {
         match r.read(&mut len[..1]) {

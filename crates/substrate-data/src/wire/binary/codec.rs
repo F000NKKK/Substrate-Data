@@ -2,15 +2,24 @@
 
 use bumpalo::Bump;
 
+use super::writer::START_BYTES;
 use super::{DecodeError, Decoder, Writer};
 use crate::model::borrowed::ValueRef;
 use crate::model::value::Value;
 
 /// `value` in the binary form.
 pub fn encode(value: &Value) -> Vec<u8> {
-    let mut w = Writer::new();
+    let mut out = Vec::with_capacity(START_BYTES);
+    encode_into(value, &mut out);
+    out
+}
+
+/// `value` in the binary form, appended to `out` (a whole document, header
+/// first): a buffer that is kept and reused grows once.
+pub fn encode_into(value: &Value, out: &mut Vec<u8>) {
+    let mut w = Writer::appending(std::mem::take(out));
     w.value(value);
-    w.finish()
+    *out = w.finish();
 }
 
 /// Reads the binary form.

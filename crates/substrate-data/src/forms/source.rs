@@ -20,7 +20,7 @@ pub fn is_binary(bytes: &[u8]) -> bool {
 /// [`ReadError`] when the text isn't UTF-8 or the binary form is malformed.
 pub fn text(bytes: &[u8]) -> Result<String, ReadError> {
     if !is_binary(bytes) {
-        return std::str::from_utf8(bytes)
+        return crate::utf8::from_utf8(bytes)
             .map(str::to_owned)
             .map_err(ReadError::NotUtf8);
     }

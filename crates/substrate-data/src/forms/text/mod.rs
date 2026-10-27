@@ -9,6 +9,7 @@ mod comments;
 mod doc;
 mod line_col;
 mod parser;
+mod scan;
 mod span;
 mod spans;
 mod syntax_error;

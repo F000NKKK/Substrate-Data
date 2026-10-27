@@ -77,13 +77,20 @@ jobs:
       - run: cargo test --workspace --all-features
       # llvm-cov on stable does not run doc tests; they run here.
       - run: cargo test --workspace --all-features --doc
+      # The per-instruction-set kernels (lanes/sse42.rs, avx2.rs, avx512.rs, neon.rs)
+      # run only where the machine has the instructions, which a hosted runner
+      # does not promise (AVX-512), so their coverage would depend on the
+      # runner's luck. They are tested for byte-identity with the portable
+      # code by the simd-backends job instead, on x86-64 and AArch64.
       - name: coverage per crate, threshold by layer (chapter 8 §8.1)
+        env:
+          ISA_FILES: 'wire/frame/lanes/(sse42|avx2|avx512|neon)\.rs$'
         run: |
           set -eu
           gate() { # layer min-lines min-regions
             for crate in $(python3 .craftbook/tools/craftcheck crates . --layer "$1"); do
               echo "== $crate ($1): lines >= $2 %, regions >= $3 %"
-              cargo llvm-cov --package "$crate" --all-features --fail-under-lines "$2" --fail-under-regions "$3"
+              cargo llvm-cov --package "$crate" --all-features --ignore-filename-regex "$ISA_FILES" --fail-under-lines "$2" --fail-under-regions "$3"
             done
           }
           gate shared-kernel 95 90
@@ -92,6 +99,8 @@ jobs:
           gate infra 70 0
       - name: coverage of changed lines >= 90 % (pull requests)
         if: github.event_name == 'pull_request'
+        env:
+          ISA_FILES: 'wire/frame/lanes/(sse42|avx2|avx512|neon)\.rs$'
         run: |
           set -eu
           packages=""
@@ -101,10 +110,27 @@ jobs:
             done
           done
           [ -n "$packages" ] || exit 0
-          cargo llvm-cov $packages --all-features --lcov --output-path lcov.info
+          cargo llvm-cov $packages --all-features --ignore-filename-regex "$ISA_FILES" --lcov --output-path lcov.info
           pipx run diff-cover lcov.info --compare-branch "origin/${{ github.base_ref }}" --fail-under 90
       - run: cargo deny check
       - run: cargo doc --workspace --no-deps --all-features
+
+  # Every instruction set a processor can run is tested on the processors the
+  # runners have: x86-64 (SSE4.2, AVX2, and AVX-512 where the machine has it)
+  # and AArch64 (NEON). The test prints which backends it ran.
+  simd-backends:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test -p substrate-data --test lane_backends -- --nocapture
+      - run: cargo test -p substrate-data --lib frame
 
   mutants:
     if: github.event_name == 'schedule'

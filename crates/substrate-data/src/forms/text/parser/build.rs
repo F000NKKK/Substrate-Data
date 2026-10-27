@@ -6,7 +6,18 @@ use std::borrow::Cow;
 use crate::forms::text::SyntaxError;
 
 /// The parser's error, boxed so a result stays small: errors are rare.
-pub(super) type Failure = Box<SyntaxError>;
+#[derive(Debug)]
+pub(super) struct Failure(Box<SyntaxError>);
+
+impl Failure {
+    pub(super) fn new(error: SyntaxError) -> Self {
+        Self(Box::new(error))
+    }
+
+    pub(super) fn into_inner(self) -> SyntaxError {
+        *self.0
+    }
+}
 
 /// Makes the parser's values. Lists and maps are filled on a stack the
 /// builder keeps: [`Build::mark`] says where a container starts, its items

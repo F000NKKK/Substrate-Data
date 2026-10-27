@@ -19,7 +19,11 @@ fn through_every_form<T: Schema + PartialEq + Debug>(x: &T) {
     assert_eq!(&read_value::<T>(&value).expect("value"), x, "value");
     let text = to_text(x);
     // Written straight, the same text as through the value.
-    assert_eq!(text, substrate_data::text::to_string_pretty(&value), "straight");
+    assert_eq!(
+        text,
+        substrate_data::text::to_string_pretty(&value),
+        "straight"
+    );
     assert_eq!(
         &from_text::<T>(&text).expect("text").value,
         x,

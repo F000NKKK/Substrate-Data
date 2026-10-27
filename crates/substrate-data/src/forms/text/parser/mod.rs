@@ -4,8 +4,10 @@
 mod borrowed;
 mod build;
 mod entry;
+mod keys;
 mod number;
 mod owned;
+#[expect(clippy::module_inception, reason = "the module's one type")]
 mod parser;
 mod string;
 

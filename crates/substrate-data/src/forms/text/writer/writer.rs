@@ -2,20 +2,12 @@
 
 use super::float::push_float;
 use super::integer::push_int;
+use super::open::Open;
 use super::string::{push_string, write_body};
 use crate::model::value::Value;
 
 /// How far a nested level is indented in the pretty form.
 const INDENT: &[u8] = b"  ";
-
-/// A list or map being written: how many of its entries are still to come,
-/// and how many have been.
-#[derive(Debug)]
-struct Open {
-    map: bool,
-    remaining: usize,
-    done: usize,
-}
 
 /// Writes the text form piece by piece, without a [`Value`] in between. A
 /// list or map is given its length, then that many values (a map's each
@@ -73,7 +65,8 @@ impl Writer {
     /// A bool.
     pub fn bool(&mut self, b: bool) -> &mut Self {
         self.begin();
-        self.out.extend_from_slice(if b { b"true" } else { b"false" });
+        self.out
+            .extend_from_slice(if b { b"true" } else { b"false" });
         self.end()
     }
 
@@ -118,10 +111,8 @@ impl Writer {
         self.out.extend_from_slice(crate::typed::BYTES.as_bytes());
         self.out.push(b':');
         let at = self.out.len();
-        self.out.resize(
-            at + base64::encoded_len(bytes.len(), true).unwrap_or(0),
-            0,
-        );
+        self.out
+            .resize(at + base64::encoded_len(bytes.len(), true).unwrap_or(0), 0);
         let n = base64::engine::general_purpose::STANDARD
             .encode_slice(bytes, &mut self.out[at..])
             .unwrap_or(0);

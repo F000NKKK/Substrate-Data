@@ -2,16 +2,11 @@
 //! their own files.
 
 use std::borrow::Cow;
-use std::collections::HashSet;
 
-use super::build::Build;
+use super::build::{Build, Failure};
 use super::entry::MAX_DEPTH;
-use super::build::Failure;
+use super::keys::Keys;
 use crate::forms::text::{LineCol, Span, Spans, SyntaxError, scan};
-use crate::model::quick_hash::QuickBuild;
-
-/// Maps up to this many keys are checked for a repeat by a scan; past it, a set.
-const SCAN_MAX: usize = 16;
 
 /// `B` makes the values; `SPANS`: whether to record where each value is.
 #[derive(Debug)]
@@ -51,7 +46,7 @@ impl<'t, B: Build<'t>, const SPANS: bool> Parser<'t, B, SPANS> {
         if offset >= self.src.len() {
             message.push_str(", found the end of the file");
         }
-        Box::new(SyntaxError {
+        Failure::new(SyntaxError {
             message,
             at: LineCol::of(self.text, offset),
             offset,
@@ -62,27 +57,12 @@ impl<'t, B: Build<'t>, const SPANS: bool> Parser<'t, B, SPANS> {
         self.src.get(self.i).copied()
     }
 
-    /// Skips spaces, tabs and line breaks; the runs of spaces that
-    /// indentation is, eight at a time.
-    fn skip_blanks(&mut self) {
-        while let Some(b) = self.peek() {
-            match b {
-                b' ' => {
-                    self.i += 1;
-                    while self.src[self.i..].first_chunk() == Some(&[b' '; 8]) {
-                        self.i += 8;
-                    }
-                }
-                b'\t' | b'\n' | b'\r' => self.i += 1,
-                _ => break,
-            }
-        }
-    }
-
     /// Skips whitespace and comments.
     pub(super) fn ws(&mut self) -> Result<(), Failure> {
         loop {
-            self.skip_blanks();
+            while let Some(b' ' | b'\t' | b'\n' | b'\r') = self.peek() {
+                self.i += 1;
+            }
             if self.peek() != Some(b'/') {
                 return Ok(());
             }
@@ -194,7 +174,7 @@ impl<'t, B: Build<'t>, const SPANS: bool> Parser<'t, B, SPANS> {
             let key_start = self.i;
             let key = self.key()?;
             let key_span = Span::new(key_start, self.i);
-            if keys.repeats(&self.build, mark, &key) {
+            if keys.repeats(&self.build, mark, key.clone()) {
                 return Err(
                     self.error_at(key_start, format!("`{key}` is already set in this object"))
                 );
@@ -236,35 +216,5 @@ impl<'t, B: Build<'t>, const SPANS: bool> Parser<'t, B, SPANS> {
             }
             _ => Err(self.error("expected a key")),
         }
-    }
-}
-
-/// The keys of the map being read, for refusing a repeat: the builder's
-/// scan while it's small, a set once it grows.
-#[derive(Default)]
-struct Keys<'t> {
-    count: usize,
-    set: Option<HashSet<Cow<'t, str>, QuickBuild>>,
-}
-
-impl<'t> Keys<'t> {
-    /// Whether the map begun at `mark` has `key` already; if not, notes it.
-    fn repeats<B: Build<'t>>(&mut self, build: &B, mark: usize, key: &Cow<'t, str>) -> bool {
-        self.count += 1;
-        if let Some(set) = &mut self.set {
-            return !set.insert(key.clone());
-        }
-        if build.has_key(mark, key) {
-            return true;
-        }
-        if self.count > SCAN_MAX {
-            let mut set = HashSet::with_hasher(QuickBuild::default());
-            build.each_key(mark, &mut |k| {
-                set.insert(Cow::Owned(k.to_owned()));
-            });
-            set.insert(key.clone());
-            self.set = Some(set);
-        }
-        false
     }
 }

@@ -53,7 +53,7 @@ fn run<'t, B: Build<'t>, const SPANS: bool>(
     text: &'t str,
     builder: B,
 ) -> Result<(B::Value, Spans), SyntaxError> {
-    parse_all::<B, SPANS>(text, builder).map_err(|e| *e)
+    parse_all::<B, SPANS>(text, builder).map_err(Failure::into_inner)
 }
 
 fn parse_all<'t, B: Build<'t>, const SPANS: bool>(

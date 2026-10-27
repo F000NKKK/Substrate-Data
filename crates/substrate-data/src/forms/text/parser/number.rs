@@ -1,8 +1,7 @@
 //! A number literal: an integer when it has no fraction or exponent and fits.
 
-use super::build::Build;
+use super::build::{Build, Failure};
 use super::parser::Parser;
-use super::build::Failure;
 
 /// Integers of up to this many digits fit an `i64` without a check.
 const SAFE_DIGITS: usize = 18;

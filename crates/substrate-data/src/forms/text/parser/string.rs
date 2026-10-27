@@ -2,9 +2,8 @@
 
 use std::borrow::Cow;
 
-use super::build::Build;
+use super::build::{Build, Failure};
 use super::parser::Parser;
-use super::build::Failure;
 use crate::forms::text::scan;
 
 /// `\\u` escapes are hexadecimal.

@@ -50,7 +50,11 @@ fn codec_fields_round_trip_in_every_form() {
     let x = sample();
     assert_eq!(read_value::<Codecs>(&x.write()).unwrap(), x);
     let text = to_text(&x);
-    assert_eq!(text, substrate_data::text::to_string_pretty(&x.write()), "straight");
+    assert_eq!(
+        text,
+        substrate_data::text::to_string_pretty(&x.write()),
+        "straight"
+    );
     assert_eq!(from_text::<Codecs>(&text).unwrap().value, x, "{text}");
     assert_eq!(read_bytes::<Codecs>(&to_bytes(&x)).unwrap(), x);
     assert_eq!(read_frame::<Codecs>(&to_frame(&x)), Some(x));

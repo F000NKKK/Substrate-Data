@@ -88,7 +88,10 @@ fn tie_digits(f: f64, shortest: &str) -> Option<u64> {
 fn significant_digits(shortest: &str) -> usize {
     let mut first = None;
     let mut last = 0;
-    let digits = shortest.bytes().take_while(|&b| b != b'e').filter(u8::is_ascii_digit);
+    let digits = shortest
+        .bytes()
+        .take_while(|&b| b != b'e')
+        .filter(u8::is_ascii_digit);
     for (at, digit) in digits.enumerate() {
         if digit != b'0' {
             first.get_or_insert(at);
@@ -156,11 +159,17 @@ fn place(digits: &[u8], point: i32, out: &mut Vec<u8>) {
     let count = i32::try_from(digits.len()).unwrap_or(0);
     if point <= 0 {
         out.extend_from_slice(b"0.");
-        out.extend(std::iter::repeat_n(b'0', usize::try_from(-point).unwrap_or(0)));
+        out.extend(std::iter::repeat_n(
+            b'0',
+            usize::try_from(-point).unwrap_or(0),
+        ));
         out.extend_from_slice(digits);
     } else if point >= count {
         out.extend_from_slice(digits);
-        out.extend(std::iter::repeat_n(b'0', usize::try_from(point - count).unwrap_or(0)));
+        out.extend(std::iter::repeat_n(
+            b'0',
+            usize::try_from(point - count).unwrap_or(0),
+        ));
         out.extend_from_slice(b".0");
     } else {
         let (whole, fraction) = digits.split_at(usize::try_from(point).unwrap_or(0));
@@ -187,8 +196,21 @@ mod tests {
         }
     }
 
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "a narrowing is what is wanted"
+    )]
+    fn single_of(f: f64) -> f32 {
+        f as f32
+    }
+
     fn same_as_debug(f: f64) {
-        assert_eq!(float_string(f), format!("{f:?}"), "bits {:#018x}", f.to_bits());
+        assert_eq!(
+            float_string(f),
+            format!("{f:?}"),
+            "bits {:#018x}",
+            f.to_bits()
+        );
     }
 
     #[test]
@@ -216,8 +238,12 @@ mod tests {
     #[test]
     fn edges_of_the_thresholds_and_neighbours_of_every_power_of_ten() {
         for exp in -330..=308 {
-            let f: f64 = format!("1e{exp}").parse().unwrap_or(1.0);
-            for bits in [f.to_bits().wrapping_sub(1), f.to_bits(), f.to_bits() + 1] {
+            let power: f64 = format!("1e{exp}").parse().unwrap_or(1.0);
+            for bits in [
+                power.to_bits().wrapping_sub(1),
+                power.to_bits(),
+                power.to_bits() + 1,
+            ] {
                 let f = f64::from_bits(bits);
                 if f.is_finite() {
                     same_as_debug(f);
@@ -266,7 +292,7 @@ mod tests {
                 same_as_debug(f64::from(single));
             }
             let unit = f64::from(u32::try_from(rng.next() >> 40).unwrap_or(0)) / 16_777_216.0;
-            same_as_debug(f64::from((unit * 100.0) as f32));
+            same_as_debug(f64::from(single_of(unit * 100.0)));
             same_as_debug(unit * 4096.0);
         }
     }

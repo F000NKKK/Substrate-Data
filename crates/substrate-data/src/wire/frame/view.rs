@@ -18,17 +18,23 @@
 use std::marker::PhantomData;
 
 use super::Unpacker;
+use super::sizes::{F32_BYTES, F64_BYTES};
 
 /// A type read as a view of a frame: what it is borrowed (`View`), and what
 /// a list of it is (`ListView`).
 pub trait View<'a>: Sized {
+    /// What it's viewed as.
     type View;
+    /// What a list of it is viewed as.
     type ListView;
+    /// It viewed in a frame.
     fn unpack_view(u: &mut Unpacker<'a>) -> Option<Self::View>;
+    /// A list of it viewed in a frame.
     fn unpack_list_view(u: &mut Unpacker<'a>) -> Option<Self::ListView>;
 }
 
 /// `T`'s view of the frame `bytes`.
+#[must_use]
 pub fn read_view<'a, T: View<'a>>(bytes: &'a [u8]) -> Option<T::View> {
     let mut u = Unpacker::open(bytes)?;
     let v = T::unpack_view(&mut u)?;
@@ -43,7 +49,7 @@ pub struct List<'a, T> {
     item: PhantomData<fn() -> T>,
 }
 
-impl<'a, T> Clone for List<'a, T> {
+impl<T> Clone for List<'_, T> {
     fn clone(&self) -> Self {
         List {
             u: self.u.fork(self.u.position()),
@@ -60,15 +66,20 @@ impl<T> std::fmt::Debug for List<'_, T> {
 }
 
 impl<'a, T: View<'a>> List<'a, T> {
+    /// How many items.
+    #[must_use]
     pub fn len(&self) -> usize {
         self.len
     }
 
+    /// Whether it has none.
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.len == 0
     }
 
     /// Each item's view, read as it's reached.
+    #[must_use]
     pub fn iter(&self) -> ListIter<'a, T> {
         ListIter {
             u: self.u.fork(self.u.position()),
@@ -78,12 +89,22 @@ impl<'a, T: View<'a>> List<'a, T> {
     }
 
     /// Item `i` (the ones before it stepped over).
+    #[must_use]
     pub fn get(&self, i: usize) -> Option<T::View> {
         self.iter().nth(i)
     }
 }
 
+impl<'a, T: View<'a>> IntoIterator for &List<'a, T> {
+    type Item = T::View;
+    type IntoIter = ListIter<'a, T>;
+    fn into_iter(self) -> ListIter<'a, T> {
+        self.iter()
+    }
+}
+
 /// [`List::iter`].
+#[derive(Debug)]
 pub struct ListIter<'a, T> {
     u: Unpacker<'a>,
     left: usize,
@@ -114,7 +135,7 @@ impl<'a> View<'a> for bool {
     type View = bool;
     type ListView = List<'a, bool>;
     fn unpack_view(u: &mut Unpacker<'a>) -> Option<bool> {
-        u.get_bool()
+        u.bool()
     }
     fn unpack_list_view(u: &mut Unpacker<'a>) -> Option<Self::ListView> {
         list(u)
@@ -125,7 +146,7 @@ impl<'a> View<'a> for String {
     type View = &'a str;
     type ListView = List<'a, Self>;
     fn unpack_view(u: &mut Unpacker<'a>) -> Option<&'a str> {
-        u.get_str()
+        u.str()
     }
     fn unpack_list_view(u: &mut Unpacker<'a>) -> Option<Self::ListView> {
         list(u)
@@ -136,7 +157,7 @@ impl<'a> View<'a> for Box<str> {
     type View = &'a str;
     type ListView = List<'a, Self>;
     fn unpack_view(u: &mut Unpacker<'a>) -> Option<&'a str> {
-        u.get_str()
+        u.str()
     }
     fn unpack_list_view(u: &mut Unpacker<'a>) -> Option<Self::ListView> {
         list(u)
@@ -158,7 +179,7 @@ impl<'a, T: View<'a>> View<'a> for Option<T> {
     type View = Option<T::View>;
     type ListView = List<'a, Option<T>>;
     fn unpack_view(u: &mut Unpacker<'a>) -> Option<Option<T::View>> {
-        if u.get_bool()? {
+        if u.bool()? {
             T::unpack_view(u).map(Some)
         } else {
             Some(None)
@@ -202,15 +223,20 @@ pub struct Ints<'a, T> {
 }
 
 impl<T: TryFrom<i128>> Ints<'_, T> {
+    /// How many numbers.
+    #[must_use]
     pub fn len(&self) -> usize {
         self.len
     }
 
+    /// Whether it has none.
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.len == 0
     }
 
     /// Item `i`, if there's one: read in place, O(1).
+    #[must_use]
     pub fn get(&self, i: usize) -> Option<T> {
         if i >= self.len {
             return None;
@@ -224,6 +250,7 @@ impl<T: TryFrom<i128>> Ints<'_, T> {
         T::try_from(n).ok()
     }
 
+    /// The numbers, in order.
     pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
         (0..self.len).map_while(|i| self.get(i))
     }
@@ -239,18 +266,21 @@ pub struct Floats<'a, T> {
     item: PhantomData<fn() -> T>,
 }
 
-const F32_BYTES: usize = 4;
-const F64_BYTES: usize = 8;
-
 impl<T: From<f32> + FromF64> Floats<'_, T> {
+    /// How many numbers.
+    #[must_use]
     pub fn len(&self) -> usize {
         self.len
     }
 
+    /// Whether it has none.
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.len == 0
     }
 
+    /// Number `i`, if there's one.
+    #[must_use]
     pub fn get(&self, i: usize) -> Option<T> {
         if i >= self.len {
             return None;
@@ -264,6 +294,7 @@ impl<T: From<f32> + FromF64> Floats<'_, T> {
         }
     }
 
+    /// The numbers, in order.
     pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
         (0..self.len).map_while(|i| self.get(i))
     }
@@ -271,6 +302,7 @@ impl<T: From<f32> + FromF64> Floats<'_, T> {
 
 /// A float out of a `f64` (a `f32` rounds).
 pub trait FromF64 {
+    /// `f` as this type.
     fn from_f64(f: f64) -> Self;
 }
 
@@ -281,6 +313,10 @@ impl FromF64 for f64 {
 }
 
 impl FromF64 for f32 {
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "narrowing to the nearest `f32` is what's asked"
+    )]
     fn from_f64(f: f64) -> Self {
         f as f32
     }

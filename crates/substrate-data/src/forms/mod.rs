@@ -4,6 +4,7 @@
 #[cfg(feature = "json")]
 pub mod json;
 pub mod patch;
+mod read_error;
 pub mod source;
 pub mod text;
 #[cfg(feature = "toml")]

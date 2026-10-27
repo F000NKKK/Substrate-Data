@@ -35,10 +35,14 @@ use crate::schema::{Kinds, Reader, Schema, Shape, is_metadata_key};
 
 /// How a field of type `F` is read and written.
 pub trait With<F> {
+    /// The field's shape.
     fn shape() -> Shape;
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<F>;
+    /// Reads the field.
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<F>;
+    /// Writes the field.
     fn write(f: &F) -> Value;
     /// The field's value when it isn't there (`None`: it's required).
+    #[must_use]
     fn absent() -> Option<F> {
         None
     }
@@ -69,20 +73,21 @@ pub trait With<F> {
     }
     /// The field out of a frame.
     fn unpack(u: &mut Unpacker<'_>) -> Option<F> {
-        let mut d = Decoder::body(u.get_bytes()?);
+        let mut d = Decoder::body(u.bytes()?);
         let f = Self::decode(&mut d)?;
         d.at_end().then_some(f)
     }
 }
 
 /// A reference of kind(s) `K`, kept as the resolved id.
+#[derive(Debug)]
 pub struct RefTo<K>(PhantomData<K>);
 
 impl<K: Kinds> With<K::Id> for RefTo<K> {
     fn shape() -> Shape {
         super::ref_shape::<K>()
     }
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<K::Id> {
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<K::Id> {
         super::read_id::<K>(v, cx)
     }
     fn write(f: &K::Id) -> Value {
@@ -102,17 +107,18 @@ impl<K: Kinds> With<K::Id> for RefTo<K> {
 /// Text as it's spelled — markup's attribute, which may spell a reference
 /// (`@file:images/logo.png`): a string kept as written, a typed value as its
 /// spelling. Nothing is checked or resolved here.
+#[derive(Debug)]
 pub struct Spelled;
 
 impl With<String> for Spelled {
     fn shape() -> Shape {
         Shape::Str
     }
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<String> {
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<String> {
         if let ValueRef::Str(s) = v {
             return Some(s.to_string());
         }
-        let spelled = crate::typed::typed_string(&v.to_value());
+        let spelled = crate::typed::spelling(&v.to_value());
         if spelled.is_none() {
             cx.expected(super::Expected::Text, v);
         }
@@ -124,13 +130,14 @@ impl With<String> for Spelled {
 }
 
 /// An optional field through `W`.
+#[derive(Debug)]
 pub struct Opt<W>(PhantomData<W>);
 
 impl<F, W: With<F>> With<Option<F>> for Opt<W> {
     fn shape() -> Shape {
         Shape::Optional(W::shape)
     }
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Option<F>> {
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<Option<F>> {
         if v.is_null() {
             Some(None)
         } else {
@@ -149,13 +156,14 @@ impl<F, W: With<F>> With<Option<F>> for Opt<W> {
 }
 
 /// A list, each item through `W`.
+#[derive(Debug)]
 pub struct List<W>(PhantomData<W>);
 
 impl<F, W: With<F>> With<Vec<F>> for List<W> {
     fn shape() -> Shape {
         Shape::List(W::shape)
     }
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Vec<F>> {
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<Vec<F>> {
         let ValueRef::List(items) = v else {
             cx.expected(super::Expected::List, v);
             return None;
@@ -176,13 +184,14 @@ impl<F, W: With<F>> With<Vec<F>> for List<W> {
 }
 
 /// An object of any keys, each value through `W`.
+#[derive(Debug)]
 pub struct Values<W>(PhantomData<W>);
 
 impl<F, W: With<F>> With<BTreeMap<String, F>> for Values<W> {
     fn shape() -> Shape {
         Shape::Map(W::shape)
     }
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<BTreeMap<String, F>> {
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<BTreeMap<String, F>> {
         read_values::<F, W, _>(v, cx)
     }
     fn write(f: &BTreeMap<String, F>) -> Value {
@@ -194,7 +203,7 @@ impl<F, W: With<F>> With<HashMap<String, F>> for Values<W> {
     fn shape() -> Shape {
         Shape::Map(W::shape)
     }
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<HashMap<String, F>> {
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<HashMap<String, F>> {
         read_values::<F, W, _>(v, cx)
     }
     fn write(f: &HashMap<String, F>) -> Value {
@@ -205,7 +214,7 @@ impl<F, W: With<F>> With<HashMap<String, F>> for Values<W> {
 /// An object's entries (its notes left out), each value through `W`.
 fn read_values<F, W: With<F>, M: Default + Extend<(String, F)>>(
     v: &ValueRef<'_>,
-    cx: &mut Reader,
+    cx: &mut Reader<'_>,
 ) -> Option<M> {
     let map = cx.map(v)?;
     let mut out = M::default();
@@ -230,13 +239,14 @@ fn write_values<'a, F: 'a, W: With<F>>(
 }
 
 /// The field's own schema — `with` spelled out (`List<Plain>` for a `Vec<T: Schema>`).
+#[derive(Debug)]
 pub struct Plain;
 
 impl<F: Schema> With<F> for Plain {
     fn shape() -> Shape {
         F::shape()
     }
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<F> {
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<F> {
         F::read(v, cx)
     }
     fn write(f: &F) -> Value {
@@ -263,26 +273,28 @@ impl<F: Schema> With<F> for Plain {
 }
 
 /// Bytes as they are (`Vec<u8>`): a payload a format doesn't look into.
+#[derive(Debug)]
 pub struct Raw;
 
 impl With<Vec<u8>> for Raw {
     fn shape() -> Shape {
         Shape::Bytes
     }
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Vec<u8>> {
+    fn read(v: &ValueRef<'_>, cx: &mut Reader<'_>) -> Option<Vec<u8>> {
         match v {
             ValueRef::Bytes(b) => Some(b.to_vec()),
             // As text: `@bytes:<base64>`.
-            ValueRef::Str(s) => match crate::typed::classify(s)
-                .map_err(|e| cx.problem_of(crate::Problem::BadTyped, e.to_string()))
-                .ok()?
-            {
-                crate::typed::Spelled::Bytes(b) => Some(b),
-                _ => {
+            ValueRef::Str(s) => {
+                if let crate::typed::Spelled::Bytes(b) = crate::typed::classify(s)
+                    .map_err(|e| cx.problem_of(crate::Problem::BadTyped, e.to_string()))
+                    .ok()?
+                {
+                    Some(b)
+                } else {
                     cx.expected(super::Expected::Bytes, v);
                     None
                 }
-            },
+            }
             other => {
                 cx.expected(super::Expected::Bytes, other);
                 None
@@ -302,7 +314,7 @@ impl With<Vec<u8>> for Raw {
         p.put_bytes(f);
     }
     fn unpack(u: &mut Unpacker<'_>) -> Option<Vec<u8>> {
-        u.get_bytes().map(<[u8]>::to_vec)
+        u.bytes().map(<[u8]>::to_vec)
     }
     fn absent() -> Option<Vec<u8>> {
         Some(Vec::new())

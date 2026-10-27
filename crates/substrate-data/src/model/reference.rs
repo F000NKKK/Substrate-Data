@@ -14,6 +14,11 @@ pub struct KindName(Atom);
 
 impl KindName {
     /// `name` as a kind, if it's one.
+    ///
+    /// # Errors
+    ///
+    /// [`TypedError::BadKind`] when `name` isn't lower case letters, digits and `_`
+    /// starting with a letter.
     pub fn new(name: &str) -> Result<KindName, TypedError> {
         if Self::is_valid(name) {
             Ok(KindName(Atom::new(name)))
@@ -25,6 +30,7 @@ impl KindName {
     }
 
     /// A name `kind!` already checked at compile time.
+    #[must_use]
     pub fn declared(name: &'static str) -> KindName {
         debug_assert!(Self::is_valid(name), "`{name}` isn't a kind");
         KindName(Atom::new(name))
@@ -32,6 +38,7 @@ impl KindName {
 
     /// Whether `name` is a kind — at compile time too (`kind!` checks its
     /// names with it).
+    #[must_use]
     pub const fn is_valid(name: &str) -> bool {
         let b = name.as_bytes();
         if b.is_empty() || !b[0].is_ascii_lowercase() {
@@ -49,11 +56,13 @@ impl KindName {
     }
 
     /// As written.
+    #[must_use]
     pub fn as_str(self) -> &'static str {
         self.0.as_str()
     }
 
     /// Its number in this process's atom table.
+    #[must_use]
     pub fn atom(self) -> Atom {
         self.0
     }
@@ -104,6 +113,10 @@ pub struct RefKey(Box<str>);
 
 impl RefKey {
     /// `id` as a reference's id, if it's one.
+    ///
+    /// # Errors
+    ///
+    /// [`TypedError::BadId`] when `id` is empty or has whitespace or control characters.
     pub fn new(id: &str) -> Result<RefKey, TypedError> {
         if Self::is_valid(id) {
             Ok(RefKey(id.into()))
@@ -116,6 +129,7 @@ impl RefKey {
     }
 
     /// Whether `id` may be a reference's id.
+    #[must_use]
     pub fn is_valid(id: &str) -> bool {
         !id.is_empty() && !id.chars().any(|c| c.is_whitespace() || c.is_control())
     }
@@ -126,6 +140,7 @@ impl RefKey {
     }
 
     /// As written.
+    #[must_use]
     pub fn as_str(&self) -> &str {
         &self.0
     }

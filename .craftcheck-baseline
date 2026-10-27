@@ -1,0 +1,52 @@
+crates/substrate-data-derive/src/enums.rs	C101		1
+crates/substrate-data-derive/src/marker.rs	C108	Fallback	1
+crates/substrate-data/benches/messages.rs	C101		1
+crates/substrate-data/src/diagnostic.rs	C101		1
+crates/substrate-data/src/diagnostic.rs	C108	Code	1
+crates/substrate-data/src/diagnostic.rs	C108	Errors	1
+crates/substrate-data/src/diagnostic.rs	C108	Problem	1
+crates/substrate-data/src/diagnostic.rs	C108	Severity	1
+crates/substrate-data/src/forms/patch/format.rs	S701		2
+crates/substrate-data/src/forms/patch/rewrite.rs	S701		1
+crates/substrate-data/src/forms/text/parser.rs	C101		1
+crates/substrate-data/src/model/borrowed.rs	C108	MapRef	1
+crates/substrate-data/src/model/borrowed.rs	C108	ValueRef	1
+crates/substrate-data/src/model/reference.rs	C108	KindName	1
+crates/substrate-data/src/model/reference.rs	C108	RefKey	1
+crates/substrate-data/src/model/typed.rs	C108	Spelled	1
+crates/substrate-data/src/model/value.rs	C101		1
+crates/substrate-data/src/model/value.rs	C108	Path	1
+crates/substrate-data/src/model/value.rs	C108	Ref	1
+crates/substrate-data/src/model/value.rs	C108	Seg	1
+crates/substrate-data/src/names.rs	C108	Word	1
+crates/substrate-data/src/schema/format.rs	C108	Schema	1
+crates/substrate-data/src/schema/named_type.rs	C108	NamedShape	1
+crates/substrate-data/src/schema/reader/reader.rs	C101		1
+crates/substrate-data/src/schema/reader/reader.rs	C108	Step	1
+crates/substrate-data/src/schema/reader/resolve.rs	C108	Unresolved	1
+crates/substrate-data/src/schema/refs/kind.rs	C108	Kinds	1
+crates/substrate-data/src/schema/refs/read_ref.rs	S701		1
+crates/substrate-data/src/schema/shape.rs	C108	EnumShape	1
+crates/substrate-data/src/schema/shape.rs	C108	Field	1
+crates/substrate-data/src/schema/shape.rs	C108	StructShape	1
+crates/substrate-data/src/schema/shape.rs	C108	Variant	1
+crates/substrate-data/src/schema/with.rs	C101		1
+crates/substrate-data/src/schema/with.rs	C108	List	1
+crates/substrate-data/src/schema/with.rs	C108	Opt	1
+crates/substrate-data/src/schema/with.rs	C108	Plain	1
+crates/substrate-data/src/schema/with.rs	C108	Raw	1
+crates/substrate-data/src/schema/with.rs	C108	RefTo	1
+crates/substrate-data/src/schema/with.rs	C108	Spelled	1
+crates/substrate-data/src/schema/with.rs	C108	Values	1
+crates/substrate-data/src/sync.rs	C108	RwLock	1
+crates/substrate-data/src/wire/binary/decoder.rs	C101		1
+crates/substrate-data/src/wire/frame/unpacker.rs	C101		1
+crates/substrate-data/src/wire/frame/view.rs	C101		1
+crates/substrate-data/src/wire/frame/view.rs	C108	Floats	1
+crates/substrate-data/src/wire/frame/view.rs	C108	FromF64	1
+crates/substrate-data/src/wire/frame/view.rs	C108	Ints	1
+crates/substrate-data/src/wire/frame/view.rs	C108	List	1
+crates/substrate-data/src/wire/frame/view.rs	C108	ListIter	1
+crates/substrate-data/src/wire/stream.rs	C108	StreamWriter	1
+crates/substrate-data/tests/bus/frames.rs	C101		1
+crates/substrate-data/tests/codecs.rs	S701		1

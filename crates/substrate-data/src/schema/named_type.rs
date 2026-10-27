@@ -29,6 +29,7 @@ pub struct NamedShape {
 
 impl NamedShape {
     /// The shape of `T`.
+    #[must_use]
     pub fn of<T: NamedType>() -> NamedShape {
         NamedShape {
             name: T::NAME,
@@ -37,11 +38,13 @@ impl NamedShape {
     }
 
     /// What tools know it by.
+    #[must_use]
     pub fn name(&self) -> &'static str {
         self.name
     }
 
     /// What it's stored as.
+    #[must_use]
     pub fn stored(&self) -> Shape {
         (self.stored)()
     }

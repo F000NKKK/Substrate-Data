@@ -1,9 +1,8 @@
 //! [`ShapeDoc`]: a whole shape as data — its root and the definitions of
 //! the structs and enums in it.
 
-use super::DefinitionDoc;
-use super::ShapeNode;
 use super::definitions::Definitions;
+use super::{DefinitionDoc, ShapeNode};
 use crate::schema::{Ordered, Shape};
 
 /// A shape as data: written `{ root, defs }`, structs and enums once in
@@ -18,6 +17,7 @@ pub struct ShapeDoc {
 
 impl ShapeDoc {
     /// `shape` described.
+    #[must_use]
     pub fn of(shape: &Shape) -> ShapeDoc {
         let mut defs = Definitions::default();
         let root = ShapeNode::of(shape, &mut defs);
@@ -28,6 +28,7 @@ impl ShapeDoc {
     }
 
     /// The definition named `name`.
+    #[must_use]
     pub fn definition(&self, name: &str) -> Option<&DefinitionDoc> {
         self.defs.0.iter().find(|(n, _)| n == name).map(|(_, d)| d)
     }

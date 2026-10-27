@@ -3,8 +3,20 @@
 //! small, a medium and a large message — against a hand-written byte
 //! layout of the same data, the ceiling for any encoding.
 
-use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
+#![expect(
+    missing_docs,
+    reason = "criterion_group! makes an undocumented function"
+)]
+#![expect(
+    clippy::unwrap_used,
+    clippy::cast_possible_truncation,
+    clippy::cast_precision_loss,
+    reason = "a benchmark: fixed inputs that always decode, generated numbers in range"
+)]
+
 use std::hint::black_box;
+
+use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
 use substrate_data::Schema;
 
 #[derive(Schema, Clone, PartialEq, Debug)]
@@ -16,7 +28,7 @@ struct Point {
 
 /// Small: a user's profile.
 #[derive(Schema, Clone, PartialEq, Debug)]
-struct UserInfo {
+struct UserCard {
     role_id: String,
     region: String,
     home: Point,
@@ -141,8 +153,8 @@ fn chain() -> Node {
 const GRID_SIDE: usize = 32;
 const CART_LINES: u32 = 41;
 
-fn user() -> UserInfo {
-    UserInfo {
+fn user() -> UserCard {
+    UserCard {
         role_id: "core:editor".into(),
         region: "core:eu_west".into(),
         home: Point {
@@ -192,12 +204,12 @@ fn encode_via_value<T: Schema>(v: &T) -> Vec<u8> {
 
 /// The hand-written layout: little-endian numbers, strings a u16 length.
 mod raw {
-    pub fn str(o: &mut Vec<u8>, s: &str) {
+    pub(crate) fn str(o: &mut Vec<u8>, s: &str) {
         o.extend_from_slice(&(s.len() as u16).to_le_bytes());
         o.extend_from_slice(s.as_bytes());
     }
 
-    pub fn user(e: &super::UserInfo) -> Vec<u8> {
+    pub(crate) fn user(e: &super::UserCard) -> Vec<u8> {
         let mut o = Vec::with_capacity(96);
         str(&mut o, &e.role_id);
         str(&mut o, &e.region);
@@ -209,7 +221,7 @@ mod raw {
         o
     }
 
-    pub fn grid(a: &super::Grid) -> Vec<u8> {
+    pub(crate) fn grid(a: &super::Grid) -> Vec<u8> {
         let mut o = Vec::with_capacity(a.cells.len() * 2 + 64);
         for p in &a.legend {
             str(&mut o, p);
@@ -232,13 +244,13 @@ fn case<T: Schema + PartialEq + std::fmt::Debug>(
     let mut g = c.benchmark_group(name);
     g.throughput(Throughput::Bytes(bytes.len() as u64));
     g.bench_function(BenchmarkId::new("encode", bytes.len()), |b| {
-        b.iter(|| encode(black_box(v)))
+        b.iter(|| encode(black_box(v)));
     });
     g.bench_function(BenchmarkId::new("encode via value", bytes.len()), |b| {
-        b.iter(|| encode_via_value(black_box(v)))
+        b.iter(|| encode_via_value(black_box(v)));
     });
     g.bench_function(BenchmarkId::new("decode", bytes.len()), |b| {
-        b.iter(|| substrate_data::read_bytes::<T>(black_box(&bytes)).unwrap())
+        b.iter(|| substrate_data::read_bytes::<T>(black_box(&bytes)).unwrap());
     });
     g.bench_function(BenchmarkId::new("decode via value", bytes.len()), |b| {
         b.iter(|| {
@@ -247,11 +259,11 @@ fn case<T: Schema + PartialEq + std::fmt::Debug>(
                 &substrate_data::binary::decode_ref(black_box(&bytes), &arena).unwrap(),
             )
             .unwrap()
-        })
+        });
     });
     if let Some(raw) = raw {
         g.bench_function(BenchmarkId::new("raw encode", raw(v).len()), |b| {
-            b.iter(|| raw(black_box(v)))
+            b.iter(|| raw(black_box(v)));
         });
     }
     g.finish();
@@ -271,11 +283,11 @@ fn bench(c: &mut Criterion) {
             entries()
                 .into_iter()
                 .collect::<substrate_data::Stream<Entry>>()
-        })
+        });
     });
     c.bench_function("entries_vec_10k/build from items", |b| b.iter(entries));
     c.bench_function("entries_stream_10k/read all items", |b| {
-        b.iter(|| black_box(&stream).items.iter().count())
+        b.iter(|| black_box(&stream).items.iter().count());
     });
     case(c, "strings_unique", &strings(MANY), None);
     case(c, "strings_repeated", &strings(FEW_KINDS), None);
@@ -304,7 +316,7 @@ fn bench(c: &mut Criterion) {
     }
     let bytes = substrate_data::binary::encode(&unknown);
     c.bench_function("unknown_field/decode (fails, says why)", |b| {
-        b.iter(|| substrate_data::read_bytes::<UserInfo>(black_box(&bytes)).unwrap_err())
+        b.iter(|| substrate_data::read_bytes::<UserCard>(black_box(&bytes)).unwrap_err());
     });
 }
 

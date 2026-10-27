@@ -21,8 +21,11 @@ pub enum Problem {
     NotAReference,
     /// A reference to another kind than its field takes.
     WrongKind,
+    /// A key the type doesn't have.
     UnknownField,
+    /// A required field that isn't there.
     MissingField,
+    /// A number outside its field's range.
     OutOfRange,
     /// A string written as a typed value that isn't one (`@File:x`).
     BadTyped,
@@ -53,6 +56,7 @@ impl Problem {
     ];
 
     /// Its stable code: `SD0000` …
+    #[must_use]
     pub const fn code(self) -> &'static str {
         match self {
             Problem::Invalid => "SD0000",
@@ -71,6 +75,7 @@ impl Problem {
     }
 
     /// The problem a code names, if it's one of this crate's.
+    #[must_use]
     pub fn of_code(code: &str) -> Option<Problem> {
         Problem::ALL.into_iter().find(|p| p.code() == code)
     }
@@ -87,7 +92,9 @@ impl fmt::Display for Problem {
 /// in every form.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Code {
+    /// One of this crate's problems (`SD0001`).
     Data(Problem),
+    /// A tool's own code (`E0308`).
     Tool(Atom),
 }
 
@@ -98,17 +105,19 @@ impl Code {
     }
 
     /// As written: `SD0001`, `E0308`.
-    pub fn as_str(&self) -> &'static str {
+    #[must_use]
+    pub fn as_str(self) -> &'static str {
         match self {
             Code::Data(p) => p.code(),
             Code::Tool(a) => a.as_str(),
         }
     }
 
-    fn atom(&self) -> Atom {
+    /// As an atom: what the code is written as.
+    fn atom(self) -> Atom {
         match self {
             Code::Data(p) => Atom::new(p.code()),
-            Code::Tool(a) => *a,
+            Code::Tool(a) => a,
         }
     }
 }
@@ -142,7 +151,7 @@ impl Schema for Code {
     fn shape() -> crate::Shape {
         Atom::shape()
     }
-    fn read(v: &crate::ValueRef<'_>, cx: &mut crate::Reader) -> Option<Self> {
+    fn read(v: &crate::ValueRef<'_>, cx: &mut crate::Reader<'_>) -> Option<Self> {
         Atom::read(v, cx).map(Code::tool)
     }
     fn write(&self) -> crate::Value {
@@ -165,9 +174,12 @@ impl Schema for Code {
 /// How bad it is.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Schema)]
 pub enum Severity {
+    /// It's wrong: the document isn't read.
     #[default]
     Error,
+    /// It may be wrong.
     Warning,
+    /// Something worth knowing.
     Note,
 }
 
@@ -175,10 +187,12 @@ pub enum Severity {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Schema)]
 #[data(rename_all = "camelCase")]
 pub struct Diagnostic {
+    /// How bad it is.
     pub severity: Severity,
     /// What it is: one of this crate's [`Problem`]s (`SD0001`) or a
     /// tool's own code (`E0308`, a lint's name); none until it's known.
     pub code: Option<Code>,
+    /// What's wrong, for a person.
     pub message: String,
     /// The file it's in.
     pub file: Option<Atom>,
@@ -190,8 +204,11 @@ pub struct Diagnostic {
     pub on_key: bool,
     /// 1-based.
     pub line: Option<u32>,
+    /// Its 1-based column, when known.
     pub col: Option<u32>,
+    /// The line it ends on, when known.
     pub end_line: Option<u32>,
+    /// The column it ends at, when known.
     pub end_col: Option<u32>,
     /// Who found it, when not the tool itself (`rustc`, `cargo`).
     pub tool: Option<Atom>,
@@ -208,6 +225,7 @@ impl Diagnostic {
         Self::of(Severity::Warning, code, message)
     }
 
+    /// A diagnostic of `severity`, `code` and `message`, not yet placed.
     pub fn of(severity: Severity, code: impl Into<Code>, message: impl fmt::Display) -> Self {
         Diagnostic {
             severity,
@@ -218,6 +236,7 @@ impl Diagnostic {
     }
 
     /// Text that doesn't parse, where it stops.
+    #[must_use]
     pub fn syntax(e: SyntaxError) -> Self {
         Self::error(Problem::Syntax, e.message).at(e.at)
     }
@@ -272,6 +291,8 @@ impl Diagnostic {
         self
     }
 
+    /// Whether it's an error.
+    #[must_use]
     pub fn is_error(&self) -> bool {
         self.severity == Severity::Error
     }
@@ -365,17 +386,17 @@ mod tests {
             Diagnostic::from("bad")
                 .or_code(Atom::new("XY0004"))
                 .code
-                .map(|c| c.as_str()),
+                .map(Code::as_str),
             Some("XY0004")
         );
         // A crate code read back is its problem, typed.
-        let d = Diagnostic::error(Problem::MissingField, "missing `id`");
-        let mut bytes = Vec::new();
-        crate::io::write_frame(&mut bytes, &d).unwrap();
-        let back: Diagnostic = crate::io::read_frame(&mut bytes.as_slice())
+        let missing = Diagnostic::error(Problem::MissingField, "missing `id`");
+        let mut framed = Vec::new();
+        crate::io::write_frame(&mut framed, &missing).unwrap();
+        let read_back: Diagnostic = crate::io::read_frame(&mut framed.as_slice())
             .unwrap()
             .unwrap();
-        assert_eq!(back.code, Some(Code::Data(Problem::MissingField)));
+        assert_eq!(read_back.code, Some(Code::Data(Problem::MissingField)));
         assert_eq!(Code::tool(Atom::new("SD0006")), Problem::MissingField);
         assert!(
             Problem::ALL

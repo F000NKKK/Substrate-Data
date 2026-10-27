@@ -25,22 +25,21 @@ pub mod names;
 mod sync;
 mod wire;
 
+pub use atom::Atom;
+pub use bumpalo::Bump;
+pub use diagnostic::{Code, Diagnostic, Errors, Problem, Severity};
 #[cfg(feature = "json")]
 pub use forms::json;
 #[cfg(feature = "toml")]
 pub use forms::toml;
 pub use forms::{patch, source, text};
-pub use model::{atom, typed};
-pub use schema::with;
-pub use wire::{binary, frame, io};
-
-pub use atom::Atom;
-pub use bumpalo::Bump;
-pub use diagnostic::{Code, Diagnostic, Errors, Problem, Severity};
 pub use model::borrowed::{MapRef, ValueRef};
 pub use model::value::{KindName, Map, Path, Ref, RefKey, Seg, Value, ValueKind};
+pub use model::{atom, typed};
+pub use schema::with;
 pub use text::{Doc, LineCol, Span, Spans, SyntaxError};
 pub use wire::stream::{Stream, StreamWriter};
+pub use wire::{binary, frame, io};
 pub mod schema;
 
 pub use schema::{

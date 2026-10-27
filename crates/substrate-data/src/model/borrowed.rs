@@ -6,22 +6,32 @@
 
 use bumpalo::Bump;
 
+use crate::model::number::{int_to_f64, whole_to_i64};
 use crate::model::value::{KindName, Map, Ref, RefKey, Value, ValueKind};
 
 /// A borrowed [`Value`]: the same cases, strings `&'a str`, lists and maps slices.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ValueRef<'a> {
+    /// Nothing.
     Null,
+    /// `true` or `false`.
     Bool(bool),
+    /// An integer.
     Int(i64),
+    /// A number with a fraction or an exponent.
     Float(f64),
+    /// A string, as spelled.
     Str(&'a str),
+    /// A list, in the arena.
     List(&'a [ValueRef<'a>]),
+    /// A map, in the arena.
     Map(MapRef<'a>),
     /// `@file:images/logo.png`: its kind checked, its id as written
     /// (checked where it was read).
     Ref {
+        /// Its kind.
         kind: KindName,
+        /// Its id, as written.
         id: &'a str,
     },
     /// Bytes as they are.
@@ -33,29 +43,40 @@ pub enum ValueRef<'a> {
 pub struct MapRef<'a>(pub &'a [(&'a str, ValueRef<'a>)]);
 
 impl<'a> MapRef<'a> {
-    pub fn get(&self, key: &str) -> Option<&'a ValueRef<'a>> {
+    /// The value of `key`.
+    #[must_use]
+    pub fn get(self, key: &str) -> Option<&'a ValueRef<'a>> {
         self.0.iter().find(|(k, _)| *k == key).map(|(_, v)| v)
     }
 
-    pub fn iter(&self) -> impl ExactSizeIterator<Item = (&'a str, &'a ValueRef<'a>)> + 'a {
+    /// The entries, in order.
+    #[must_use]
+    pub fn iter(self) -> impl ExactSizeIterator<Item = (&'a str, &'a ValueRef<'a>)> + 'a {
         self.0.iter().map(|(k, v)| (*k, v))
     }
 
-    pub fn keys(&self) -> impl ExactSizeIterator<Item = &'a str> + 'a {
+    /// The keys, in order.
+    #[must_use]
+    pub fn keys(self) -> impl ExactSizeIterator<Item = &'a str> + 'a {
         self.0.iter().map(|(k, _)| *k)
     }
 
-    pub fn len(&self) -> usize {
+    /// How many entries.
+    #[must_use]
+    pub fn len(self) -> usize {
         self.0.len()
     }
 
-    pub fn is_empty(&self) -> bool {
+    /// Whether it has no entries.
+    #[must_use]
+    pub fn is_empty(self) -> bool {
         self.0.is_empty()
     }
 }
 
 impl<'a> ValueRef<'a> {
     /// Which case it is.
+    #[must_use]
     pub fn kind(&self) -> ValueKind {
         match self {
             ValueRef::Null => ValueKind::Null,
@@ -70,10 +91,14 @@ impl<'a> ValueRef<'a> {
         }
     }
 
+    /// Whether it's null.
+    #[must_use]
     pub fn is_null(&self) -> bool {
         matches!(self, ValueRef::Null)
     }
 
+    /// The bool, if it's one.
+    #[must_use]
     pub fn as_bool(&self) -> Option<bool> {
         match self {
             ValueRef::Bool(b) => Some(*b),
@@ -81,22 +106,28 @@ impl<'a> ValueRef<'a> {
         }
     }
 
+    /// The integer, if it's one (a float with no fraction is).
+    #[must_use]
     pub fn as_i64(&self) -> Option<i64> {
         match self {
             ValueRef::Int(n) => Some(*n),
-            ValueRef::Float(f) if f.fract() == 0.0 && f.abs() < 9.0e15 => Some(*f as i64),
+            ValueRef::Float(f) => whole_to_i64(*f),
             _ => None,
         }
     }
 
+    /// The number, if it's one.
+    #[must_use]
     pub fn as_f64(&self) -> Option<f64> {
         match self {
-            ValueRef::Int(n) => Some(*n as f64),
+            ValueRef::Int(n) => Some(int_to_f64(*n)),
             ValueRef::Float(f) => Some(*f),
             _ => None,
         }
     }
 
+    /// The string, if it's one.
+    #[must_use]
     pub fn as_str(&self) -> Option<&'a str> {
         match self {
             ValueRef::Str(s) => Some(s),
@@ -104,6 +135,8 @@ impl<'a> ValueRef<'a> {
         }
     }
 
+    /// The list, if it's one.
+    #[must_use]
     pub fn as_list(&self) -> Option<&'a [ValueRef<'a>]> {
         match self {
             ValueRef::List(l) => Some(l),
@@ -111,6 +144,8 @@ impl<'a> ValueRef<'a> {
         }
     }
 
+    /// The map, if it's one.
+    #[must_use]
     pub fn as_map(&self) -> Option<MapRef<'a>> {
         match self {
             ValueRef::Map(m) => Some(*m),
@@ -119,19 +154,21 @@ impl<'a> ValueRef<'a> {
     }
 
     /// `self[key]` of a map, `None` for anything else.
+    #[must_use]
     pub fn get(&self, key: &str) -> Option<&'a ValueRef<'a>> {
         self.as_map()?.get(key)
     }
 
     /// An owned copy.
-    pub fn to_value(&self) -> Value {
-        match *self {
+    #[must_use]
+    pub fn to_value(self) -> Value {
+        match self {
             ValueRef::Null => Value::Null,
             ValueRef::Bool(b) => Value::Bool(b),
             ValueRef::Int(n) => Value::Int(n),
             ValueRef::Float(f) => Value::Float(f),
             ValueRef::Str(s) => Value::Str(s.to_string()),
-            ValueRef::List(l) => Value::List(l.iter().map(ValueRef::to_value).collect()),
+            ValueRef::List(l) => Value::List(l.iter().map(|v| v.to_value()).collect()),
             ValueRef::Map(m) => {
                 let mut out = Map::with_capacity(m.len());
                 for (k, v) in m.iter() {
@@ -145,8 +182,9 @@ impl<'a> ValueRef<'a> {
     }
 
     /// The reference of a `Ref`, owned.
-    pub fn to_ref(&self) -> Option<Ref> {
-        match *self {
+    #[must_use]
+    pub fn to_ref(self) -> Option<Ref> {
+        match self {
             ValueRef::Ref { kind, id } => Some(Ref::new(kind, RefKey::spelled(id))),
             _ => None,
         }

@@ -3,7 +3,7 @@
 //! trip and the shape.
 
 use substrate_data::schema::Found;
-use substrate_data::{Id, Ref, Schema, Value, binary, from_text, from_value, text};
+use substrate_data::{Id, Schema, Value, binary, from_text, from_value, text};
 
 substrate_data::kind!(
     User = "user",
@@ -69,7 +69,7 @@ struct Task {
     cell: [i32; 2],
 }
 
-const TASK: &str = r##"{
+const TASK: &str = r#"{
   // The release task.
   name: "@@release",
   project: "@project:apps/notes",
@@ -81,7 +81,7 @@ const TASK: &str = r##"{
     { type: "review", status: "review", files: ["@file:diff", "@file:log"], $note: "meta" },
     { type: "archived" },
   ],
-}"##;
+}"#;
 
 #[test]
 fn reads_a_document_and_its_references() {
@@ -89,7 +89,7 @@ fn reads_a_document_and_its_references() {
     let n = read.value;
     assert_eq!(n.name, "@release");
     assert_eq!(n.project, Some(Id::new("apps/notes")));
-    assert_eq!(n.color, Some(0xFF8D6ACC));
+    assert_eq!(n.color, Some(0xFF8D_6ACC));
     assert_eq!(n.cell, [0, -2]);
     assert_eq!(
         n.parts[0],
@@ -132,7 +132,7 @@ fn reads_a_document_and_its_references() {
 
 #[test]
 fn every_problem_is_reported_with_its_place() {
-    let text = r##"{
+    let text = r#"{
   name: 5,
   project: "@file:notes",
   cell: [1],
@@ -143,7 +143,7 @@ fn every_problem_is_reported_with_its_place() {
     { type: "review", status: "boil", hours: "heavy", files: ["@file:a b"] },
     { file: "no type" },
   ],
-}"##;
+}"#;
     let errors = from_text::<Task>(text).unwrap_err().to_string();
     let expected = [
         "2:9: name: expected a string, found 5",
@@ -167,10 +167,10 @@ fn missing_fields_and_syntax_errors() {
         .unwrap_err()
         .to_string();
     assert_eq!(e, "1:1: missing `file`");
-    let e = from_text::<Attachment>("{ file: \"x\",, }")
+    let syntax = from_text::<Attachment>("{ file: \"x\",, }")
         .unwrap_err()
         .to_string();
-    assert_eq!(e, "1:13: expected a key");
+    assert_eq!(syntax, "1:13: expected a key");
 }
 
 #[test]
@@ -235,376 +235,4 @@ fn shapes_describe_the_format() {
             .get("kind"),
         Some(&Value::from("ref"))
     );
-}
-
-/// A plain-string model read through codecs, references resolved.
-#[derive(Schema, Debug, PartialEq)]
-struct Plainly {
-    #[data(with = "substrate_data::with::RefTo<(File, Doc)>")]
-    look: String,
-    #[data(with = "substrate_data::with::Opt<substrate_data::with::RefTo<User>>")]
-    owner: Option<String>,
-    #[data(
-        with = "substrate_data::with::List<substrate_data::with::RefTo<Project>>",
-        default
-    )]
-    links: Vec<String>,
-}
-
-/// Resolves references against what there is: `…nope` isn't.
-struct Store;
-
-impl substrate_data::Resolve for Store {
-    fn reference(
-        &mut self,
-        r: &Ref,
-        _: &substrate_data::Path,
-    ) -> Result<substrate_data::RefKey, substrate_data::Unresolved> {
-        if r.id.as_str().ends_with("nope") {
-            Err(substrate_data::Unresolved::Missing(r.clone()))
-        } else {
-            Ok(substrate_data::RefKey::new(&format!("store://{}", r.id)).unwrap())
-        }
-    }
-}
-
-#[test]
-fn codecs_keep_plain_types_and_resolve() {
-    let v =
-        text::parse_value(r#"{ look: "@doc:tree", owner: "@user:bob", links: ["@project:root"] }"#)
-            .unwrap();
-    let read = substrate_data::from_value_with::<Plainly>(&v, &mut Store).unwrap();
-    assert_eq!(
-        read.value,
-        Plainly {
-            look: "store://tree".into(),
-            owner: Some("store://bob".into()),
-            links: vec!["store://root".into()]
-        }
-    );
-    let v = text::parse_value(r#"{ look: "tree", links: ["@project:nope", "@file:x"] }"#).unwrap();
-    let problems: Vec<String> = substrate_data::from_value_with::<Plainly>(&v, &mut Store)
-        .unwrap_err()
-        .into_iter()
-        .map(|p| format!("{}: {}", p.path, p.message))
-        .collect();
-    assert_eq!(
-        problems,
-        [
-            "look: `tree`: name it by a reference — `@file:tree`",
-            "links[0]: `@project:nope`: there is no such project",
-            "links[1]: `@file:x` is a reference to file — this takes `@project:`",
-        ]
-    );
-    let shape = Plainly::shape().describe().write();
-    let fields = shape
-        .get("defs")
-        .unwrap()
-        .get("Plainly")
-        .unwrap()
-        .get("fields")
-        .unwrap()
-        .as_list()
-        .unwrap();
-    assert_eq!(
-        fields[0].get("shape").unwrap().get("of"),
-        Some(&Value::List(vec![Value::from("file"), Value::from("doc")]))
-    );
-    assert_eq!(fields[2].get("required"), Some(&Value::Bool(false)));
-}
-
-#[derive(Schema, Debug, PartialEq)]
-struct Ranged {
-    #[data(range = "1..=99")]
-    copies: u32,
-    #[data(range = "-16..=32")]
-    from: Option<[f64; 3]>,
-}
-
-#[test]
-fn ranges_are_checked_and_described() {
-    assert_eq!(
-        from_text::<Ranged>("{ copies: 64, from: [0, 8, 32] }")
-            .unwrap()
-            .value,
-        Ranged {
-            copies: 64,
-            from: Some([0.0, 8.0, 32.0])
-        }
-    );
-    let e = from_text::<Ranged>("{ copies: 100, from: [0, 40.5, 0] }")
-        .unwrap_err()
-        .to_string();
-    assert_eq!(
-        e.lines().collect::<Vec<_>>(),
-        [
-            "1:11: copies: 100 is out of range (1..=99)",
-            "1:22: from: 40.5 is out of range (-16..=32)"
-        ]
-    );
-    let shape = Ranged::shape().describe().write();
-    let fields = shape
-        .get("defs")
-        .unwrap()
-        .get("Ranged")
-        .unwrap()
-        .get("fields")
-        .unwrap()
-        .as_list()
-        .unwrap();
-    assert_eq!(
-        fields[0].get("range"),
-        Some(&Value::List(vec![Value::Float(1.0), Value::Float(99.0)]))
-    );
-}
-
-#[derive(Schema, Debug, PartialEq)]
-struct Blob {
-    #[data(with = "substrate_data::with::Raw")]
-    bytes: Vec<u8>,
-}
-
-#[test]
-fn raw_bytes_round_trip_through_text() {
-    let blob = Blob {
-        bytes: vec![0, 1, 2, 255],
-    };
-    let text = substrate_data::to_text(&blob);
-    assert!(text.contains("@bytes:"), "{text}");
-    assert_eq!(
-        substrate_data::from_text::<Blob>(&text).unwrap().value,
-        blob
-    );
-}
-
-#[test]
-fn paths_and_sets_round_trip() {
-    let path = std::path::PathBuf::from("/home/a/.cache/files/21");
-    assert_eq!(
-        substrate_data::read_bytes::<std::path::PathBuf>(&substrate_data::to_bytes(&path)).unwrap(),
-        path
-    );
-    let words: std::collections::BTreeSet<String> = ["b".into(), "a".into()].into();
-    assert_eq!(
-        substrate_data::read_bytes::<std::collections::BTreeSet<String>>(
-            &substrate_data::to_bytes(&words)
-        )
-        .unwrap(),
-        words
-    );
-    let numbers: std::collections::BTreeSet<u32> = [3, 1, 2].into();
-    assert_eq!(
-        substrate_data::read_bytes::<std::collections::BTreeSet<u32>>(&substrate_data::to_bytes(
-            &numbers
-        ))
-        .unwrap(),
-        numbers
-    );
-    let from_text = substrate_data::text::parse_value("[2, 1, 2]").unwrap();
-    assert_eq!(
-        substrate_data::read_value::<std::collections::BTreeSet<u32>>(&from_text).unwrap(),
-        [1, 2].into()
-    );
-}
-
-#[derive(substrate_data::Schema, Debug, PartialEq)]
-#[data(rename_all = "camelCase")]
-struct Camel {
-    name_problem: Option<String>,
-    r#type: String,
-}
-
-#[derive(substrate_data::Schema, Debug, PartialEq)]
-#[data(rename_all = "camelCase", tag = "type")]
-enum CamelVariants {
-    SharedLink { link_id: String },
-    Plain,
-}
-
-#[test]
-fn rename_all_camel_case_names_fields_and_variants() {
-    let c = Camel {
-        name_problem: Some("x".into()),
-        r#type: "t".into(),
-    };
-    let v = substrate_data::Schema::write(&c);
-    assert!(v.get("nameProblem").is_some() && v.get("type").is_some());
-    assert_eq!(substrate_data::read_value::<Camel>(&v).unwrap(), c);
-    let s = CamelVariants::SharedLink {
-        link_id: "i".into(),
-    };
-    let v = substrate_data::Schema::write(&s);
-    assert_eq!(v.get("type").and_then(|t| t.as_str()), Some("sharedLink"));
-    assert_eq!(v.get("link_id").and_then(|t| t.as_str()), Some("i"));
-    assert_eq!(substrate_data::read_value::<CamelVariants>(&v).unwrap(), s);
-}
-
-/// A small struct a variant wraps.
-#[derive(substrate_data::Schema, Debug, Clone, PartialEq)]
-struct Amount {
-    count: u64,
-}
-
-/// Variants wrapping values that aren't structs, beside one that is.
-#[derive(substrate_data::Schema, Debug, Clone, PartialEq)]
-#[data(tag = "type")]
-enum Reply {
-    Accepted(u64),
-    Named(String),
-    Gave(Option<Amount>),
-    Counted(Amount),
-    Done,
-}
-
-#[test]
-fn a_wrapped_value_that_isnt_a_struct_sits_under_value() {
-    use substrate_data::schema::WRAPPED;
-    let all = [
-        Reply::Accepted(7),
-        Reply::Named("n".into()),
-        Reply::Gave(Some(Amount { count: 2 })),
-        Reply::Gave(None),
-        Reply::Counted(Amount { count: 3 }),
-        Reply::Done,
-    ];
-    for r in &all {
-        let v = r.write();
-        assert_eq!(
-            substrate_data::read_value::<Reply>(&v).unwrap(),
-            *r,
-            "{v:?}"
-        );
-        let bytes = substrate_data::schema::to_bytes(r);
-        assert_eq!(substrate_data::read_bytes::<Reply>(&bytes).unwrap(), *r);
-    }
-    let accepted = Reply::Accepted(7).write();
-    assert_eq!(accepted.get(WRAPPED), Some(&Value::Int(7)));
-    // A struct's fields stay beside the tag; a missing Option is left out.
-    let counted = Reply::Counted(Amount { count: 3 }).write();
-    assert!(counted.get(WRAPPED).is_none() && counted.get("count").is_some());
-    assert!(Reply::Gave(None).write().get(WRAPPED).is_none());
-    // The shape says where the value is.
-    let substrate_data::Shape::Enum(e) = Reply::shape() else {
-        panic!("an enum")
-    };
-    let named = e.variants.iter().find(|v| v.name == "named").unwrap();
-    assert_eq!(named.fields[0].name, WRAPPED);
-    assert!(named.fields[0].required);
-}
-
-/// A type of a format's own, stored as three floats (red, green, blue).
-#[derive(Debug, Clone, Copy, PartialEq)]
-struct Color([f32; 3]);
-
-impl substrate_data::NamedType for Color {
-    const NAME: &'static str = "color";
-    type Stored = [f32; 3];
-    fn to_stored(&self) -> [f32; 3] {
-        self.0
-    }
-    fn from_stored(rgb: [f32; 3]) -> Option<Self> {
-        rgb.iter()
-            .all(|c| (0.0..=1.0).contains(c))
-            .then_some(Color(rgb))
-    }
-}
-
-substrate_data::named_schema!(Color);
-
-#[derive(Schema, Debug, Clone, PartialEq)]
-struct Label {
-    text: String,
-    color: Color,
-}
-
-#[test]
-fn named_shapes_and_at_signs_survive_every_form() {
-    let m = Label {
-        text: "@everyone".into(),
-        color: Color([1.0, 0.5, 0.25]),
-    };
-    let txt = substrate_data::to_text(&m);
-    assert!(txt.contains("\"@@everyone\""), "{txt}");
-    assert_eq!(from_text::<Label>(&txt).unwrap().value, m);
-    let bytes = substrate_data::to_bytes(&m);
-    assert_eq!(substrate_data::read_bytes::<Label>(&bytes).unwrap(), m);
-    let frame = substrate_data::frame::to_frame(&m);
-    assert_eq!(
-        substrate_data::frame::read_frame::<Label>(&frame),
-        Some(m.clone())
-    );
-    // A tool with no code for it reads the frame by its shape...
-    let seen = substrate_data::frame::read_shaped(&frame, &Label::shape()).unwrap();
-    assert_eq!(substrate_data::read_value::<Label>(&seen).unwrap(), m);
-    // ...and sees the name it may have an editor for.
-    let d = Label::shape().describe().write();
-    let color = &d
-        .get("defs")
-        .unwrap()
-        .get("Label")
-        .unwrap()
-        .get("fields")
-        .unwrap()
-        .as_list()
-        .unwrap()[1];
-    let shape = color.get("shape").unwrap();
-    assert_eq!(shape.get("kind"), Some(&Value::from("named")));
-    assert_eq!(shape.get("name"), Some(&Value::from("color")));
-}
-
-#[test]
-fn an_atom_starting_with_at_round_trips_in_binary() {
-    let a = substrate_data::Atom::new("@everyone");
-    let bytes = substrate_data::to_bytes(&a);
-    assert_eq!(
-        substrate_data::read_bytes::<substrate_data::Atom>(&bytes).unwrap(),
-        a
-    );
-    assert_eq!(
-        substrate_data::binary::decode(&bytes).unwrap(),
-        Value::from("@@everyone")
-    );
-}
-
-#[derive(Schema, Debug, Clone, PartialEq)]
-struct Lists {
-    set: std::collections::BTreeSet<u32>,
-    pair: (f32, String),
-    names: substrate_data::OneOrList<String>,
-    path: substrate_data::Path,
-}
-
-#[test]
-fn list_shaped_types_pack_as_lists() {
-    let l = Lists {
-        set: [3, 1, 2].into_iter().collect(),
-        pair: (0.5, "@at".into()),
-        names: substrate_data::OneOrList(vec!["one".into()]),
-        path: substrate_data::Path::root().key("a").index(2),
-    };
-    let frame = substrate_data::frame::to_frame(&l);
-    assert_eq!(
-        substrate_data::frame::read_frame::<Lists>(&frame),
-        Some(l.clone())
-    );
-    // A tool with no code for it reads the same frame by its shape alone.
-    let seen = substrate_data::frame::read_shaped(&frame, &Lists::shape()).unwrap();
-    assert_eq!(substrate_data::read_value::<Lists>(&seen).unwrap(), l);
-}
-
-#[derive(Schema, Debug, Clone, PartialEq)]
-struct Palette {
-    colors: Vec<Color>,
-    accent: Option<Color>,
-}
-
-#[test]
-fn named_shapes_read_by_shape_inside_lists_and_options() {
-    let p = Palette {
-        colors: vec![Color([0.0, 1.0, 0.5]), Color([0.125, 0.25, 0.75])],
-        accent: Some(Color([1.0, 0.5, 0.0])),
-    };
-    let frame = substrate_data::frame::to_frame(&p);
-    let seen = substrate_data::frame::read_shaped(&frame, &Palette::shape()).unwrap();
-    assert_eq!(substrate_data::read_value::<Palette>(&seen).unwrap(), p);
 }

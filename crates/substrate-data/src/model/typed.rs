@@ -11,10 +11,10 @@
 
 use std::fmt;
 
+use base64::Engine as _;
+
 use crate::model::value::{KindName, Ref, Value, ValueKind};
 use crate::names::TYPED;
-
-use base64::Engine as _;
 
 /// The kind word of bytes written as text (`@bytes:…`); no reference has it.
 const BYTES: &str = "bytes";
@@ -24,12 +24,15 @@ const BYTES: &str = "bytes";
 pub enum Spelled {
     /// Plain text (its `@@` escape undone).
     Plain(String),
+    /// A reference.
     Ref(Ref),
+    /// Bytes.
     Bytes(Vec<u8>),
 }
 
 impl Spelled {
     /// Which value it is, for messages.
+    #[must_use]
     pub fn kind(&self) -> ValueKind {
         match self {
             Spelled::Plain(_) => ValueKind::Str,
@@ -39,6 +42,7 @@ impl Spelled {
     }
 
     /// As a value (plain text as spelled again: a leading `@` doubled).
+    #[must_use]
     pub fn into_value(self) -> Value {
         match self {
             Spelled::Plain(s) => Value::Str(escape_at(&s)),
@@ -50,13 +54,28 @@ impl Spelled {
 
 /// A string written as a typed value that isn't one.
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[expect(
+    clippy::module_name_repetitions,
+    reason = "re-exported at the crate root, where `Error` alone would say nothing"
+)]
 pub enum TypedError {
     /// No `kind:` (`@logo`).
-    NoKind { spelled: String },
+    NoKind {
+        /// The string as written.
+        spelled: String,
+    },
     /// A kind that isn't one (`@File:x`).
-    BadKind { kind: String },
+    BadKind {
+        /// The kind as written.
+        kind: String,
+    },
     /// An id that isn't one (`@file:a b`), of `kind` when it's known.
-    BadId { kind: Option<KindName>, id: String },
+    BadId {
+        /// Its reference's kind, when it's known.
+        kind: Option<KindName>,
+        /// The id as written.
+        id: String,
+    },
     /// `@bytes:` that isn't base64.
     BadBytes(base64::DecodeError),
 }
@@ -92,6 +111,10 @@ impl std::error::Error for TypedError {}
 
 /// What `s` spells: a typed value if it's written as one (`@…`), plain
 /// text otherwise; `@@` escapes a leading `@`.
+///
+/// # Errors
+///
+/// [`TypedError`] when `s` starts with `@` but isn't a typed value.
 pub fn classify(s: &str) -> Result<Spelled, TypedError> {
     let Some(rest) = s.strip_prefix(TYPED) else {
         return Ok(Spelled::Plain(s.to_string()));
@@ -112,7 +135,7 @@ pub fn classify(s: &str) -> Result<Spelled, TypedError> {
 }
 
 /// The string form of a typed value (`None` for the untyped ones).
-pub fn typed_string(v: &Value) -> Option<String> {
+pub fn spelling(v: &Value) -> Option<String> {
     Some(match v {
         Value::Ref(r) => r.to_string(),
         Value::Bytes(b) => format!(
@@ -129,11 +152,12 @@ pub fn flatten(v: &Value) -> Value {
     match v {
         Value::List(items) => Value::List(items.iter().map(flatten).collect()),
         Value::Map(m) => Value::Map(m.iter().map(|(k, x)| (k.to_string(), flatten(x))).collect()),
-        other => typed_string(other).map_or_else(|| other.clone(), Value::Str),
+        other => spelling(other).map_or_else(|| other.clone(), Value::Str),
     }
 }
 
 /// `s` with a leading `@` doubled, so it reads back as plain text.
+#[must_use]
 pub fn escape_at(s: &str) -> String {
     if s.starts_with(TYPED) {
         format!("{TYPED}{s}")
@@ -197,7 +221,7 @@ mod tests {
             "@doc:guides/intro[0]",
             "@bytes:AQID",
         ] {
-            assert_eq!(typed_string(&classify(s).unwrap().into_value()).unwrap(), s);
+            assert_eq!(spelling(&classify(s).unwrap().into_value()).unwrap(), s);
         }
         assert_eq!(
             classify("@@at").unwrap().into_value(),

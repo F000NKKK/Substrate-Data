@@ -1,3 +1,5 @@
+//! Comments kept as data: read in, written back.
+
 use super::with_comments;
 use crate::model::value::Value;
 
@@ -20,10 +22,7 @@ fn comments_become_notes() {
     );
     let first = &v.get("list").unwrap().as_list().unwrap()[0];
     assert_eq!(s(first, "comment").as_deref(), Some("First."));
-    let keys: Vec<&str> = match &v {
-        Value::Map(m) => m.keys().collect(),
-        _ => unreachable!(),
-    };
+    let keys: Vec<&str> = v.as_map().unwrap().keys().collect();
     assert_eq!(keys, ["comment", "$pages", "pages", "cover", "list"]);
 }
 

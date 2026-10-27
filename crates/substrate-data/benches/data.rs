@@ -1,9 +1,23 @@
-//! substrate-data against serde_json on a task-tracker document (a few
+//! substrate-data against `serde_json` on a task-tracker document (a few
 //! thousand tasks with parts, ~1 MB of text): parsing the text, writing
 //! it, and the binary form.
 
-use criterion::{Criterion, criterion_group, criterion_main};
+#![expect(
+    missing_docs,
+    reason = "criterion_group! makes an undocumented function"
+)]
+#![expect(
+    clippy::unwrap_used,
+    clippy::print_stderr,
+    clippy::cast_precision_loss,
+    clippy::format_push_string,
+    clippy::shadow_unrelated,
+    reason = "a benchmark: fixed inputs that always parse, a generated document, sizes printed"
+)]
+
 use std::hint::black_box;
+
+use criterion::{Criterion, criterion_group, criterion_main};
 
 /// Tasks in the generated document.
 const TASKS: usize = 4000;
@@ -54,28 +68,28 @@ fn bench(c: &mut Criterion) {
 
     let mut g = c.benchmark_group("parse");
     g.bench_function("serde_json", |b| {
-        b.iter(|| serde_json::from_str::<serde_json::Value>(black_box(doc_text)).unwrap())
+        b.iter(|| serde_json::from_str::<serde_json::Value>(black_box(doc_text)).unwrap());
     });
     g.bench_function("substrate_data text", |b| {
-        b.iter(|| substrate_data::text::parse_value(black_box(doc_text)).unwrap())
+        b.iter(|| substrate_data::text::parse_value(black_box(doc_text)).unwrap());
     });
     g.bench_function("substrate_data text + spans", |b| {
-        b.iter(|| substrate_data::text::parse(black_box(doc_text)).unwrap())
+        b.iter(|| substrate_data::text::parse(black_box(doc_text)).unwrap());
     });
     g.bench_function("substrate_data binary", |b| {
-        b.iter(|| substrate_data::binary::decode(black_box(&bytes)).unwrap())
+        b.iter(|| substrate_data::binary::decode(black_box(&bytes)).unwrap());
     });
     g.finish();
 
     let mut g = c.benchmark_group("write");
     g.bench_function("serde_json", |b| {
-        b.iter(|| serde_json::to_string(black_box(&json)).unwrap())
+        b.iter(|| serde_json::to_string(black_box(&json)).unwrap());
     });
     g.bench_function("substrate_data text", |b| {
-        b.iter(|| substrate_data::text::to_string(black_box(&value)))
+        b.iter(|| substrate_data::text::to_string(black_box(&value)));
     });
     g.bench_function("substrate_data binary", |b| {
-        b.iter(|| substrate_data::binary::encode(black_box(&value)))
+        b.iter(|| substrate_data::binary::encode(black_box(&value)));
     });
     g.finish();
 }

@@ -1,0 +1,37 @@
+# Craftbook configuration: the layer map and the exemptions, each with its
+# reason (rust/06-tooling.md).
+
+[[crate]]
+name = "substrate-data"
+layer = "shared-kernel"
+context = "data"
+
+[[crate]]
+name = "substrate-data-derive"
+layer = "shared-kernel"
+context = "data"
+
+[[exempt]]
+path = "crates/substrate-data/src/model/atom/table.rs"
+reason = "an atom is a number in the process's one name table; a runtime installs it once so every copy of the crate (dylibs) shares it (ch. 4 §4.7)"
+codes = ["A501"]
+
+[[exempt]]
+path = "crates/substrate-data/src/model/atom/local.rs"
+reason = "the process's name table when no runtime installs one: the global the atom table is"
+codes = ["A501"]
+
+[[exempt]]
+path = "crates/substrate-data/src/wire/frame/floats/narrowing.rs"
+reason = "the processor's float kernels, chosen once by CPU feature and read-only after"
+codes = ["A501"]
+
+[[exempt]]
+path = "crates/substrate-data/src/wire/frame/lanes/packing.rs"
+reason = "the processor's bit-packing kernels, chosen once by CPU feature and read-only after"
+codes = ["A501"]
+
+[[exempt]]
+path = "crates/substrate-data-derive/src/lib.rs"
+reason = "a proc-macro crate's derive entry point must be a function at its root; it only forwards to expand::derive"
+codes = ["C103"]

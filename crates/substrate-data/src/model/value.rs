@@ -3,6 +3,7 @@
 use std::fmt;
 
 /// A value.
+use crate::model::number::{int_to_f64, whole_to_i64};
 ///
 /// The text form has no syntax of its own for the typed values (`Ref`,
 /// `Bytes`): they're written as strings (`"@file:images/logo.png"`), so
@@ -16,13 +17,20 @@ use std::fmt;
 /// `Schema::write` of a `String` doubles the `@`, its read undoes it.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub enum Value {
+    /// Nothing.
     #[default]
     Null,
+    /// `true` or `false`.
     Bool(bool),
+    /// An integer.
     Int(i64),
+    /// A number with a fraction or an exponent.
     Float(f64),
+    /// A string, as spelled (a plain one's leading `@` doubled).
     Str(String),
+    /// A list.
     List(Vec<Value>),
+    /// A map, in file order.
     Map(Map),
     /// `@file:images/logo.png` — something of some kind, by id.
     Ref(Ref),
@@ -37,16 +45,24 @@ pub enum Value {
 /// as its kind's id type ([`crate::Id`]).
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Ref {
+    /// What it names: `user`, `doc`, `file`.
     pub kind: KindName,
+    /// Which one, as written.
     pub id: RefKey,
 }
 
 impl Ref {
+    /// `@kind:id`.
+    #[must_use]
     pub fn new(kind: KindName, id: RefKey) -> Self {
         Self { kind, id }
     }
 
     /// `kind` and `id` checked: `Ref::parse("file", "images/logo.png")`.
+    ///
+    /// # Errors
+    ///
+    /// [`crate::typed::TypedError`] when `kind` or `id` isn't one.
     pub fn parse(kind: &str, id: &str) -> Result<Self, crate::typed::TypedError> {
         let kind = KindName::new(kind)?;
         let id = RefKey::new(id).map_err(|_| crate::typed::TypedError::BadId {
@@ -79,14 +95,23 @@ pub use super::reference::{KindName, RefKey};
 /// (`"a string"`, `"a list"`) when they say what was found.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ValueKind {
+    /// Null.
     Null,
+    /// A bool.
     Bool,
+    /// An integer.
     Int,
+    /// A float.
     Float,
+    /// A string.
     Str,
+    /// A list.
     List,
+    /// A map.
     Map,
+    /// A reference.
     Ref,
+    /// Bytes.
     Bytes,
 }
 
@@ -122,10 +147,12 @@ impl Value {
         }
     }
 
+    /// Whether it's null.
     pub fn is_null(&self) -> bool {
         matches!(self, Value::Null)
     }
 
+    /// The bool, if it's one.
     pub fn as_bool(&self) -> Option<bool> {
         match self {
             Value::Bool(b) => Some(*b),
@@ -133,22 +160,25 @@ impl Value {
         }
     }
 
+    /// The integer, if it's one (a float with no fraction is).
     pub fn as_i64(&self) -> Option<i64> {
         match self {
             Value::Int(n) => Some(*n),
-            Value::Float(f) if f.fract() == 0.0 && f.abs() < 9.0e15 => Some(*f as i64),
+            Value::Float(f) => whole_to_i64(*f),
             _ => None,
         }
     }
 
+    /// The number, if it's one.
     pub fn as_f64(&self) -> Option<f64> {
         match self {
-            Value::Int(n) => Some(*n as f64),
+            Value::Int(n) => Some(int_to_f64(*n)),
             Value::Float(f) => Some(*f),
             _ => None,
         }
     }
 
+    /// The string, if it's one.
     pub fn as_str(&self) -> Option<&str> {
         match self {
             Value::Str(s) => Some(s),
@@ -156,6 +186,7 @@ impl Value {
         }
     }
 
+    /// The list, if it's one.
     pub fn as_list(&self) -> Option<&[Value]> {
         match self {
             Value::List(l) => Some(l),
@@ -163,6 +194,7 @@ impl Value {
         }
     }
 
+    /// The map, if it's one.
     pub fn as_map(&self) -> Option<&Map> {
         match self {
             Value::Map(m) => Some(m),
@@ -242,7 +274,9 @@ impl From<Map> for Value {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, crate::Schema)]
 #[data(tag = "type")]
 pub enum Seg {
+    /// A map's key.
     Key(String),
+    /// A list's index.
     Index(usize),
 }
 
@@ -251,26 +285,36 @@ pub enum Seg {
 pub struct Path(Vec<Seg>);
 
 impl Path {
+    /// The path of the document's root.
+    #[must_use]
     pub fn root() -> Self {
         Self(Vec::new())
     }
 
+    /// Its steps, from the root.
+    #[must_use]
     pub fn segments(&self) -> &[Seg] {
         &self.0
     }
 
+    /// Whether it's the root.
+    #[must_use]
     pub fn is_root(&self) -> bool {
         self.0.is_empty()
     }
 
+    /// One step further.
     pub fn push(&mut self, seg: Seg) {
         self.0.push(seg);
     }
 
+    /// One step back.
     pub fn pop(&mut self) {
         self.0.pop();
     }
 
+    /// This path, then `key`.
+    #[must_use]
     pub fn key(&self, key: &str) -> Path {
         let mut p = self.clone();
         p.0.push(Seg::Key(key.to_string()));
@@ -278,12 +322,15 @@ impl Path {
     }
 
     /// `rest` under this path.
+    #[must_use]
     pub fn then(&self, rest: &Path) -> Path {
         let mut p = self.clone();
         p.0.extend(rest.0.iter().cloned());
         p
     }
 
+    /// This path, then index `i`.
+    #[must_use]
     pub fn index(&self, i: usize) -> Path {
         let mut p = self.clone();
         p.0.push(Seg::Index(i));
@@ -296,7 +343,7 @@ impl crate::Schema for Path {
     fn shape() -> crate::Shape {
         Vec::<Seg>::shape()
     }
-    fn read(v: &crate::ValueRef<'_>, cx: &mut crate::Reader) -> Option<Self> {
+    fn read(v: &crate::ValueRef<'_>, cx: &mut crate::Reader<'_>) -> Option<Self> {
         Vec::<Seg>::read(v, cx).map(Path)
     }
     fn write(&self) -> Value {

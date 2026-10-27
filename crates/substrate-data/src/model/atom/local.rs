@@ -1,5 +1,7 @@
 //! The table a process keeps itself: the runtime's, or a tool's.
-use super::{HashMap, OnceLock, RwLock};
+use std::collections::HashMap;
+
+use crate::sync::{OnceLock, RwLock};
 
 #[derive(Default)]
 struct Names {
@@ -14,6 +16,7 @@ fn names() -> &'static RwLock<Names> {
 }
 
 /// `name`'s number, made the first time (its text kept for good).
+#[must_use]
 pub fn intern(name: &str) -> u32 {
     if let Some(&n) = names().read().numbers.get(name) {
         return n;
@@ -29,6 +32,8 @@ pub fn intern(name: &str) -> u32 {
     n
 }
 
+/// The name numbered `n`, if there's one.
+#[must_use]
 pub fn name(n: u32) -> Option<&'static str> {
     names().read().names.get(n as usize).copied()
 }

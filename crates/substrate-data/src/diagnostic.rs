@@ -7,6 +7,161 @@ use std::fmt;
 
 use crate::{Atom, LineCol, Path, Schema, SyntaxError};
 
+/// What's wrong with a value, as this crate finds it: each a stable code
+/// (`SD…`) tools can match on.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Problem {
+    /// Any other problem with a value.
+    Invalid,
+    /// Text that doesn't parse.
+    Syntax,
+    /// A value of another type than its field's.
+    Expected,
+    /// A bare id where a reference goes (`@file:…`).
+    NotAReference,
+    /// A reference to another kind than its field takes.
+    WrongKind,
+    UnknownField,
+    MissingField,
+    OutOfRange,
+    /// A string written as a typed value that isn't one (`@File:x`).
+    BadTyped,
+    /// Binary data that won't decode.
+    BadBinary,
+    /// A reference whose id isn't of its kind's id type (`@user:abc` where
+    /// a user's id is a number).
+    BadId,
+    /// A reference to nothing there is (a [`crate::Resolve`] says so).
+    Unresolved,
+}
+
+impl Problem {
+    /// Every problem, in code order.
+    pub const ALL: [Problem; 12] = [
+        Problem::Invalid,
+        Problem::Syntax,
+        Problem::Expected,
+        Problem::NotAReference,
+        Problem::WrongKind,
+        Problem::UnknownField,
+        Problem::MissingField,
+        Problem::OutOfRange,
+        Problem::BadTyped,
+        Problem::BadBinary,
+        Problem::BadId,
+        Problem::Unresolved,
+    ];
+
+    /// Its stable code: `SD0000` …
+    pub const fn code(self) -> &'static str {
+        match self {
+            Problem::Invalid => "SD0000",
+            Problem::Syntax => "SD0001",
+            Problem::Expected => "SD0002",
+            Problem::NotAReference => "SD0003",
+            Problem::WrongKind => "SD0004",
+            Problem::UnknownField => "SD0005",
+            Problem::MissingField => "SD0006",
+            Problem::OutOfRange => "SD0007",
+            Problem::BadTyped => "SD0008",
+            Problem::BadBinary => "SD0009",
+            Problem::BadId => "SD0010",
+            Problem::Unresolved => "SD0011",
+        }
+    }
+
+    /// The problem a code names, if it's one of this crate's.
+    pub fn of_code(code: &str) -> Option<Problem> {
+        Problem::ALL.into_iter().find(|p| p.code() == code)
+    }
+}
+
+impl fmt::Display for Problem {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.code())
+    }
+}
+
+/// A diagnostic's kind: one of this crate's [`Problem`]s, or a tool's own
+/// code (`E0308`, a lint's name), kept as an [`Atom`]. Written as its code
+/// in every form.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Code {
+    Data(Problem),
+    Tool(Atom),
+}
+
+impl Code {
+    /// A tool's own code; one of this crate's codes is that [`Problem`].
+    pub fn tool(code: Atom) -> Code {
+        Problem::of_code(code.as_str()).map_or(Code::Tool(code), Code::Data)
+    }
+
+    /// As written: `SD0001`, `E0308`.
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Code::Data(p) => p.code(),
+            Code::Tool(a) => a.as_str(),
+        }
+    }
+
+    fn atom(&self) -> Atom {
+        match self {
+            Code::Data(p) => Atom::new(p.code()),
+            Code::Tool(a) => *a,
+        }
+    }
+}
+
+impl From<Problem> for Code {
+    fn from(p: Problem) -> Code {
+        Code::Data(p)
+    }
+}
+
+impl From<Atom> for Code {
+    fn from(a: Atom) -> Code {
+        Code::tool(a)
+    }
+}
+
+impl fmt::Display for Code {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl PartialEq<Problem> for Code {
+    fn eq(&self, p: &Problem) -> bool {
+        *self == Code::Data(*p)
+    }
+}
+
+/// Written as its code; packed in a frame as an [`Atom`] (its number).
+impl Schema for Code {
+    fn shape() -> crate::Shape {
+        Atom::shape()
+    }
+    fn read(v: &crate::ValueRef<'_>, cx: &mut crate::Reader) -> Option<Self> {
+        Atom::read(v, cx).map(Code::tool)
+    }
+    fn write(&self) -> crate::Value {
+        self.atom().write()
+    }
+    fn encode(&self, w: &mut crate::binary::Writer) {
+        self.atom().encode(w);
+    }
+    fn decode(d: &mut crate::binary::Decoder<'_>) -> Option<Self> {
+        Atom::decode(d).map(Code::tool)
+    }
+    fn pack(&self, p: &mut crate::frame::Packer) {
+        self.atom().pack(p);
+    }
+    fn unpack(u: &mut crate::frame::Unpacker<'_>) -> Option<Self> {
+        Atom::unpack(u).map(Code::tool)
+    }
+}
+
 /// How bad it is.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Schema)]
 pub enum Severity {
@@ -21,9 +176,9 @@ pub enum Severity {
 #[data(rename_all = "camelCase")]
 pub struct Diagnostic {
     pub severity: Severity,
-    /// What it is: one of [`crate::names::problem`]'s codes (`SD0001`) or a tool's own, or
-    /// the tool's own (`E0308`, a lint's name); none until it's known.
-    pub code: Option<Atom>,
+    /// What it is: one of this crate's [`Problem`]s (`SD0001`) or a
+    /// tool's own code (`E0308`, a lint's name); none until it's known.
+    pub code: Option<Code>,
     pub message: String,
     /// The file it's in.
     pub file: Option<Atom>,
@@ -44,19 +199,19 @@ pub struct Diagnostic {
 
 impl Diagnostic {
     /// An error of kind `code`.
-    pub fn error(code: &str, message: impl fmt::Display) -> Self {
+    pub fn error(code: impl Into<Code>, message: impl fmt::Display) -> Self {
         Self::of(Severity::Error, code, message)
     }
 
     /// A warning of kind `code`.
-    pub fn warning(code: &str, message: impl fmt::Display) -> Self {
+    pub fn warning(code: impl Into<Code>, message: impl fmt::Display) -> Self {
         Self::of(Severity::Warning, code, message)
     }
 
-    pub fn of(severity: Severity, code: &str, message: impl fmt::Display) -> Self {
+    pub fn of(severity: Severity, code: impl Into<Code>, message: impl fmt::Display) -> Self {
         Diagnostic {
             severity,
-            code: Some(Atom::new(code)),
+            code: Some(code.into()),
             message: message.to_string(),
             ..Self::default()
         }
@@ -64,7 +219,7 @@ impl Diagnostic {
 
     /// Text that doesn't parse, where it stops.
     pub fn syntax(e: SyntaxError) -> Self {
-        Self::error(crate::names::problem::SYNTAX, e.message).at(e.at)
+        Self::error(Problem::Syntax, e.message).at(e.at)
     }
 
     /// In `file`.
@@ -98,15 +253,15 @@ impl Diagnostic {
 
     /// Found by `tool`.
     #[must_use]
-    pub fn by(mut self, tool: &str) -> Self {
-        self.tool = Some(Atom::new(tool));
+    pub fn by(mut self, tool: Atom) -> Self {
+        self.tool = Some(tool);
         self
     }
 
     /// Of kind `code` when its kind isn't known yet (it was met as plain text).
     #[must_use]
-    pub fn or_code(mut self, code: &str) -> Self {
-        self.code.get_or_insert_with(|| Atom::new(code));
+    pub fn or_code(mut self, code: impl Into<Code>) -> Self {
+        self.code.get_or_insert(code.into());
         self
     }
 
@@ -195,7 +350,7 @@ mod tests {
 
     #[test]
     fn said_with_what_is_known_and_a_frame_reads_back() {
-        let d = Diagnostic::error("XY0002", "no owner")
+        let d = Diagnostic::error(Atom::new("XY0002"), "no owner")
             .in_file("docs/intro.doc")
             .at_line(3)
             .at_path(Path::root().key("owner"));
@@ -207,8 +362,25 @@ mod tests {
             .unwrap();
         assert_eq!(back, d);
         assert_eq!(
-            Diagnostic::from("bad").or_code("YB0004").code.as_deref(),
-            Some("YB0004")
+            Diagnostic::from("bad")
+                .or_code(Atom::new("XY0004"))
+                .code
+                .map(|c| c.as_str()),
+            Some("XY0004")
+        );
+        // A crate code read back is its problem, typed.
+        let d = Diagnostic::error(Problem::MissingField, "missing `id`");
+        let mut bytes = Vec::new();
+        crate::io::write_frame(&mut bytes, &d).unwrap();
+        let back: Diagnostic = crate::io::read_frame(&mut bytes.as_slice())
+            .unwrap()
+            .unwrap();
+        assert_eq!(back.code, Some(Code::Data(Problem::MissingField)));
+        assert_eq!(Code::tool(Atom::new("SD0006")), Problem::MissingField);
+        assert!(
+            Problem::ALL
+                .iter()
+                .all(|p| Problem::of_code(p.code()) == Some(*p))
         );
     }
 }

@@ -740,7 +740,7 @@ mod tests {
     #[test]
     fn typed_values_are_strings_in_text() {
         let v = Value::List(vec![
-            Value::Ref(crate::Ref::new("file", "images/logo.png")),
+            Value::Ref(crate::Ref::parse("file", "images/logo.png").unwrap()),
             Value::Bytes(vec![1, 2, 3]),
             Value::Str("@@not a ref".into()),
         ]);

@@ -36,9 +36,9 @@ fn equality_is_the_entries() {
     assert_eq!(a, b);
 }
 
-/// The index costs a value nothing: a map is no bigger than the biggest
-/// other kind of value (a reference: two strings).
+/// The index costs a value nothing: a value, whose biggest kind is a
+/// map, is no bigger than the map itself.
 #[test]
-fn a_map_is_no_bigger_than_a_reference() {
-    assert!(std::mem::size_of::<Map>() <= std::mem::size_of::<super::super::value::Ref>());
+fn a_value_is_no_bigger_than_a_map() {
+    assert!(std::mem::size_of::<Value>() <= std::mem::size_of::<Map>());
 }

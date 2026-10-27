@@ -36,16 +36,16 @@ pub use wire::{binary, frame, io};
 
 pub use atom::Atom;
 pub use bumpalo::Bump;
-pub use diagnostic::{Diagnostic, Errors, Severity};
+pub use diagnostic::{Code, Diagnostic, Errors, Problem, Severity};
 pub use model::borrowed::{MapRef, ValueRef};
-pub use model::value::{Map, Path, Ref, Seg, Value};
+pub use model::value::{KindName, Map, Path, Ref, RefKey, Seg, Value, ValueKind};
 pub use text::{Doc, LineCol, Span, Spans, SyntaxError};
 pub use wire::stream::{Stream, StreamWriter};
 pub mod schema;
 
 pub use schema::{
-    Id, Kind, Kinds, OneOrList, Ordered, Read, Reader, Resolve, Schema, Shape, from_doc_with,
-    from_text, from_value, from_value_with, placed, read_bytes, read_ref_value, read_value,
-    to_bytes, to_text,
+    Expected, Id, Kind, Kinds, NamedType, OneOrList, Ordered, Read, Reader, RefId, Resolve, Schema,
+    Shape, ShapeDoc, Uid, Unresolved, from_doc_with, from_text, from_value, from_value_with,
+    placed, read_bytes, read_ref_value, read_value, to_bytes, to_text,
 };
 pub use substrate_data_derive::Schema;

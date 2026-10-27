@@ -45,7 +45,7 @@ pub(crate) fn expand_unit_enum(names: &[(&Ident, &String)], shape: Tokens) -> To
         }
         fn read(v: &#krate::ValueRef<'_>, cx: &mut #krate::Reader) -> ::std::option::Option<Self> {
             let #krate::ValueRef::Str(s) = v else {
-                cx.expected("a name", v);
+                cx.expected(#krate::schema::Expected::Name, v);
                 return ::std::option::Option::None;
             };
             match *s {
@@ -207,11 +207,11 @@ fn tagged(vs: &[Variant], other: Option<&Variant>, tag: &str, shape: Tokens) -> 
         fn read(v: &#krate::ValueRef<'_>, cx: &mut #krate::Reader) -> ::std::option::Option<Self> {
             let map = cx.map(v)?;
             let ::std::option::Option::Some(kind) = map.get(#tag) else {
-                cx.problem(::std::format!("missing `{}` ({})", #tag, [#(#keys),*].map(|k| ::std::format!("`{k}`")).join(", ")));
+                cx.problem_of(#krate::Problem::MissingField, ::std::format!("missing `{}` ({})", #tag, [#(#keys),*].map(|k| ::std::format!("`{k}`")).join(", ")));
                 return ::std::option::Option::None;
             };
             let #krate::ValueRef::Str(kind) = kind else {
-                cx.at(#krate::Seg::Key(::std::string::String::from(#tag)), |cx| cx.expected("a name", kind));
+                cx.at(#krate::Seg::Key(::std::string::String::from(#tag)), |cx| cx.expected(#krate::schema::Expected::Name, kind));
                 return ::std::option::Option::None;
             };
             match *kind {

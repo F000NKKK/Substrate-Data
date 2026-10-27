@@ -199,7 +199,8 @@ fn writes_back_what_it_read() {
 
 #[test]
 fn shapes_describe_the_format() {
-    let d = Task::shape().describe();
+    // Its typed description, written, keeps the keys tools read.
+    let d = Task::shape().describe().write();
     let defs = d.get("defs").unwrap();
     let part = defs.get("Part").unwrap();
     assert_eq!(part.get("tag"), Some(&Value::from("type")));
@@ -254,11 +255,15 @@ struct Plainly {
 struct Store;
 
 impl substrate_data::Resolve for Store {
-    fn reference(&mut self, r: &Ref, _: &substrate_data::Path) -> Result<String, String> {
-        if r.id.ends_with("nope") {
-            Err(format!("no {} {}", r.kind, r.id))
+    fn reference(
+        &mut self,
+        r: &Ref,
+        _: &substrate_data::Path,
+    ) -> Result<substrate_data::RefKey, substrate_data::Unresolved> {
+        if r.id.as_str().ends_with("nope") {
+            Err(substrate_data::Unresolved::Missing(r.clone()))
         } else {
-            Ok(format!("store://{}", r.id))
+            Ok(substrate_data::RefKey::new(&format!("store://{}", r.id)).unwrap())
         }
     }
 }
@@ -287,11 +292,11 @@ fn codecs_keep_plain_types_and_resolve() {
         problems,
         [
             "look: `tree`: name it by a reference — `@file:tree`",
-            "links[0]: no project nope",
+            "links[0]: `@project:nope`: there is no such project",
             "links[1]: `@file:x` is a reference to file — this takes `@project:`",
         ]
     );
-    let shape = Plainly::shape().describe();
+    let shape = Plainly::shape().describe().write();
     let fields = shape
         .get("defs")
         .unwrap()
@@ -337,7 +342,7 @@ fn ranges_are_checked_and_described() {
             "1:22: from: 40.5 is out of range (-16..=32)"
         ]
     );
-    let shape = Ranged::shape().describe();
+    let shape = Ranged::shape().describe().write();
     let fields = shape
         .get("defs")
         .unwrap()
@@ -491,26 +496,20 @@ fn a_wrapped_value_that_isnt_a_struct_sits_under_value() {
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct Color([f32; 3]);
 
-impl Schema for Color {
-    fn shape() -> substrate_data::Shape {
-        substrate_data::Shape::Named {
-            name: "color",
-            of: <[f32; 3]>::shape,
-        }
+impl substrate_data::NamedType for Color {
+    const NAME: &'static str = "color";
+    type Stored = [f32; 3];
+    fn to_stored(&self) -> [f32; 3] {
+        self.0
     }
-    fn read(v: &substrate_data::ValueRef<'_>, cx: &mut substrate_data::Reader) -> Option<Self> {
-        <[f32; 3]>::read(v, cx).map(Color)
-    }
-    fn write(&self) -> Value {
-        self.0.write()
-    }
-    fn pack(&self, p: &mut substrate_data::frame::Packer) {
-        self.0.pack(p);
-    }
-    fn unpack(u: &mut substrate_data::frame::Unpacker<'_>) -> Option<Self> {
-        <[f32; 3]>::unpack(u).map(Color)
+    fn from_stored(rgb: [f32; 3]) -> Option<Self> {
+        rgb.iter()
+            .all(|c| (0.0..=1.0).contains(c))
+            .then_some(Color(rgb))
     }
 }
+
+substrate_data::named_schema!(Color);
 
 #[derive(Schema, Debug, Clone, PartialEq)]
 struct Label {
@@ -538,7 +537,7 @@ fn named_shapes_and_at_signs_survive_every_form() {
     let seen = substrate_data::frame::read_shaped(&frame, &Label::shape()).unwrap();
     assert_eq!(substrate_data::read_value::<Label>(&seen).unwrap(), m);
     // ...and sees the name it may have an editor for.
-    let d = Label::shape().describe();
+    let d = Label::shape().describe().write();
     let color = &d
         .get("defs")
         .unwrap()

@@ -4,18 +4,26 @@
 //! check, and describes itself ([`Shape`]) for editors (property grids, completion) and the
 //! docs.
 
+mod description;
+mod expected;
 mod fields;
+mod named_type;
 mod one_or_list;
 mod plain;
 mod reader;
+mod resolve;
 mod shape;
 mod typed_values;
 pub mod with;
 
+pub use description::{DefinitionDoc, FieldDoc, ShapeDoc, ShapeNode, VariantDoc};
+pub use expected::Expected;
 pub use fields::{Fields, field_name};
+pub use named_type::{NamedShape, NamedType, read_named};
 pub use one_or_list::OneOrList;
 pub use plain::*;
 pub use reader::*;
+pub use resolve::{Resolve, Unresolved};
 pub use shape::*;
 pub use typed_values::*;
 
@@ -27,7 +35,7 @@ use crate::binary::{Decoder, Writer};
 use crate::diagnostic::{Diagnostic, Errors};
 use crate::frame::{Packer, Unpacker};
 use crate::model::borrowed::{MapRef, ValueRef};
-use crate::model::value::{Map, Path, Ref, Seg, Value};
+use crate::model::value::{Path, Ref, Seg, Value};
 use crate::text::{self, Doc, LineCol};
 use crate::typed;
 
@@ -124,7 +132,7 @@ pub trait Schema: Sized {
 /// Where a tagged enum's variant keeps what it wraps when that isn't a
 /// struct (`Id(String)` is `{type: "id", value: "…"}`); a wrapped struct's
 /// fields sit next to the tag instead.
-pub const WRAPPED: &str = crate::names::word::VALUE;
+pub const WRAPPED: &str = crate::names::Word::Value.as_str();
 
 /// Whether a tagged enum's variant wrapping `T` lays `T`'s fields next to
 /// the tag (a struct) or keeps `T` under [`WRAPPED`].
@@ -199,7 +207,7 @@ pub fn read_bytes<T: Schema>(bytes: &[u8]) -> Result<T, Vec<Diagnostic>> {
     }
     let arena = bumpalo::Bump::new();
     let v = crate::binary::decode_ref(bytes, &arena)
-        .map_err(|e| vec![Diagnostic::error(crate::names::problem::BAD_BINARY, e)])?;
+        .map_err(|e| vec![Diagnostic::error(crate::diagnostic::Problem::BadBinary, e)])?;
     read_ref_value(&v)
 }
 

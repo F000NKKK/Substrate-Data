@@ -10,7 +10,7 @@ socket, and describe it to an editor that builds property grids from it.
 🇺🇸 **English** | 🇷🇺 [Русский](README.ru.md)
 
 ```rust
-substrate_data::kind!(File = "file", User = "user");
+substrate_data::kind!(File = "file", User = "user": u64);
 
 /// A file attached to something.
 #[derive(substrate_data::Schema, Debug, PartialEq)]
@@ -26,12 +26,12 @@ struct Attachment {
 let r: Attachment = substrate_data::from_text(r#"{
     // The logo for the front page.
     file: "@file:images/logo.png",
-    owner: "@user:alice",
+    owner: "@user:42",
 }"#).unwrap().value;
 
 let bytes = substrate_data::to_bytes(&r);            // compact, self-describing
 let frame = substrate_data::frame::to_frame(&r);     // packed, schema-known
-let shape = Attachment::shape().describe();          // for editors and docs
+let shape = Attachment::shape().describe();          // a typed ShapeDoc, for editors and docs
 ```
 
 ## Crates

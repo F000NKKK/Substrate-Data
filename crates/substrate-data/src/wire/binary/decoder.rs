@@ -10,7 +10,7 @@ use super::{
     unzigzag,
 };
 use crate::model::borrowed::{MapRef, ValueRef};
-use crate::model::value::{Map, Ref, Value};
+use crate::model::value::{KindName, Map, Ref, RefKey, Value};
 
 /// Strings a decoder makes room for at once: a message's keys and values.
 const STRINGS_START: usize = 16;
@@ -206,6 +206,24 @@ impl<'b> Decoder<'b> {
             .clone())
     }
 
+    /// A reference's kind and id, each checked: a malformed one is an error.
+    fn reference(&mut self) -> Result<(KindName, &'b str), DecodeError> {
+        let at = self.i;
+        let kind = KindName::new(self.string()?).map_err(|e| DecodeError {
+            message: e.to_string(),
+            offset: at,
+        })?;
+        let at = self.i;
+        let id = self.string()?;
+        if !RefKey::is_valid(id) {
+            return Err(DecodeError {
+                message: format!("`{id}` isn't a reference's id"),
+                offset: at,
+            });
+        }
+        Ok((kind, id))
+    }
+
     fn deeper(&mut self) -> Result<(), DecodeError> {
         self.depth += 1;
         if self.depth > MAX_DEPTH {
@@ -255,10 +273,10 @@ impl<'b> Decoder<'b> {
                 self.depth -= 1;
                 Value::Map(map)
             }
-            tag::REF => Value::Ref(Ref {
-                kind: self.string()?.to_owned(),
-                id: self.string()?.to_owned(),
-            }),
+            tag::REF => {
+                let (kind, id) = self.reference()?;
+                Value::Ref(Ref::new(kind, RefKey::spelled(id)))
+            }
             tag::BYTES => Value::Bytes(self.length_bytes()?.to_vec()),
             tag::INTS => {
                 let n = self.count(1)?;
@@ -311,10 +329,10 @@ impl<'b> Decoder<'b> {
                 ValueRef::List(items)
             }
             tag::MAP => self.map_ref(arena, stack)?,
-            tag::REF => ValueRef::Ref {
-                kind: self.string()?,
-                id: self.string()?,
-            },
+            tag::REF => {
+                let (kind, id) = self.reference()?;
+                ValueRef::Ref { kind, id }
+            }
             tag::BYTES => ValueRef::Bytes(self.length_bytes()?),
             tag::INTS => self.ints_ref(arena)?,
             tag::STREAM => {

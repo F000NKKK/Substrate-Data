@@ -6,7 +6,7 @@
 
 use bumpalo::Bump;
 
-use crate::model::value::{Map, Ref, Value};
+use crate::model::value::{KindName, Map, Ref, RefKey, Value, ValueKind};
 
 /// A borrowed [`Value`]: the same cases, strings `&'a str`, lists and maps slices.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -18,9 +18,10 @@ pub enum ValueRef<'a> {
     Str(&'a str),
     List(&'a [ValueRef<'a>]),
     Map(MapRef<'a>),
-    /// `@file:images/logo.png`.
+    /// `@file:images/logo.png`: its kind checked, its id as written
+    /// (checked where it was read).
     Ref {
-        kind: &'a str,
+        kind: KindName,
         id: &'a str,
     },
     /// Bytes as they are.
@@ -54,18 +55,18 @@ impl<'a> MapRef<'a> {
 }
 
 impl<'a> ValueRef<'a> {
-    /// The type's name, for messages: `"a string"`, `"a list"`, ...
-    pub fn kind_name(&self) -> &'static str {
+    /// Which case it is.
+    pub fn kind(&self) -> ValueKind {
         match self {
-            ValueRef::Null => "null",
-            ValueRef::Bool(_) => "true/false",
-            ValueRef::Int(_) => "an integer",
-            ValueRef::Float(_) => "a number",
-            ValueRef::Str(_) => "a string",
-            ValueRef::List(_) => "a list",
-            ValueRef::Map(_) => "an object",
-            ValueRef::Ref { .. } => "a reference",
-            ValueRef::Bytes(_) => "bytes",
+            ValueRef::Null => ValueKind::Null,
+            ValueRef::Bool(_) => ValueKind::Bool,
+            ValueRef::Int(_) => ValueKind::Int,
+            ValueRef::Float(_) => ValueKind::Float,
+            ValueRef::Str(_) => ValueKind::Str,
+            ValueRef::List(_) => ValueKind::List,
+            ValueRef::Map(_) => ValueKind::Map,
+            ValueRef::Ref { .. } => ValueKind::Ref,
+            ValueRef::Bytes(_) => ValueKind::Bytes,
         }
     }
 
@@ -138,7 +139,7 @@ impl<'a> ValueRef<'a> {
                 }
                 Value::Map(out)
             }
-            ValueRef::Ref { kind, id } => Value::Ref(Ref::new(kind, id)),
+            ValueRef::Ref { kind, id } => Value::Ref(Ref::new(kind, RefKey::spelled(id))),
             ValueRef::Bytes(b) => Value::Bytes(b.to_vec()),
         }
     }
@@ -146,7 +147,7 @@ impl<'a> ValueRef<'a> {
     /// The reference of a `Ref`, owned.
     pub fn to_ref(&self) -> Option<Ref> {
         match *self {
-            ValueRef::Ref { kind, id } => Some(Ref::new(kind, id)),
+            ValueRef::Ref { kind, id } => Some(Ref::new(kind, RefKey::spelled(id))),
             _ => None,
         }
     }
@@ -168,8 +169,8 @@ impl Value {
                 arena.alloc_slice_fill_iter(m.iter().map(|(k, v)| (k, v.borrow(arena)))),
             )),
             Value::Ref(r) => ValueRef::Ref {
-                kind: &r.kind,
-                id: &r.id,
+                kind: r.kind,
+                id: r.id.as_str(),
             },
             Value::Bytes(b) => ValueRef::Bytes(b),
         }

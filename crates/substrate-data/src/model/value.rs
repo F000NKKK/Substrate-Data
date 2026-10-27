@@ -33,18 +33,34 @@ pub enum Value {
 /// A reference: its kind (`user`, `doc`, `file`, or any other the
 /// format names) and id (`images/logo.png`, `team:alice`). The id is
 /// opaque here; what it names and whether it exists is the format's
-/// business (a [`crate::Resolve`] checks it).
+/// business (a [`crate::Resolve`] checks it), and a typed field reads it
+/// as its kind's id type ([`crate::Id`]).
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Ref {
-    pub kind: String,
-    pub id: String,
+    pub kind: KindName,
+    pub id: RefKey,
 }
 
 impl Ref {
-    pub fn new(kind: impl Into<String>, id: impl Into<String>) -> Self {
+    pub fn new(kind: KindName, id: RefKey) -> Self {
+        Self { kind, id }
+    }
+
+    /// `kind` and `id` checked: `Ref::parse("file", "images/logo.png")`.
+    pub fn parse(kind: &str, id: &str) -> Result<Self, crate::typed::TypedError> {
+        let kind = KindName::new(kind)?;
+        let id = RefKey::new(id).map_err(|_| crate::typed::TypedError::BadId {
+            kind: Some(kind),
+            id: id.to_owned(),
+        })?;
+        Ok(Self { kind, id })
+    }
+
+    /// A typed id of kind `K` as a reference.
+    pub fn of<K: crate::Kind>(id: &K::Id) -> Self {
         Self {
-            kind: kind.into(),
-            id: id.into(),
+            kind: K::kind_name(),
+            id: RefKey::spelled(&crate::schema::RefId::spell(id)),
         }
     }
 }
@@ -57,20 +73,52 @@ impl fmt::Display for Ref {
 }
 
 pub use super::map::Map;
+pub use super::reference::{KindName, RefKey};
+
+/// Which of a [`Value`]'s cases a value is — what messages name
+/// (`"a string"`, `"a list"`) when they say what was found.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ValueKind {
+    Null,
+    Bool,
+    Int,
+    Float,
+    Str,
+    List,
+    Map,
+    Ref,
+    Bytes,
+}
+
+impl fmt::Display for ValueKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(match self {
+            ValueKind::Null => "null",
+            ValueKind::Bool => "true/false",
+            ValueKind::Int => "an integer",
+            ValueKind::Float => "a number",
+            ValueKind::Str => "a string",
+            ValueKind::List => "a list",
+            ValueKind::Map => "an object",
+            ValueKind::Ref => "a reference",
+            ValueKind::Bytes => "bytes",
+        })
+    }
+}
 
 impl Value {
-    /// The type's name, for messages: `"a string"`, `"a list"`, ...
-    pub fn kind_name(&self) -> &'static str {
+    /// Which case it is.
+    pub fn kind(&self) -> ValueKind {
         match self {
-            Value::Null => "null",
-            Value::Bool(_) => "true/false",
-            Value::Int(_) => "an integer",
-            Value::Float(_) => "a number",
-            Value::Str(_) => "a string",
-            Value::List(_) => "a list",
-            Value::Map(_) => "an object",
-            Value::Ref(_) => "a reference",
-            Value::Bytes(_) => "bytes",
+            Value::Null => ValueKind::Null,
+            Value::Bool(_) => ValueKind::Bool,
+            Value::Int(_) => ValueKind::Int,
+            Value::Float(_) => ValueKind::Float,
+            Value::Str(_) => ValueKind::Str,
+            Value::List(_) => ValueKind::List,
+            Value::Map(_) => ValueKind::Map,
+            Value::Ref(_) => ValueKind::Ref,
+            Value::Bytes(_) => ValueKind::Bytes,
         }
     }
 

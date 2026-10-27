@@ -6,7 +6,7 @@ use super::{
 
 /// What a typed value's string starts with (`@file:…`).
 fn typed_mark() -> char {
-    crate::names::TYPED.chars().next().unwrap_or_default()
+    crate::names::TYPED
 }
 
 /// Plain text as a value: a leading `@` doubled, so it reads back as text
@@ -44,7 +44,7 @@ impl Schema for bool {
     }
     fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Self> {
         v.as_bool().or_else(|| {
-            cx.expected("true or false", v);
+            cx.expected(super::Expected::Bool, v);
             None
         })
     }
@@ -88,7 +88,7 @@ macro_rules! int_schema {
             }
             fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Self> {
                 let Some(n) = v.as_i64() else {
-                    cx.expected("an integer", v);
+                    cx.expected(super::Expected::Integer, v);
                     return None;
                 };
                 $of_i64(n).or_else(|| {
@@ -165,7 +165,7 @@ macro_rules! float_schema {
             }
             fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Self> {
                 v.as_f64().map(|f| f as $t).or_else(|| {
-                    cx.expected("a number", v);
+                    cx.expected(super::Expected::Number, v);
                     None
                 })
             }
@@ -213,21 +213,21 @@ impl Schema for String {
             // Plain text, the usual case: copied once, into the result.
             ValueRef::Str(s) if !s.starts_with('@') => Some(s.to_string()),
             ValueRef::Str(s) => match typed::classify(s) {
-                Ok(Value::Str(s)) => Some(s),
+                Ok(typed::Spelled::Plain(s)) => Some(s),
                 Ok(other) => {
                     cx.problem(format!(
                         "expected plain text, found {} (write `@@` for a literal `@`)",
-                        other.kind_name()
+                        other.kind()
                     ));
                     None
                 }
                 Err(e) => {
-                    cx.problem_of(crate::names::problem::BAD_TYPED, e);
+                    cx.problem_of(crate::diagnostic::Problem::BadTyped, e.to_string());
                     None
                 }
             },
             other => {
-                cx.expected("a string", other);
+                cx.expected(super::Expected::Str, other);
                 None
             }
         }
@@ -415,7 +415,7 @@ impl<T: Schema> Schema for Vec<T> {
     }
     fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Self> {
         let ValueRef::List(items) = v else {
-            cx.expected("a list", v);
+            cx.expected(super::Expected::List, v);
             return None;
         };
         let mut out = Vec::with_capacity(items.len());
@@ -597,7 +597,7 @@ impl<T: Schema, E: Schema> Schema for Result<T, E> {
     }
     fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Self> {
         let ValueRef::Map(m) = v else {
-            cx.expected("{ ok } or { err }", v);
+            cx.expected(super::Expected::OkOrErr, v);
             return None;
         };
         if let Some(ok) = m.get(RESULT_OK) {
@@ -606,7 +606,7 @@ impl<T: Schema, E: Schema> Schema for Result<T, E> {
                 .map(Ok);
         }
         let Some(err) = m.get(RESULT_ERR) else {
-            cx.expected("{ ok } or { err }", v);
+            cx.expected(super::Expected::OkOrErr, v);
             return None;
         };
         cx.at(Seg::Key(RESULT_ERR.into()), |cx| E::read(err, cx))
@@ -628,14 +628,14 @@ pub(crate) const RESULT_ERR: &str = "err";
 /// A tuple, written as a list of its items in order: a pair `[a, b]` (a
 /// point, a size), a triple `[x, y, z]` (a position).
 macro_rules! tuples {
-    ($($what:literal: $n:literal => ($($t:ident $i:tt),+);)+) => {$(
+    ($($n:literal => ($($t:ident $i:tt),+);)+) => {$(
         impl<$($t: Schema),+> Schema for ($($t,)+) {
             fn shape() -> Shape {
                 Shape::List(Value::shape)
             }
             fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Self> {
                 let ValueRef::List(items) = v else {
-                    cx.expected($what, v);
+                    cx.expected(super::Expected::Items($n), v);
                     return None;
                 };
                 if items.len() != $n {
@@ -669,9 +669,9 @@ macro_rules! tuples {
 }
 
 tuples! {
-    "a pair [a, b]": 2 => (A 0, B 1);
-    "a triple [a, b, c]": 3 => (A 0, B 1, C 2);
-    "four [a, b, c, d]": 4 => (A 0, B 1, C 2, D 3);
+    2 => (A 0, B 1);
+    3 => (A 0, B 1, C 2);
+    4 => (A 0, B 1, C 2, D 3);
 }
 
 fn read_map<T: Schema>(

@@ -1,7 +1,8 @@
 //! Reading a value against a schema: its problems, with their paths.
+use super::{Expected, MapRef, Path, Ref, Resolve, Schema, Seg, ValueRef};
 use crate::Diagnostic;
-
-use super::{MapRef, Path, Ref, Schema, Seg, ValueRef};
+use crate::diagnostic::Problem;
+use crate::model::value::RefKey;
 
 // ── Reading ─────────────────────────────────────────────────────────────────
 
@@ -46,15 +47,6 @@ pub fn is_metadata_key(key: &str) -> bool {
     key.starts_with(META_PREFIX) || key.starts_with(PRIVATE_PREFIX) || key == COMMENT_KEY
 }
 
-/// What a tool makes of the references it reads: a build checks each one
-/// against what there is (and may rewrite its id), an editor shows them.
-pub trait Resolve {
-    /// A reference: the id to keep, or why it's wrong.
-    fn reference(&mut self, r: &Ref, _path: &Path) -> Result<String, String> {
-        Ok(r.id.clone())
-    }
-}
-
 impl<'r> Reader<'r> {
     pub fn new() -> Self {
         Self::default()
@@ -69,16 +61,18 @@ impl<'r> Reader<'r> {
     }
 
     /// `r` resolved (a problem if it's wrong); its id without a resolver.
-    pub fn resolve_ref(&mut self, r: &Ref) -> Option<String> {
+    pub fn resolve_ref(&mut self, r: &Ref) -> Option<RefKey> {
         let result = match &mut self.resolver {
             Some(res) => res.reference(r, &Self::built(&self.path)),
             None => Ok(r.id.clone()),
         };
-        result.map_err(|e| self.problem(e)).ok()
+        result
+            .map_err(|e| self.problem_of(Problem::Unresolved, e.to_string()))
+            .ok()
     }
 
     /// [`Reader::resolve_ref`], taking `r`: without a resolver the id moves.
-    pub fn take_ref(&mut self, r: Ref) -> Option<String> {
+    pub fn take_ref(&mut self, r: Ref) -> Option<RefKey> {
         if self.resolver.is_none() {
             return Some(r.id);
         }
@@ -113,19 +107,19 @@ impl<'r> Reader<'r> {
 
     /// Reports a problem with the value being read.
     pub fn problem(&mut self, message: impl Into<String>) {
-        self.problem_of(crate::names::problem::INVALID, message);
+        self.problem_of(Problem::Invalid, message);
     }
 
-    /// Reports a problem of kind `code` (`crate::names::problem`) with the value being read.
-    pub fn problem_of(&mut self, code: &'static str, message: impl Into<String>) {
-        let found = Diagnostic::error(code, message.into()).at_path(self.path());
+    /// Reports a `problem` with the value being read.
+    pub fn problem_of(&mut self, problem: Problem, message: impl Into<String>) {
+        let found = Diagnostic::error(problem, message.into()).at_path(self.path());
         self.problems.push(found);
     }
 
     /// "expected X, found Y".
-    pub fn expected(&mut self, what: &str, found: &ValueRef) {
+    pub fn expected(&mut self, what: Expected, found: &ValueRef) {
         self.problem_of(
-            crate::names::problem::EXPECTED,
+            Problem::Expected,
             format!("expected {what}, found {}", found_text(found)),
         );
     }
@@ -159,7 +153,7 @@ impl<'r> Reader<'r> {
         match v {
             ValueRef::Map(m) => Some(*m),
             other => {
-                self.expected("an object", other);
+                self.expected(Expected::Object, other);
                 None
             }
         }
@@ -188,7 +182,7 @@ impl<'r> Reader<'r> {
                     }
                 });
             let mut found = Diagnostic::error(
-                crate::names::problem::UNKNOWN_FIELD,
+                Problem::UnknownField,
                 format!("unknown field `{key}`{hint}"),
             )
             .at_path(self.path().key(key));
@@ -218,10 +212,7 @@ impl<'r> Reader<'r> {
         match map.get(key) {
             Some(v) => self.at(Seg::Key(key.to_string()), |cx| T::read(v, cx)),
             None => T::absent().or_else(|| {
-                self.problem_of(
-                    crate::names::problem::MISSING_FIELD,
-                    format!("missing `{key}`"),
-                );
+                self.problem_of(Problem::MissingField, format!("missing `{key}`"));
                 None
             }),
         }
@@ -249,10 +240,7 @@ impl<'r> Reader<'r> {
         match map.get(key) {
             Some(v) => self.in_field(key, |cx| W::read(v, cx)),
             None => W::absent().or_else(|| {
-                self.problem_of(
-                    crate::names::problem::MISSING_FIELD,
-                    format!("missing `{key}`"),
-                );
+                self.problem_of(Problem::MissingField, format!("missing `{key}`"));
                 None
             }),
         }
@@ -308,7 +296,7 @@ fn found_text(v: &ValueRef) -> String {
         ValueRef::Int(n) => n.to_string(),
         ValueRef::Float(f) => f.to_string(),
         ValueRef::Bool(b) => b.to_string(),
-        other => other.kind_name().to_string(),
+        other => other.kind().to_string(),
     }
 }
 
@@ -407,7 +395,7 @@ impl Reader<'_> {
                 let bad = show(n);
                 self.at(Seg::Key(key.to_string()), |cx| {
                     cx.problem_of(
-                        crate::names::problem::OUT_OF_RANGE,
+                        Problem::OutOfRange,
                         format!("{bad} is out of range ({}..={})", show(lo), show(hi)),
                     )
                 });

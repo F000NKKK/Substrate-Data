@@ -31,7 +31,7 @@ use crate::binary::{Decoder, Writer};
 use crate::frame::{Packer, Unpacker};
 use crate::model::borrowed::ValueRef;
 use crate::model::value::{Map, Ref, Seg, Value};
-use crate::schema::{Kinds, Reader, Schema, Shape, is_metadata_key, read_ref};
+use crate::schema::{Kinds, Reader, Schema, Shape, is_metadata_key};
 
 /// How a field of type `F` is read and written.
 pub trait With<F> {
@@ -78,32 +78,24 @@ pub trait With<F> {
 /// A reference of kind(s) `K`, kept as the resolved id.
 pub struct RefTo<K>(PhantomData<K>);
 
-impl<K: Kinds> With<String> for RefTo<K> {
+impl<K: Kinds> With<K::Id> for RefTo<K> {
     fn shape() -> Shape {
-        Shape::Ref(K::NAMES)
+        super::ref_shape::<K>()
     }
-    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<String> {
-        // The usual case, a reference of a kind it takes: nothing copied but its id.
-        if let ValueRef::Ref { kind, id } = v
-            && (K::NAMES.is_empty() || K::NAMES.contains(kind))
-        {
-            if cx.keeps_found() || cx.resolves() {
-                let r = Ref::new(*kind, *id);
-                if cx.keeps_found() {
-                    cx.note_ref(r.clone());
-                }
-                return cx.take_ref(r);
-            }
-            return Some(id.to_string());
-        }
-        let r = read_ref(v, cx, K::NAMES)?;
-        cx.take_ref(r)
+    fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<K::Id> {
+        super::read_id::<K>(v, cx)
     }
-    fn write(f: &String) -> Value {
+    fn write(f: &K::Id) -> Value {
         Value::Ref(Ref::new(
-            K::NAMES.first().copied().unwrap_or("ref"),
-            f.clone(),
+            K::first(),
+            crate::model::value::RefKey::spelled(&crate::schema::RefId::spell(f)),
         ))
+    }
+    fn pack(f: &K::Id, p: &mut Packer) {
+        f.pack(p);
+    }
+    fn unpack(u: &mut Unpacker<'_>) -> Option<K::Id> {
+        K::Id::unpack(u)
     }
 }
 
@@ -122,7 +114,7 @@ impl With<String> for Spelled {
         }
         let spelled = crate::typed::typed_string(&v.to_value());
         if spelled.is_none() {
-            cx.expected("text", v);
+            cx.expected(super::Expected::Text, v);
         }
         spelled
     }
@@ -165,7 +157,7 @@ impl<F, W: With<F>> With<Vec<F>> for List<W> {
     }
     fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Vec<F>> {
         let ValueRef::List(items) = v else {
-            cx.expected("a list", v);
+            cx.expected(super::Expected::List, v);
             return None;
         };
         let mut out = Vec::with_capacity(items.len());
@@ -281,15 +273,18 @@ impl With<Vec<u8>> for Raw {
         match v {
             ValueRef::Bytes(b) => Some(b.to_vec()),
             // As text: `@bytes:<base64>`.
-            ValueRef::Str(s) => match crate::typed::classify(s).map_err(|e| cx.problem(e)).ok()? {
-                crate::Value::Bytes(b) => Some(b),
+            ValueRef::Str(s) => match crate::typed::classify(s)
+                .map_err(|e| cx.problem_of(crate::Problem::BadTyped, e.to_string()))
+                .ok()?
+            {
+                crate::typed::Spelled::Bytes(b) => Some(b),
                 _ => {
-                    cx.expected("bytes", v);
+                    cx.expected(super::Expected::Bytes, v);
                     None
                 }
             },
             other => {
-                cx.expected("bytes", other);
+                cx.expected(super::Expected::Bytes, other);
                 None
             }
         }

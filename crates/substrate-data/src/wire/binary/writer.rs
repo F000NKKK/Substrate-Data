@@ -13,7 +13,7 @@ pub(crate) const START_BYTES: usize = 256;
 ///
 /// ```
 /// let mut w = substrate_data::binary::Writer::new();
-/// w.map(2).key("id").str("core:ruby").key("count").int(3);
+/// w.map(2).key("id").str("docs/intro").key("count").int(3);
 /// let v = substrate_data::binary::decode(&w.finish()).unwrap();
 /// assert_eq!(v.get("count").and_then(|c| c.as_i64()), Some(3));
 /// ```
@@ -179,8 +179,8 @@ impl Writer {
             }
             Value::Ref(r) => {
                 self.out.push(tag::REF);
-                self.string(&r.kind);
-                self.string(&r.id);
+                self.string(r.kind.as_str());
+                self.string(r.id.as_str());
                 self
             }
             Value::Bytes(b) => self.bytes(b),

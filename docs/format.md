@@ -38,7 +38,15 @@ A reference's **kind** is lower case ASCII (`[a-z][a-z0-9_]*`): `asset`,
 `kind!`. Its **id** is anything but empty, whitespace or control
 characters; what it names and whether it exists is the format's business
 (a [`Resolve`] checks references while reading, and every reference met is
-reported with its path).
+reported with its path). In code both parts are checked newtypes,
+`KindName` (interned) and `RefKey`, made once when the reference is read.
+
+A kind declares the **type of its ids**: `kind!(User = "user": u64, Doc =
+"doc")` — `String` when none is said, else `u32`, `u64`, `i64` or `Uid`
+(128 bits, written as 32 lower-case hex digits), or any type implementing
+`RefId`. `Id<User>` holds a `u64`; `"@user:abc"` is an SD0010 problem at
+its path. The text and binary forms spell every id as text, so changing a
+kind's id type changes no file.
 
 ### Typed values
 
@@ -175,6 +183,8 @@ record = varint length, its fields in declaration order
 | tuple | as a list, each item its binary form as bytes |
 | unit enum | varint variant index |
 | [`Atom`] | its number in this process's table |
+| `Id<K>` (and `with::RefTo<K>`) | its id, as `K`'s id type packs (`@user:42` is one varint); the kind is the field's |
+| `Ref` (any kind) | its kind and its id, as strings |
 | anything else | its binary form, as bytes |
 
 **Evolution rule:** fields are only ever appended. A record carries its
@@ -236,7 +246,8 @@ One schema gives:
   [`Resolve`] when one is given;
 - **shape** — `T::shape()` describes the type (fields, docs from `///`,
   required or not, numeric ranges, enum variants), and `Shape::describe()`
-  turns it into a value any tool can read: an editor builds property grids,
+  turns it into a `ShapeDoc` — typed, itself a `Schema`, written
+  `{ root, defs }` — that any tool can read: an editor builds property grids,
   pickers (a `ref` field of kind `file` gets the file picker), completion
   and hover docs from it; docs generate their field tables from it.
 
@@ -260,24 +271,30 @@ to the tag; one that wraps anything else keeps it under `value`.
 
 ### Domain types
 
-`Shape::Named { name, of }` lets a format describe a type of its own
-(`"color"`, `"date"`, `"money"`, `"duration"`) stored as plain data
-(`of`): a tool that knows the name shows its own editor (a colour picker,
-a calendar), one that doesn't edits `of`. A program implements `Schema`
-for its own types in its own adapter crate and returns a named shape; this crate knows nothing
-of them.
+A format describes a type of its own (`"color"`, `"date"`, `"money"`,
+`"duration"`) by implementing `NamedType` — its `NAME`, the `Stored` type
+it is kept as, and the conversions — and `substrate_data::named_schema!(T)`
+implements `Schema` from that. Its shape is `Shape::Named`, described
+`{ kind: "named", name, of }`: a tool that knows the name shows its own
+editor (a colour picker, a calendar), one that doesn't edits `of`. This
+crate knows nothing of the names.
 
-A named type is stored as `of` in every form: its `write`, `encode` and
-`pack` produce what `of`'s would (so `frame::read_shaped` reads it as
-`of`). A list of a named type packs item by item (the default
+A named type is stored as `Stored` in every form (so `frame::read_shaped`
+reads it as `of`); a stored value `from_stored` refuses is a problem at
+its path. A list of a named type packs item by item (the default
 `pack_list`), not as a packed list of numbers.
+
+A reference's shape is `{ kind: "ref", of: [kinds], id: <id shape> }`.
 
 ---
 
 ## Diagnostics
 
 Every problem is a `Diagnostic`: a code, a severity, a message, and where
-(file, path, line and column). Codes from this crate:
+(file, path, line and column). Its code is a `Code`: `Code::Data(Problem)`
+for this crate's (each `Problem` variant has its `code()`), or
+`Code::Tool(Atom)` for a tool's own; both are written as the code's text.
+Codes from this crate:
 
 | Code | Meaning |
 |---|---|
@@ -291,6 +308,8 @@ Every problem is a `Diagnostic`: a code, a severity, a message, and where
 | SD0007 | number out of range |
 | SD0008 | a string written as a typed value that isn't one |
 | SD0009 | binary data that won't decode |
+| SD0010 | a reference whose id isn't its kind's id type |
+| SD0011 | a reference the [`Resolve`] doesn't resolve |
 
 Tools add their own codes; a `Diagnostic` is itself a `Schema`, so it
 crosses a protocol like any other message.
@@ -307,5 +326,5 @@ magic were renumbered (`SDAT` v1); nothing reads the old `YOGD` bytes.
 [`Value`]: ../crates/substrate-data/src/model/value.rs
 [`Schema`]: ../crates/substrate-data/src/schema/mod.rs
 [`Shape`]: ../crates/substrate-data/src/schema/shape.rs
-[`Resolve`]: ../crates/substrate-data/src/schema/reader.rs
+[`Resolve`]: ../crates/substrate-data/src/schema/resolve.rs
 [`Atom`]: ../crates/substrate-data/src/model/atom.rs

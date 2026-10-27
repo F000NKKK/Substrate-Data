@@ -31,7 +31,17 @@ pub fn unpack_shaped(u: &mut Unpacker<'_>, shape: &Shape) -> Option<Value> {
             crate::Atom::from_number(u32::try_from(u.get_u()?).ok()?)?.as_str(),
         )),
         // A named type packs as what it's stored as.
-        Shape::Named { of, .. } => unpack_shaped(u, &of())?,
+        Shape::Named(named) => unpack_shaped(u, &named.stored())?,
+        // A reference of declared kinds packs only its id, as its id's
+        // shape says; one of any kind, its kind and id as text.
+        Shape::Ref { kinds: [], .. } => Value::Ref(crate::Ref::new(
+            crate::KindName::new(u.get_str()?).ok()?,
+            crate::RefKey::new(u.get_str()?).ok()?,
+        )),
+        Shape::Ref { kinds, id } => Value::Ref(crate::Ref::new(
+            crate::KindName::new(kinds[0]).ok()?,
+            crate::RefKey::new(&unpack_id(u, &id())?).ok()?,
+        )),
         Shape::Bytes => Value::Bytes(u.get_bytes()?.to_vec()),
         Shape::Optional(inner) => {
             if u.get_bool()? {
@@ -45,6 +55,15 @@ pub fn unpack_shaped(u: &mut Unpacker<'_>, shape: &Shape) -> Option<Value> {
         Shape::Enum(e) if e.tag.is_none() => names(u, e)?,
         _ => u.get_tagged::<Value>()?,
     })
+}
+
+/// A reference's id packed as `shape`, spelled.
+fn unpack_id(u: &mut Unpacker<'_>, shape: &Shape) -> Option<String> {
+    match shape {
+        Shape::Int { .. } => Some(u.get_i()?.to_string()),
+        Shape::Named(named) => unpack_id(u, &named.stored()),
+        _ => Some(u.get_str()?.to_owned()),
+    }
 }
 
 /// A list: numbers packed, anything else value by value.

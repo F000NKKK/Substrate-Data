@@ -146,7 +146,7 @@ impl<T: Schema> Schema for Stream<T> {
     /// The slow way (a text file, a value): read whole, then written.
     fn read(v: &ValueRef<'_>, cx: &mut Reader) -> Option<Self> {
         let ValueRef::List(items) = v else {
-            cx.expected("a list", v);
+            cx.expected(crate::schema::Expected::List, v);
             return None;
         };
         let mut w = Stream::writer();

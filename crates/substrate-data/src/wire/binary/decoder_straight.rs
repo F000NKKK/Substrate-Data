@@ -5,6 +5,8 @@
 use bumpalo::Bump;
 
 use super::decoder::{F32_BYTES, F64_BYTES, MAP_ENTRY_MIN};
+use super::decoder_value::inline_int;
+use super::shapes::ShapeFrame;
 use super::{Decoder, tag, unzigzag};
 use crate::model::number::int_to_f64;
 
@@ -32,6 +34,11 @@ impl<'b> Decoder<'b> {
 
     /// An integer, if one is next.
     pub fn int(&mut self) -> Option<i64> {
+        let t = *self.b.get(self.i)?;
+        if self.is_inline_int(t) {
+            self.i += 1;
+            return Some(inline_int(t));
+        }
         self.next_is(tag::INT)?;
         self.varint().ok().map(unzigzag)
     }
@@ -47,13 +54,18 @@ impl<'b> Decoder<'b> {
                 self.i += 1;
                 self.fixed().ok().map(|b| f64::from(f32::from_le_bytes(b)))
             }
-            tag::INT => self.int().map(int_to_f64),
+            t if t == tag::INT || self.is_inline_int(t) => self.int().map(int_to_f64),
             _ => None,
         }
     }
 
     /// A string, if one is next.
     pub fn str(&mut self) -> Option<&'b str> {
+        let t = *self.b.get(self.i)?;
+        if self.is_indexed(t) {
+            self.i += 1;
+            return self.indexed(t).ok();
+        }
         self.next_is(tag::STR)?;
         self.string().ok()
     }
@@ -133,19 +145,46 @@ impl<'b> Decoder<'b> {
     /// A map next: how many entries, each a [`Decoder::key`] and a value;
     /// [`Decoder::leave`] after them.
     pub fn map(&mut self) -> Option<usize> {
-        self.next_is(tag::MAP)?;
-        let n = self.count(MAP_ENTRY_MIN).ok()?;
-        self.deeper().ok()?;
-        Some(n)
+        match *self.b.get(self.i)? {
+            tag::MAP => {
+                self.i += 1;
+                let n = self.count(MAP_ENTRY_MIN).ok()?;
+                self.deeper().ok()?;
+                Some(n)
+            }
+            tag::MAP_SHAPE if self.v2 => {
+                self.i += 1;
+                let shape = self.shape_spec().ok()?;
+                let n = self.shape_width(shape).ok()?;
+                self.deeper().ok()?;
+                self.frames.push(ShapeFrame {
+                    depth: self.depth,
+                    shape,
+                    next: 0,
+                });
+                Some(n)
+            }
+            _ => None,
+        }
     }
 
     /// The end of a list or map.
     pub fn leave(&mut self) {
         self.depth = self.depth.saturating_sub(1);
+        if self.frames.last().is_some_and(|f| f.depth > self.depth) {
+            self.frames.pop();
+        }
     }
 
     /// A map's next key.
     pub fn key(&mut self) -> Option<&'b str> {
+        if let Some(frame) = self.frames.last_mut()
+            && frame.depth == self.depth
+        {
+            let string = self.shapes.keys_of(frame.shape).get(frame.next).copied()?;
+            frame.next += 1;
+            return Some(self.strings[string]);
+        }
         self.string().ok()
     }
 

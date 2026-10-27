@@ -1,8 +1,11 @@
 //! Writing the binary form: one buffer, strings written where first used.
 
 use super::interner::Interner;
-use super::{MAGIC, NEW_STRING, VERSION, tag, varint, zigzag};
-use crate::model::value::Value;
+use super::shape_table::ShapeTable;
+use super::{
+    INLINE_INT_MAX, INLINE_INT_MIN, MAGIC, NEW_STRING, STR_INDEX_COUNT, VERSION, tag, varint,
+    zigzag,
+};
 
 /// What a writer reserves to start with: most messages fit.
 pub(crate) const START_BYTES: usize = 256;
@@ -19,9 +22,32 @@ pub(crate) const START_BYTES: usize = 256;
 /// ```
 #[derive(Debug)]
 pub struct Writer {
-    out: Vec<u8>,
+    pub(super) out: Vec<u8>,
     /// The strings written, by where they are in `out`.
-    strings: Interner,
+    pub(super) strings: Interner,
+    /// The map shapes written, by their keys.
+    pub(super) shapes: ShapeTable,
+    /// What looking up a shape's keys found, and their numbers: kept to be reused.
+    found: Vec<Result<usize, Option<u32>>>,
+    numbers: Vec<usize>,
+    /// The shapes of keys that are `'static` slices, by where the slice is and which of its keys.
+    known: [StaticShape; STATIC_SHAPES],
+    /// The keys of such a shape, picked: kept to be reused.
+    picked: Vec<&'static str>,
+}
+
+/// Slots of the cache of shapes of static keys (a power of two).
+const STATIC_SHAPES: usize = 16;
+
+/// A shape found for a static slice of keys and a choice of them.
+#[derive(Debug, Clone, Copy, Default)]
+struct StaticShape {
+    /// Where the slice is.
+    keys: usize,
+    /// Which of the slice's keys the shape has.
+    present: u64,
+    /// The shape's number + 1; 0 for a free slot.
+    shape: u32,
 }
 
 impl Default for Writer {
@@ -40,6 +66,11 @@ impl Writer {
         Writer {
             out,
             strings: Interner::new(),
+            shapes: ShapeTable::default(),
+            found: Vec::new(),
+            numbers: Vec::new(),
+            known: [StaticShape::default(); STATIC_SHAPES],
+            picked: Vec::new(),
         }
     }
 
@@ -51,6 +82,11 @@ impl Writer {
         Writer {
             out,
             strings: Interner::new(),
+            shapes: ShapeTable::default(),
+            found: Vec::new(),
+            numbers: Vec::new(),
+            known: [StaticShape::default(); STATIC_SHAPES],
+            picked: Vec::new(),
         }
     }
 
@@ -62,6 +98,8 @@ impl Writer {
         self.out.extend_from_slice(MAGIC);
         self.out.push(VERSION);
         self.strings.clear();
+        self.shapes.clear();
+        self.known = [StaticShape::default(); STATIC_SHAPES];
     }
 
     /// What is written so far, to patch or send.
@@ -81,15 +119,26 @@ impl Writer {
         self
     }
 
-    /// An integer.
+    /// An integer: one byte for -16 to 111, else a tag and a varint.
     pub fn int(&mut self, n: i64) -> &mut Self {
+        let inline = u8::try_from(n.wrapping_sub(INLINE_INT_MIN))
+            .ok()
+            .filter(|&at| i64::from(at) <= INLINE_INT_MAX - INLINE_INT_MIN);
+        if let Some(at) = inline {
+            self.out.push(tag::INT_INLINE + at);
+            return self;
+        }
         self.out.push(tag::INT);
         varint(&mut self.out, zigzag(n));
         self
     }
 
-    /// A float, eight bytes ([`Writer::float32`] writes four).
+    /// A float: four bytes when it is an `f32` exactly ([`narrows`], what a
+    /// reader gives back bit for bit), else eight.
     pub fn float(&mut self, f: f64) -> &mut Self {
+        if narrows(f) {
+            return self.float32(narrow(f));
+        }
         self.out.push(tag::FLOAT);
         self.out.extend_from_slice(&f.to_le_bytes());
         self
@@ -125,10 +174,19 @@ impl Writer {
         self
     }
 
-    /// A string: its bytes the first time, its index after.
+    /// A string: its bytes the first time, its index after (in the tag
+    /// itself for the first 32 strings of the document).
     pub fn str(&mut self, s: &str) -> &mut Self {
+        let found = self.strings.find(&self.out, s);
+        if let Ok(i) = found
+            && let Ok(at) = u8::try_from(i)
+            && at < STR_INDEX_COUNT
+        {
+            self.out.push(tag::STR_INDEX + at);
+            return self;
+        }
         self.out.push(tag::STR);
-        self.string(s);
+        self.put_string(s, found);
         self
     }
 
@@ -174,10 +232,17 @@ impl Writer {
         Writer {
             out: Vec::with_capacity(START_BYTES),
             strings: Interner::new(),
+            shapes: ShapeTable::default(),
+            found: Vec::new(),
+            numbers: Vec::new(),
+            known: [StaticShape::default(); STATIC_SHAPES],
+            picked: Vec::new(),
         }
     }
 
-    /// A map of `len` entries, each a [`Writer::key`] and a value.
+    /// A map of `len` entries, each a [`Writer::key`] and a value: its
+    /// keys written one by one, and again in every map that has them.
+    /// [`Writer::record`] writes a map's keys once for all maps with them.
     pub fn map(&mut self, len: usize) -> &mut Self {
         self.out.push(tag::MAP);
         varint(&mut self.out, len as u64);
@@ -190,37 +255,88 @@ impl Writer {
         self
     }
 
-    /// A whole value.
-    pub fn value(&mut self, v: &Value) -> &mut Self {
-        match v {
-            Value::Null => self.null(),
-            Value::Bool(b) => self.bool(*b),
-            Value::Int(n) => self.int(*n),
-            Value::Float(f) => self.float(*f),
-            Value::Str(s) => self.str(s),
-            Value::List(items) => {
-                self.list(items.len());
-                for item in items {
-                    self.value(item);
-                }
-                self
-            }
-            Value::Map(map) => {
-                self.map(map.len());
-                for (key, item) in map.iter() {
-                    self.string(key);
-                    self.value(item);
-                }
-                self
-            }
-            Value::Ref(r) => {
-                self.out.push(tag::REF);
-                self.string(r.kind.as_str());
-                self.string(r.id.as_str());
-                self
-            }
-            Value::Bytes(b) => self.bytes(b),
+    /// A map of these `keys` (none repeated): the keys are written the
+    /// first time this set is met and named by number after that. A value
+    /// for each key follows, in order, with no [`Writer::key`].
+    pub fn record(&mut self, keys: &[&str]) -> &mut Self {
+        if keys.is_empty() {
+            return self.map(0);
         }
+        self.out.push(tag::MAP_SHAPE);
+        self.shape(keys.iter().copied());
+        self
+    }
+
+    /// A map of the keys of `keys` that `present` has a bit for (bit `i`
+    /// for key `i`, at most 64 keys): what [`Writer::record`] is, for a
+    /// struct whose keys are always the same slice, found again by where it
+    /// is instead of by looking at its keys. A value for each key present
+    /// follows, in order.
+    pub fn record_masked(&mut self, keys: &'static [&'static str], present: u64) -> &mut Self {
+        if present == 0 {
+            return self.map(0);
+        }
+        self.out.push(tag::MAP_SHAPE);
+        let mixed = ((keys.as_ptr() as usize >> 4) as u64) ^ present;
+        let slot = usize::try_from(mixed % STATIC_SHAPES as u64).unwrap_or(0);
+        let known = self.known[slot];
+        if known.shape != 0 && known.keys == keys.as_ptr() as usize && known.present == present {
+            varint(&mut self.out, u64::from(known.shape - 1) << 1);
+            return self;
+        }
+        let mut picked = std::mem::take(&mut self.picked);
+        picked.clear();
+        picked.extend(
+            keys.iter()
+                .take(u64::BITS as usize)
+                .enumerate()
+                .filter(|&(i, _)| present >> i & 1 == 1)
+                .map(|(_, &key)| key),
+        );
+        let shape = self.shape(picked.iter().copied());
+        self.picked = picked;
+        self.known[slot] = StaticShape {
+            keys: keys.as_ptr() as usize,
+            present,
+            shape: u32::try_from(shape + 1).unwrap_or(0),
+        };
+        self
+    }
+
+    /// The shape of `keys`: written (a marker with their count, then them)
+    /// the first time, else its number. The shape's number.
+    pub(super) fn shape<'k>(
+        &mut self,
+        keys: impl ExactSizeIterator<Item = &'k str> + Clone,
+    ) -> usize {
+        let n = keys.len();
+        let mut found = std::mem::take(&mut self.found);
+        let mut numbers = std::mem::take(&mut self.numbers);
+        found.clear();
+        for key in keys.clone() {
+            found.push(self.strings.find(&self.out, key));
+        }
+        numbers.clear();
+        numbers.extend(found.iter().map_while(|f| f.as_ref().ok().copied()));
+        let known = if numbers.len() == n {
+            self.shapes.find(&numbers)
+        } else {
+            None
+        };
+        let shape = if let Some(shape) = known {
+            varint(&mut self.out, (shape as u64) << 1);
+            shape
+        } else {
+            varint(&mut self.out, ((n as u64) << 1) | NEW_STRING);
+            for (key, at) in keys.zip(found.iter().copied()) {
+                let string = self.put_string(key, at);
+                self.shapes.key(string);
+            }
+            self.shapes.seal()
+        };
+        self.found = found;
+        self.numbers = numbers;
+        shape
     }
 
     /// The bytes.
@@ -229,15 +345,41 @@ impl Writer {
         self.out
     }
 
-    /// `s`: a reference if it was written before, else itself.
-    fn string(&mut self, s: &str) {
-        if let Some(i) = self.strings.find(&self.out, s) {
-            varint(&mut self.out, (i as u64) << 1);
-            return;
-        }
-        varint(&mut self.out, ((s.len() as u64) << 1) | NEW_STRING);
-        let at = self.out.len();
-        self.out.extend_from_slice(s.as_bytes());
-        self.strings.add(&self.out, s, at);
+    /// `s`: a reference if it was written before, else itself: its number in the table.
+    pub(super) fn string(&mut self, s: &str) -> usize {
+        let found = self.strings.find(&self.out, s);
+        self.put_string(s, found)
     }
+
+    /// `s` as a string of the table, where [`Interner::find`] said `found`.
+    fn put_string(&mut self, s: &str, found: Result<usize, Option<u32>>) -> usize {
+        match found {
+            Ok(i) => {
+                varint(&mut self.out, (i as u64) << 1);
+                i
+            }
+            Err(hash) => {
+                varint(&mut self.out, ((s.len() as u64) << 1) | NEW_STRING);
+                let at = self.out.len();
+                self.out.extend_from_slice(s.as_bytes());
+                self.strings.add(&self.out, s, at, hash)
+            }
+        }
+    }
+}
+
+/// Whether `f` is an `f32` exactly, bit for bit: what a float of four
+/// bytes holds. A NaN never is (its payload is not worth the question).
+#[must_use]
+pub(crate) fn narrows(f: f64) -> bool {
+    !f.is_nan() && f64::from(narrow(f)).to_bits() == f.to_bits()
+}
+
+/// `f` as an `f32`: only when [`narrows`] says it loses nothing.
+#[expect(
+    clippy::cast_possible_truncation,
+    reason = "called to check, or once `narrows` said it is exact"
+)]
+fn narrow(f: f64) -> f32 {
+    f as f32
 }

@@ -18,6 +18,8 @@ mod evolution;
 mod faults_binary;
 mod faults_frame;
 mod faults_text;
+mod faults_v2;
+mod forms_v2;
 mod frames;
 mod golden;
 mod hex;
@@ -29,5 +31,7 @@ mod schemas;
 mod store;
 mod syntax;
 mod typed;
+#[path = "../support/v1.rs"]
+mod v1;
 mod values;
 mod widths;

@@ -56,20 +56,22 @@ fn evolution() -> Vec<Case> {
             "frame_record_appended_fields",
             "Fields are only ever appended. A frame packed with `owner` and `archived` is read by a schema that knows only `name` and `files`: the record's length lets it skip the rest.",
         )
-        .frame(Frame {
-            writer: reading("project_v2", &newer_bytes),
-            bytes: newer_bytes.clone(),
-            also: vec![reading("project_v1", &newer_bytes)],
-        }),
+        .frame(Frame::new(
+            "frame_record_appended_fields",
+            reading("project_v2", &newer_bytes),
+            newer_bytes.clone(),
+            vec![reading("project_v1", &newer_bytes)],
+        )),
         Case::new(
             "frame_record_older_frame",
             "A frame packed before the fields were appended, read by a newer schema: the missing trailing fields are left out of the value read by shape, and take their defaults when the schema says `default` (owner none, archived false).",
         )
-        .frame(Frame {
-            writer: reading("project_v1", &older_bytes),
-            bytes: older_bytes.clone(),
-            also: vec![reading("project_v2", &older_bytes)],
-        }),
+        .frame(Frame::new(
+            "frame_record_older_frame",
+            reading("project_v1", &older_bytes),
+            older_bytes.clone(),
+            vec![reading("project_v2", &older_bytes)],
+        )),
     ]
 }
 

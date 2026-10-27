@@ -109,10 +109,12 @@ fn non_finite() -> Vec<Case> {
                 sign included; compare floats by their bits.";
     let make = |name: &str, what: &str, bits: u64| {
         let value = Value::Float(f64::from_bits(bits));
-        let bytes = substrate_data::binary::encode(&value);
+        let old = crate::v1::encode(&value);
+        let new = substrate_data::binary::encode(&value);
         Case::new(name, &format!("{what}. {note}"))
             .value(value)
-            .binary(bytes)
+            .binary(old)
+            .binary_v2(new)
     };
     vec![
         make("float_infinity", "Positive infinity", 0x7ff0_0000_0000_0000),

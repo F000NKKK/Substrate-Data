@@ -1,18 +1,23 @@
 //! Negative cases for the binary form.
 
-use substrate_data::binary::{MAGIC, VERSION, decode, decode_ref};
+use substrate_data::binary::{LEGACY_VERSION, MAGIC, VERSION, decode, decode_ref};
 use substrate_data::{Bump, Value};
 
 use crate::case::{Case, Fault};
 
 const MAX_DEPTH: usize = 256;
 
-/// The header and `body`.
-fn document(body: &[u8]) -> Vec<u8> {
+/// The header of `version` and `body`.
+fn document_of(version: u8, body: &[u8]) -> Vec<u8> {
     let mut out = MAGIC.to_vec();
-    out.push(VERSION);
+    out.push(version);
     out.extend_from_slice(body);
     out
+}
+
+/// The version 1 header and `body`: what the first vectors are made of.
+fn document(body: &[u8]) -> Vec<u8> {
+    document_of(LEGACY_VERSION, body)
 }
 
 /// A varint of `n` continuing bytes, then `last`.
@@ -221,11 +226,26 @@ fn table(rows: &[Row]) -> Vec<Case> {
         .collect()
 }
 
+/// The same rows as version 2 documents: every tag they use is one of version 1's, so
+/// they fail the same way.
+fn table_v2(rows: &[Row]) -> Vec<Case> {
+    rows.iter()
+        .map(|&(name, why, body, kind, says)| {
+            let name = name.replacen("binary_", "binary_v2_", 1);
+            let why = format!("{why} (A version 2 document.)");
+            fault(&name, &why, document_of(VERSION, body), kind, says)
+        })
+        .collect()
+}
+
 /// Every case of this module.
 pub(crate) fn cases() -> Vec<Case> {
     let mut all = header();
     all.extend(table(&HEADER_FAULTS));
+    all.extend(table_v2(&HEADER_FAULTS));
     all.extend(table(&BODY_FAULTS));
+    all.extend(table_v2(&BODY_FAULTS));
+    all.extend(super::faults_v2::cases());
     all.extend(tags());
     all.extend(huge_and_varints());
     all.extend(depth());
@@ -257,10 +277,10 @@ fn header() -> Vec<Case> {
             "unexpected end",
         ),
     ];
-    for v in [0u8, 2, 255] {
+    for v in [0u8, 3, 255] {
         out.push(fault(
             &format!("binary_version_{v}"),
-            "Only version 1 is read; any other version byte is an error at byte 5.",
+            "Only versions 1 and 2 are read; any other version byte is an error at byte 5.",
             vec![b'S', b'D', b'A', b'T', v],
             "bad_version",
             "version",
@@ -270,12 +290,12 @@ fn header() -> Vec<Case> {
 }
 
 fn tags() -> Vec<Case> {
-    [15u8, 200, 255]
+    [15u8, 16, 32, 128, 200, 255]
         .iter()
         .map(|&t| {
             fault(
                 &format!("binary_unknown_tag_{t}"),
-                "A tag byte that is none of 0..=14.",
+                "A tag byte that is none of 0..=14 in a version 1 document.",
                 document(&[t]),
                 "unknown_tag",
                 "unknown tag",
@@ -367,10 +387,13 @@ fn depth_ok() -> Case {
     }
     body.push(0);
     let bytes = document(&body);
-    decode(&bytes).expect("256 levels are fine");
+    let value = decode(&bytes).expect("256 levels are fine");
+    let upgraded = substrate_data::binary::upgrade(&bytes).expect("upgrades");
+    assert_eq!(decode(&upgraded).as_ref(), Ok(&value));
     Case::new(
         "binary_depth_256",
-        "Lists nested exactly 256 deep (MAX_DEPTH) decode; the innermost holds null.",
+        "Lists nested exactly 256 deep (MAX_DEPTH) decode; the innermost holds null. A version 1 document, with its version 2 form beside it.",
     )
     .binary(bytes)
+    .binary_v2(upgraded)
 }

@@ -7,7 +7,13 @@ use crate::case::Case;
 use crate::json::document;
 
 /// The directories of raw files and their extensions.
-const RAW_DIRS: [(&str, &str); 3] = [("binary", "sdat"), ("frames", "frame"), ("io", "stream")];
+const RAW_DIRS: [(&str, &str); 5] = [
+    ("binary", "sdat"),
+    ("binary_v2", "sdat"),
+    ("frames", "frame"),
+    ("frames_v2", "frame"),
+    ("io", "stream"),
+];
 
 /// The manifest's file name.
 const MANIFEST: &str = "cases.json";
@@ -99,4 +105,10 @@ pub(crate) fn manifest() -> Vec<serde_json::Value> {
 /// A raw file by its path in the manifest.
 pub(crate) fn raw(path: &str) -> Vec<u8> {
     fs::read(root().join(path)).unwrap_or_else(|e| panic!("{path}: {e}"))
+}
+
+/// A raw file already on disk, if there is one: what a case written before
+/// version 2 keeps, byte for byte (a vector is never rewritten).
+pub(crate) fn legacy(path: &str) -> Option<Vec<u8>> {
+    fs::read(root().join(path)).ok()
 }

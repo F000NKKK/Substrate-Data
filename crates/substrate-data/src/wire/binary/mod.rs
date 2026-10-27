@@ -17,19 +17,27 @@ mod decode_error;
 mod decoder;
 mod decoder_ref;
 mod decoder_straight;
+mod decoder_value;
+mod hash_index;
 pub(crate) mod interner;
 mod layout;
 mod seen_keys;
+mod shape_table;
+mod shapes;
 pub mod tag;
 #[cfg(test)]
 mod tests;
 mod varint;
 pub(crate) mod writer;
+mod writer_value;
 
-pub use codec::{decode, decode_ref, encode, encode_into};
+pub use codec::{decode, decode_ref, encode, encode_into, upgrade};
 pub use decode_error::DecodeError;
 pub use decoder::Decoder;
-pub use layout::{MAGIC, MAX_DEPTH, NEW_STRING, STREAM_LEN_BYTES, VERSION};
+pub use layout::{
+    INLINE_INT_MAX, INLINE_INT_MIN, LEGACY_VERSION, MAGIC, MAX_DEPTH, NEW_STRING, STR_INDEX_COUNT,
+    STREAM_LEN_BYTES, VERSION,
+};
 pub(crate) use varint::{
     VARINT_BITS, VARINT_LAST_SHIFT, VARINT_MAX_SHIFT, VARINT_MORE, VARINT_SHIFT, read_varint,
     unzigzag, varint, zigzag,

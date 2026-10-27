@@ -6,9 +6,14 @@
     "text_is_written": true,
     "value": {"t": "null"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540100",
     "binary_len": 6,
-    "binary_file": "binary/null.sdat"
+    "binary_file": "binary/null.sdat",
+    "binary_v2": "534441540200",
+    "binary_v2_len": 6,
+    "binary_v2_file": "binary_v2/null.sdat"
   },
   {
     "name": "bool_false",
@@ -17,9 +22,14 @@
     "text_is_written": true,
     "value": {"t": "bool", "v": false},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540101",
     "binary_len": 6,
-    "binary_file": "binary/bool_false.sdat"
+    "binary_file": "binary/bool_false.sdat",
+    "binary_v2": "534441540201",
+    "binary_v2_len": 6,
+    "binary_v2_file": "binary_v2/bool_false.sdat"
   },
   {
     "name": "bool_true",
@@ -28,9 +38,14 @@
     "text_is_written": true,
     "value": {"t": "bool", "v": true},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540102",
     "binary_len": 6,
-    "binary_file": "binary/bool_true.sdat"
+    "binary_file": "binary/bool_true.sdat",
+    "binary_v2": "534441540202",
+    "binary_v2_len": 6,
+    "binary_v2_file": "binary_v2/bool_true.sdat"
   },
   {
     "name": "int_0",
@@ -39,9 +54,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "0"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010300",
     "binary_len": 7,
-    "binary_file": "binary/int_0.sdat"
+    "binary_file": "binary/int_0.sdat",
+    "binary_v2": "534441540290",
+    "binary_v2_len": 6,
+    "binary_v2_file": "binary_v2/int_0.sdat"
   },
   {
     "name": "int_1",
@@ -50,9 +70,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "1"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010302",
     "binary_len": 7,
-    "binary_file": "binary/int_1.sdat"
+    "binary_file": "binary/int_1.sdat",
+    "binary_v2": "534441540291",
+    "binary_v2_len": 6,
+    "binary_v2_file": "binary_v2/int_1.sdat"
   },
   {
     "name": "int_minus_1",
@@ -61,9 +86,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "-1"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010301",
     "binary_len": 7,
-    "binary_file": "binary/int_minus_1.sdat"
+    "binary_file": "binary/int_minus_1.sdat",
+    "binary_v2": "53444154028f",
+    "binary_v2_len": 6,
+    "binary_v2_file": "binary_v2/int_minus_1.sdat"
   },
   {
     "name": "int_63",
@@ -72,9 +102,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "63"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401037e",
     "binary_len": 7,
-    "binary_file": "binary/int_63.sdat"
+    "binary_file": "binary/int_63.sdat",
+    "binary_v2": "5344415402cf",
+    "binary_v2_len": 6,
+    "binary_v2_file": "binary_v2/int_63.sdat"
   },
   {
     "name": "int_64",
@@ -83,9 +118,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "64"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401038001",
     "binary_len": 8,
-    "binary_file": "binary/int_64.sdat"
+    "binary_file": "binary/int_64.sdat",
+    "binary_v2": "5344415402d0",
+    "binary_v2_len": 6,
+    "binary_v2_file": "binary_v2/int_64.sdat"
   },
   {
     "name": "int_minus_64",
@@ -94,9 +134,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "-64"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401037f",
     "binary_len": 7,
-    "binary_file": "binary/int_minus_64.sdat"
+    "binary_file": "binary/int_minus_64.sdat",
+    "binary_v2": "5344415402037f",
+    "binary_v2_len": 7,
+    "binary_v2_file": "binary_v2/int_minus_64.sdat"
   },
   {
     "name": "int_minus_65",
@@ -105,9 +150,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "-65"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401038101",
     "binary_len": 8,
-    "binary_file": "binary/int_minus_65.sdat"
+    "binary_file": "binary/int_minus_65.sdat",
+    "binary_v2": "5344415402038101",
+    "binary_v2_len": 8,
+    "binary_v2_file": "binary_v2/int_minus_65.sdat"
   },
   {
     "name": "int_8191",
@@ -116,9 +166,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "8191"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540103fe7f",
     "binary_len": 8,
-    "binary_file": "binary/int_8191.sdat"
+    "binary_file": "binary/int_8191.sdat",
+    "binary_v2": "534441540203fe7f",
+    "binary_v2_len": 8,
+    "binary_v2_file": "binary_v2/int_8191.sdat"
   },
   {
     "name": "int_8192",
@@ -127,9 +182,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "8192"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540103808001",
     "binary_len": 9,
-    "binary_file": "binary/int_8192.sdat"
+    "binary_file": "binary/int_8192.sdat",
+    "binary_v2": "534441540203808001",
+    "binary_v2_len": 9,
+    "binary_v2_file": "binary_v2/int_8192.sdat"
   },
   {
     "name": "int_2147483647",
@@ -138,9 +198,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "2147483647"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540103feffffff0f",
     "binary_len": 11,
-    "binary_file": "binary/int_2147483647.sdat"
+    "binary_file": "binary/int_2147483647.sdat",
+    "binary_v2": "534441540203feffffff0f",
+    "binary_v2_len": 11,
+    "binary_v2_file": "binary_v2/int_2147483647.sdat"
   },
   {
     "name": "int_2147483648",
@@ -149,9 +214,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "2147483648"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401038080808010",
     "binary_len": 11,
-    "binary_file": "binary/int_2147483648.sdat"
+    "binary_file": "binary/int_2147483648.sdat",
+    "binary_v2": "5344415402038080808010",
+    "binary_v2_len": 11,
+    "binary_v2_file": "binary_v2/int_2147483648.sdat"
   },
   {
     "name": "int_9223372036854775807",
@@ -160,9 +230,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "9223372036854775807"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540103feffffffffffffffff01",
     "binary_len": 16,
-    "binary_file": "binary/int_9223372036854775807.sdat"
+    "binary_file": "binary/int_9223372036854775807.sdat",
+    "binary_v2": "534441540203feffffffffffffffff01",
+    "binary_v2_len": 16,
+    "binary_v2_file": "binary_v2/int_9223372036854775807.sdat"
   },
   {
     "name": "int_minus_9223372036854775808",
@@ -171,9 +246,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "-9223372036854775808"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540103ffffffffffffffffff01",
     "binary_len": 16,
-    "binary_file": "binary/int_minus_9223372036854775808.sdat"
+    "binary_file": "binary/int_minus_9223372036854775808.sdat",
+    "binary_v2": "534441540203ffffffffffffffffff01",
+    "binary_v2_len": 16,
+    "binary_v2_file": "binary_v2/int_minus_9223372036854775808.sdat"
   },
   {
     "name": "float_zero",
@@ -182,9 +262,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "0000000000000000", "v": "0.0"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401040000000000000000",
     "binary_len": 14,
-    "binary_file": "binary/float_zero.sdat"
+    "binary_file": "binary/float_zero.sdat",
+    "binary_v2": "53444154020c00000000",
+    "binary_v2_len": 10,
+    "binary_v2_file": "binary_v2/float_zero.sdat"
   },
   {
     "name": "float_minus_zero",
@@ -193,9 +278,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "8000000000000000", "v": "-0.0"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401040000000000000080",
     "binary_len": 14,
-    "binary_file": "binary/float_minus_zero.sdat"
+    "binary_file": "binary/float_minus_zero.sdat",
+    "binary_v2": "53444154020c00000080",
+    "binary_v2_len": 10,
+    "binary_v2_file": "binary_v2/float_minus_zero.sdat"
   },
   {
     "name": "float_one",
@@ -204,9 +294,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "3ff0000000000000", "v": "1.0"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104000000000000f03f",
     "binary_len": 14,
-    "binary_file": "binary/float_one.sdat"
+    "binary_file": "binary/float_one.sdat",
+    "binary_v2": "53444154020c0000803f",
+    "binary_v2_len": 10,
+    "binary_v2_file": "binary_v2/float_one.sdat"
   },
   {
     "name": "float_minus_one_and_a_half",
@@ -215,9 +310,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "bff8000000000000", "v": "-1.5"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104000000000000f8bf",
     "binary_len": 14,
-    "binary_file": "binary/float_minus_one_and_a_half.sdat"
+    "binary_file": "binary/float_minus_one_and_a_half.sdat",
+    "binary_v2": "53444154020c0000c0bf",
+    "binary_v2_len": 10,
+    "binary_v2_file": "binary_v2/float_minus_one_and_a_half.sdat"
   },
   {
     "name": "float_tenth",
@@ -226,9 +326,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "3fb999999999999a", "v": "0.1"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401049a9999999999b93f",
     "binary_len": 14,
-    "binary_file": "binary/float_tenth.sdat"
+    "binary_file": "binary/float_tenth.sdat",
+    "binary_v2": "5344415402049a9999999999b93f",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/float_tenth.sdat"
   },
   {
     "name": "float_half",
@@ -237,9 +342,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "3fe0000000000000", "v": "0.5"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104000000000000e03f",
     "binary_len": 14,
-    "binary_file": "binary/float_half.sdat"
+    "binary_file": "binary/float_half.sdat",
+    "binary_v2": "53444154020c0000003f",
+    "binary_v2_len": 10,
+    "binary_v2_file": "binary_v2/float_half.sdat"
   },
   {
     "name": "float_ten_to_the_16",
@@ -248,9 +358,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "4341c37937e08000", "v": "1e16"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401040080e03779c34143",
     "binary_len": 14,
-    "binary_file": "binary/float_ten_to_the_16.sdat"
+    "binary_file": "binary/float_ten_to_the_16.sdat",
+    "binary_v2": "5344415402040080e03779c34143",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/float_ten_to_the_16.sdat"
   },
   {
     "name": "float_max",
@@ -259,9 +374,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "7fefffffffffffff", "v": "1.7976931348623157e308"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104ffffffffffffef7f",
     "binary_len": 14,
-    "binary_file": "binary/float_max.sdat"
+    "binary_file": "binary/float_max.sdat",
+    "binary_v2": "534441540204ffffffffffffef7f",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/float_max.sdat"
   },
   {
     "name": "float_min_positive",
@@ -270,9 +390,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "0010000000000000", "v": "2.2250738585072014e-308"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401040000000000001000",
     "binary_len": 14,
-    "binary_file": "binary/float_min_positive.sdat"
+    "binary_file": "binary/float_min_positive.sdat",
+    "binary_v2": "5344415402040000000000001000",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/float_min_positive.sdat"
   },
   {
     "name": "float_subnormal",
@@ -281,9 +406,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "0000000000000001", "v": "5e-324"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401040100000000000000",
     "binary_len": 14,
-    "binary_file": "binary/float_subnormal.sdat"
+    "binary_file": "binary/float_subnormal.sdat",
+    "binary_v2": "5344415402040100000000000000",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/float_subnormal.sdat"
   },
   {
     "name": "float_small",
@@ -292,9 +422,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "3e7ad7f29abcaf48", "v": "1e-7"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010448afbc9af2d77a3e",
     "binary_len": 14,
-    "binary_file": "binary/float_small.sdat"
+    "binary_file": "binary/float_small.sdat",
+    "binary_v2": "53444154020448afbc9af2d77a3e",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/float_small.sdat"
   },
   {
     "name": "float_f32_max",
@@ -303,54 +438,84 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "47efffffe0000000", "v": "3.4028234663852886e38"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104000000e0ffffef47",
     "binary_len": 14,
-    "binary_file": "binary/float_f32_max.sdat"
+    "binary_file": "binary/float_f32_max.sdat",
+    "binary_v2": "53444154020cffff7f7f",
+    "binary_v2_len": 10,
+    "binary_v2_file": "binary_v2/float_f32_max.sdat"
   },
   {
     "name": "float_infinity",
     "description": "Positive infinity. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
     "value": {"t": "float", "bits": "7ff0000000000000"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104000000000000f07f",
     "binary_len": 14,
-    "binary_file": "binary/float_infinity.sdat"
+    "binary_file": "binary/float_infinity.sdat",
+    "binary_v2": "53444154020c0000807f",
+    "binary_v2_len": 10,
+    "binary_v2_file": "binary_v2/float_infinity.sdat"
   },
   {
     "name": "float_minus_infinity",
     "description": "Negative infinity. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
     "value": {"t": "float", "bits": "fff0000000000000"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104000000000000f0ff",
     "binary_len": 14,
-    "binary_file": "binary/float_minus_infinity.sdat"
+    "binary_file": "binary/float_minus_infinity.sdat",
+    "binary_v2": "53444154020c000080ff",
+    "binary_v2_len": 10,
+    "binary_v2_file": "binary_v2/float_minus_infinity.sdat"
   },
   {
     "name": "float_nan",
     "description": "The quiet NaN. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
     "value": {"t": "float", "bits": "7ff8000000000000"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104000000000000f87f",
     "binary_len": 14,
-    "binary_file": "binary/float_nan.sdat"
+    "binary_file": "binary/float_nan.sdat",
+    "binary_v2": "534441540204000000000000f87f",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/float_nan.sdat"
   },
   {
     "name": "float_nan_payload",
     "description": "A NaN with a payload. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
     "value": {"t": "float", "bits": "7ff8000000000001"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104010000000000f87f",
     "binary_len": 14,
-    "binary_file": "binary/float_nan_payload.sdat"
+    "binary_file": "binary/float_nan_payload.sdat",
+    "binary_v2": "534441540204010000000000f87f",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/float_nan_payload.sdat"
   },
   {
     "name": "float_nan_negative",
     "description": "A NaN with the sign bit set. Binary only: the text form writes a non-finite float as null (a different value), so no text is given. The binary form keeps the exact 64 bits, a NaN's payload and sign included; compare floats by their bits.",
     "value": {"t": "float", "bits": "fff8000000000000"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540104000000000000f8ff",
     "binary_len": 14,
-    "binary_file": "binary/float_nan_negative.sdat"
+    "binary_file": "binary/float_nan_negative.sdat",
+    "binary_v2": "534441540204000000000000f8ff",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/float_nan_negative.sdat"
   },
   {
     "name": "str_empty",
@@ -359,9 +524,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": ""},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010501",
     "binary_len": 7,
-    "binary_file": "binary/str_empty.sdat"
+    "binary_file": "binary/str_empty.sdat",
+    "binary_v2": "53444154020501",
+    "binary_v2_len": 7,
+    "binary_v2_file": "binary_v2/str_empty.sdat"
   },
   {
     "name": "str_ascii",
@@ -370,9 +540,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "hello"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401050b68656c6c6f",
     "binary_len": 12,
-    "binary_file": "binary/str_ascii.sdat"
+    "binary_file": "binary/str_ascii.sdat",
+    "binary_v2": "5344415402050b68656c6c6f",
+    "binary_v2_len": 12,
+    "binary_v2_file": "binary_v2/str_ascii.sdat"
   },
   {
     "name": "str_latin",
@@ -381,9 +556,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "héllo wörld"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401051b68c3a96c6c6f2077c3b6726c64",
     "binary_len": 20,
-    "binary_file": "binary/str_latin.sdat"
+    "binary_file": "binary/str_latin.sdat",
+    "binary_v2": "5344415402051b68c3a96c6c6f2077c3b6726c64",
+    "binary_v2_len": 20,
+    "binary_v2_file": "binary_v2/str_latin.sdat"
   },
   {
     "name": "str_cjk",
@@ -392,9 +572,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "日本語"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010513e697a5e69cace8aa9e",
     "binary_len": 16,
-    "binary_file": "binary/str_cjk.sdat"
+    "binary_file": "binary/str_cjk.sdat",
+    "binary_v2": "53444154020513e697a5e69cace8aa9e",
+    "binary_v2_len": 16,
+    "binary_v2_file": "binary_v2/str_cjk.sdat"
   },
   {
     "name": "str_emoji",
@@ -403,9 +588,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "🦀 and 🧪"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401051bf09fa68020616e6420f09fa7aa",
     "binary_len": 20,
-    "binary_file": "binary/str_emoji.sdat"
+    "binary_file": "binary/str_emoji.sdat",
+    "binary_v2": "5344415402051bf09fa68020616e6420f09fa7aa",
+    "binary_v2_len": 20,
+    "binary_v2_file": "binary_v2/str_emoji.sdat"
   },
   {
     "name": "str_escapes",
@@ -414,9 +604,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "quote \" backslash \\ newline \n tab \t"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401054771756f74652022206261636b736c617368205c206e65776c696e65200a207461622009",
     "binary_len": 42,
-    "binary_file": "binary/str_escapes.sdat"
+    "binary_file": "binary/str_escapes.sdat",
+    "binary_v2": "5344415402054771756f74652022206261636b736c617368205c206e65776c696e65200a207461622009",
+    "binary_v2_len": 42,
+    "binary_v2_file": "binary_v2/str_escapes.sdat"
   },
   {
     "name": "str_control",
@@ -425,9 +620,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "bell \u0007 and \u0001 and unit separator \u001f"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401054362656c6c200720616e64200120616e6420756e697420736570617261746f72201f",
     "binary_len": 40,
-    "binary_file": "binary/str_control.sdat"
+    "binary_file": "binary/str_control.sdat",
+    "binary_v2": "5344415402054362656c6c200720616e64200120616e6420756e697420736570617261746f72201f",
+    "binary_v2_len": 40,
+    "binary_v2_file": "binary_v2/str_control.sdat"
   },
   {
     "name": "str_separators",
@@ -436,9 +636,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "line   and paragraph   separators"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401054b6c696e6520e280a820616e642070617261677261706820e280a920736570617261746f7273",
     "binary_len": 44,
-    "binary_file": "binary/str_separators.sdat"
+    "binary_file": "binary/str_separators.sdat",
+    "binary_v2": "5344415402054b6c696e6520e280a820616e642070617261677261706820e280a920736570617261746f7273",
+    "binary_v2_len": 44,
+    "binary_v2_file": "binary_v2/str_separators.sdat"
   },
   {
     "name": "str_at_doubled",
@@ -447,9 +652,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "@@everyone"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010515404065766572796f6e65",
     "binary_len": 17,
-    "binary_file": "binary/str_at_doubled.sdat"
+    "binary_file": "binary/str_at_doubled.sdat",
+    "binary_v2": "53444154020515404065766572796f6e65",
+    "binary_v2_len": 17,
+    "binary_v2_file": "binary_v2/str_at_doubled.sdat"
   },
   {
     "name": "str_looks_like_ref",
@@ -458,9 +668,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "@file:images/logo.png"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401052b4066696c653a696d616765732f6c6f676f2e706e67",
     "binary_len": 28,
-    "binary_file": "binary/str_looks_like_ref.sdat"
+    "binary_file": "binary/str_looks_like_ref.sdat",
+    "binary_v2": "5344415402052b4066696c653a696d616765732f6c6f676f2e706e67",
+    "binary_v2_len": 28,
+    "binary_v2_file": "binary_v2/str_looks_like_ref.sdat"
   },
   {
     "name": "str_looks_like_bytes",
@@ -469,9 +684,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "@bytes:AQID"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540105174062797465733a41514944",
     "binary_len": 18,
-    "binary_file": "binary/str_looks_like_bytes.sdat"
+    "binary_file": "binary/str_looks_like_bytes.sdat",
+    "binary_v2": "534441540205174062797465733a41514944",
+    "binary_v2_len": 18,
+    "binary_v2_file": "binary_v2/str_looks_like_bytes.sdat"
   },
   {
     "name": "str_len_63",
@@ -480,9 +700,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401057f616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
     "binary_len": 70,
-    "binary_file": "binary/str_len_63.sdat"
+    "binary_file": "binary/str_len_63.sdat",
+    "binary_v2": "5344415402057f616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+    "binary_v2_len": 70,
+    "binary_v2_file": "binary_v2/str_len_63.sdat"
   },
   {
     "name": "str_len_64",
@@ -491,9 +716,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540105810161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
     "binary_len": 72,
-    "binary_file": "binary/str_len_64.sdat"
+    "binary_file": "binary/str_len_64.sdat",
+    "binary_v2": "534441540205810161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+    "binary_v2_len": 72,
+    "binary_v2_file": "binary_v2/str_len_64.sdat"
   },
   {
     "name": "text_exponent_is_float",
@@ -551,9 +781,14 @@
     "text_is_written": true,
     "value": {"t": "bytes", "hex": ""},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010900",
     "binary_len": 7,
-    "binary_file": "binary/bytes_empty.sdat"
+    "binary_file": "binary/bytes_empty.sdat",
+    "binary_v2": "53444154020900",
+    "binary_v2_len": 7,
+    "binary_v2_file": "binary_v2/bytes_empty.sdat"
   },
   {
     "name": "bytes_small",
@@ -562,9 +797,14 @@
     "text_is_written": true,
     "value": {"t": "bytes", "hex": "000102ff"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010904000102ff",
     "binary_len": 11,
-    "binary_file": "binary/bytes_small.sdat"
+    "binary_file": "binary/bytes_small.sdat",
+    "binary_v2": "53444154020904000102ff",
+    "binary_v2_len": 11,
+    "binary_v2_file": "binary_v2/bytes_small.sdat"
   },
   {
     "name": "bytes_every_value",
@@ -573,8 +813,12 @@
     "text_is_written": true,
     "value": {"t": "bytes", "hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 264,
-    "binary_file": "binary/bytes_every_value.sdat"
+    "binary_file": "binary/bytes_every_value.sdat",
+    "binary_v2_len": 264,
+    "binary_v2_file": "binary_v2/bytes_every_value.sdat"
   },
   {
     "name": "ref_file",
@@ -583,9 +827,14 @@
     "text_is_written": true,
     "value": {"t": "ref", "kind": "file", "id": "images/logo.png"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401080966696c651f696d616765732f6c6f676f2e706e67",
     "binary_len": 27,
-    "binary_file": "binary/ref_file.sdat"
+    "binary_file": "binary/ref_file.sdat",
+    "binary_v2": "5344415402080966696c651f696d616765732f6c6f676f2e706e67",
+    "binary_v2_len": 27,
+    "binary_v2_file": "binary_v2/ref_file.sdat"
   },
   {
     "name": "ref_user",
@@ -594,9 +843,14 @@
     "text_is_written": true,
     "value": {"t": "ref", "kind": "user", "id": "alice"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010809757365720b616c696365",
     "binary_len": 17,
-    "binary_file": "binary/ref_user.sdat"
+    "binary_file": "binary/ref_user.sdat",
+    "binary_v2": "53444154020809757365720b616c696365",
+    "binary_v2_len": 17,
+    "binary_v2_file": "binary_v2/ref_user.sdat"
   },
   {
     "name": "ref_colon_in_id",
@@ -605,9 +859,14 @@
     "text_is_written": true,
     "value": {"t": "ref", "kind": "doc", "id": "team:alice:notes"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010807646f63217465616d3a616c6963653a6e6f746573",
     "binary_len": 27,
-    "binary_file": "binary/ref_colon_in_id.sdat"
+    "binary_file": "binary/ref_colon_in_id.sdat",
+    "binary_v2": "53444154020807646f63217465616d3a616c6963653a6e6f746573",
+    "binary_v2_len": 27,
+    "binary_v2_file": "binary_v2/ref_colon_in_id.sdat"
   },
   {
     "name": "ref_unicode_id",
@@ -616,9 +875,14 @@
     "text_is_written": true,
     "value": {"t": "ref", "kind": "doc", "id": "guides/читать-меня"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010807646f63396775696465732fd187d0b8d182d0b0d182d18c2dd0bcd0b5d0bdd18f",
     "binary_len": 39,
-    "binary_file": "binary/ref_unicode_id.sdat"
+    "binary_file": "binary/ref_unicode_id.sdat",
+    "binary_v2": "53444154020807646f63396775696465732fd187d0b8d182d0b0d182d18c2dd0bcd0b5d0bdd18f",
+    "binary_v2_len": 39,
+    "binary_v2_file": "binary_v2/ref_unicode_id.sdat"
   },
   {
     "name": "ref_kind_digits",
@@ -627,9 +891,14 @@
     "text_is_written": true,
     "value": {"t": "ref", "kind": "project_2", "id": "apps/notes"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401081370726f6a6563745f3215617070732f6e6f746573",
     "binary_len": 27,
-    "binary_file": "binary/ref_kind_digits.sdat"
+    "binary_file": "binary/ref_kind_digits.sdat",
+    "binary_v2": "5344415402081370726f6a6563745f3215617070732f6e6f746573",
+    "binary_v2_len": 27,
+    "binary_v2_file": "binary_v2/ref_kind_digits.sdat"
   },
   {
     "name": "ref_at_in_id",
@@ -638,9 +907,14 @@
     "text_is_written": true,
     "value": {"t": "ref", "kind": "user", "id": "@alice"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010809757365720d40616c696365",
     "binary_len": 18,
-    "binary_file": "binary/ref_at_in_id.sdat"
+    "binary_file": "binary/ref_at_in_id.sdat",
+    "binary_v2": "53444154020809757365720d40616c696365",
+    "binary_v2_len": 18,
+    "binary_v2_file": "binary_v2/ref_at_in_id.sdat"
   },
   {
     "name": "list_empty",
@@ -649,9 +923,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": []},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010600",
     "binary_len": 7,
-    "binary_file": "binary/list_empty.sdat"
+    "binary_file": "binary/list_empty.sdat",
+    "binary_v2": "53444154020600",
+    "binary_v2_len": 7,
+    "binary_v2_file": "binary_v2/list_empty.sdat"
   },
   {
     "name": "list_mixed",
@@ -660,9 +939,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "int", "v": "1"}, {"t": "str", "v": "a"}, {"t": "null"}, {"t": "bool", "v": true}, {"t": "float", "bits": "3fe0000000000000", "v": "0.5"}]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540106050302050361000204000000000000e03f",
     "binary_len": 23,
-    "binary_file": "binary/list_mixed.sdat"
+    "binary_file": "binary/list_mixed.sdat",
+    "binary_v2": "534441540206059105036100020c0000003f",
+    "binary_v2_len": 18,
+    "binary_v2_file": "binary_v2/list_mixed.sdat"
   },
   {
     "name": "list_nested",
@@ -671,9 +955,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "list", "v": []}, {"t": "list", "v": [{"t": "int", "v": "1"}, {"t": "ints", "v": [2]}]}]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401060206000602030206010304",
     "binary_len": 17,
-    "binary_file": "binary/list_nested.sdat"
+    "binary_file": "binary/list_nested.sdat",
+    "binary_v2": "5344415402060206000602910a0104",
+    "binary_v2_len": 15,
+    "binary_v2_file": "binary_v2/list_nested.sdat"
   },
   {
     "name": "list_of_ints",
@@ -682,9 +971,14 @@
     "text_is_written": true,
     "value": {"t": "ints", "v": [1, -2, 300]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540106030302030303d804",
     "binary_len": 14,
-    "binary_file": "binary/list_of_ints.sdat"
+    "binary_file": "binary/list_of_ints.sdat",
+    "binary_v2": "53444154020a030203d804",
+    "binary_v2_len": 11,
+    "binary_v2_file": "binary_v2/list_of_ints.sdat"
   },
   {
     "name": "list_of_refs",
@@ -693,9 +987,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "ref", "kind": "file", "id": "a.png"}, {"t": "ref", "kind": "file", "id": "b.png"}, {"t": "ref", "kind": "doc", "id": "a.png"}]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010603080966696c650b612e706e6708000b622e706e670807646f6302",
     "binary_len": 33,
-    "binary_file": "binary/list_of_refs.sdat"
+    "binary_file": "binary/list_of_refs.sdat",
+    "binary_v2": "53444154020603080966696c650b612e706e6708000b622e706e670807646f6302",
+    "binary_v2_len": 33,
+    "binary_v2_file": "binary_v2/list_of_refs.sdat"
   },
   {
     "name": "map_empty",
@@ -704,9 +1003,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": []},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010700",
     "binary_len": 7,
-    "binary_file": "binary/map_empty.sdat"
+    "binary_file": "binary/map_empty.sdat",
+    "binary_v2": "53444154020700",
+    "binary_v2_len": 7,
+    "binary_v2_file": "binary_v2/map_empty.sdat"
   },
   {
     "name": "map_file_order",
@@ -715,9 +1019,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["zeta", {"t": "int", "v": "1"}], ["alpha", {"t": "int", "v": "2"}], ["mid", {"t": "int", "v": "3"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010703097a65746103020b616c7068610304076d69640306",
     "binary_len": 28,
-    "binary_file": "binary/map_file_order.sdat"
+    "binary_file": "binary/map_file_order.sdat",
+    "binary_v2": "53444154020f07097a6574610b616c706861076d6964919293",
+    "binary_v2_len": 25,
+    "binary_v2_file": "binary_v2/map_file_order.sdat"
   },
   {
     "name": "map_nested",
@@ -726,9 +1035,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["tags", {"t": "list", "v": [{"t": "str", "v": "admin"}, {"t": "str", "v": "dev"}]}], ["profile", {"t": "map", "v": [["age", {"t": "int", "v": "30"}], ["active", {"t": "bool", "v": true}]]}], ["home", {"t": "ref", "kind": "project", "id": "apps/notes"}], ["avatar", {"t": "bytes", "hex": "010203"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010705096e616d65050b616c69636509746167730602050b61646d696e05076465760f70726f66696c65070207616765033c0d6163746976650209686f6d65080f70726f6a65637415617070732f6e6f7465730d6176617461720903010203",
     "binary_len": 99,
-    "binary_file": "binary/map_nested.sdat"
+    "binary_file": "binary/map_nested.sdat",
+    "binary_v2": "53444154020f0b096e616d6509746167730f70726f66696c6509686f6d650d617661746172050b616c6963650602050b61646d696e05076465760f05076167650d616374697665ae02080f70726f6a65637415617070732f6e6f7465730903010203",
+    "binary_v2_len": 98,
+    "binary_v2_file": "binary_v2/map_nested.sdat"
   },
   {
     "name": "map_unicode_key",
@@ -737,9 +1051,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["имя", {"t": "str", "v": "алиса"}], ["😀", {"t": "int", "v": "1"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540107020dd0b8d0bcd18f0515d0b0d0bbd0b8d181d0b009f09f98800302",
     "binary_len": 33,
-    "binary_file": "binary/map_unicode_key.sdat"
+    "binary_file": "binary/map_unicode_key.sdat",
+    "binary_v2": "53444154020f050dd0b8d0bcd18f09f09f98800515d0b0d0bbd0b8d181d0b091",
+    "binary_v2_len": 32,
+    "binary_v2_file": "binary_v2/map_unicode_key.sdat"
   },
   {
     "name": "map_empty_key",
@@ -748,9 +1067,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["", {"t": "int", "v": "1"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010701010302",
     "binary_len": 10,
-    "binary_file": "binary/map_empty_key.sdat"
+    "binary_file": "binary/map_empty_key.sdat",
+    "binary_v2": "53444154020f030191",
+    "binary_v2_len": 9,
+    "binary_v2_file": "binary_v2/map_empty_key.sdat"
   },
   {
     "name": "map_at_key",
@@ -759,9 +1083,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["@x", {"t": "int", "v": "1"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540107010540780302",
     "binary_len": 12,
-    "binary_file": "binary/map_at_key.sdat"
+    "binary_file": "binary/map_at_key.sdat",
+    "binary_v2": "53444154020f0305407891",
+    "binary_v2_len": 11,
+    "binary_v2_file": "binary_v2/map_at_key.sdat"
   },
   {
     "name": "table_repeated_values",
@@ -770,9 +1099,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "str", "v": "a"}, {"t": "str", "v": "a"}, {"t": "str", "v": "b"}, {"t": "str", "v": "a"}]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401060405036105000503620500",
     "binary_len": 17,
-    "binary_file": "binary/table_repeated_values.sdat"
+    "binary_file": "binary/table_repeated_values.sdat",
+    "binary_v2": "534441540206040503612005036220",
+    "binary_v2_len": 15,
+    "binary_v2_file": "binary_v2/table_repeated_values.sdat"
   },
   {
     "name": "table_repeated_keys",
@@ -781,9 +1115,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "map", "v": [["id", {"t": "int", "v": "1"}], ["name", {"t": "str", "v": "alice"}]]}, {"t": "map", "v": [["id", {"t": "int", "v": "2"}], ["name", {"t": "str", "v": "bob"}]]}, {"t": "map", "v": [["id", {"t": "int", "v": "3"}], ["name", {"t": "str", "v": "alice"}]]}]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401060307020569640302096e616d65050b616c6963650702000304020507626f620702000306020504",
     "binary_len": 45,
-    "binary_file": "binary/table_repeated_keys.sdat"
+    "binary_file": "binary/table_repeated_keys.sdat",
+    "binary_v2": "5344415402100305056964096e616d6591050b616c696365920507626f629322",
+    "binary_v2_len": 32,
+    "binary_v2_file": "binary_v2/table_repeated_keys.sdat"
   },
   {
     "name": "table_key_is_value",
@@ -792,9 +1131,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["name", {"t": "str", "v": "name"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010701096e616d650500",
     "binary_len": 14,
-    "binary_file": "binary/table_key_is_value.sdat"
+    "binary_file": "binary/table_key_is_value.sdat",
+    "binary_v2": "53444154020f03096e616d6520",
+    "binary_v2_len": 13,
+    "binary_v2_file": "binary_v2/table_key_is_value.sdat"
   },
   {
     "name": "table_empty_string",
@@ -803,9 +1147,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "str", "v": ""}, {"t": "str", "v": ""}, {"t": "map", "v": [["", {"t": "str", "v": ""}]]}]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010603050105000701000500",
     "binary_len": 16,
-    "binary_file": "binary/table_empty_string.sdat"
+    "binary_file": "binary/table_empty_string.sdat",
+    "binary_v2": "534441540206030501200f030020",
+    "binary_v2_len": 14,
+    "binary_v2_file": "binary_v2/table_empty_string.sdat"
   },
   {
     "name": "table_kinds_and_ids",
@@ -814,9 +1163,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "ref", "kind": "file", "id": "a"}, {"t": "ref", "kind": "file", "id": "b"}, {"t": "ref", "kind": "doc", "id": "a"}, {"t": "str", "v": "file"}]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010604080966696c650361080003620807646f63020500",
     "binary_len": 27,
-    "binary_file": "binary/table_kinds_and_ids.sdat"
+    "binary_file": "binary/table_kinds_and_ids.sdat",
+    "binary_v2": "53444154020604080966696c650361080003620807646f630220",
+    "binary_v2_len": 26,
+    "binary_v2_file": "binary_v2/table_kinds_and_ids.sdat"
   },
   {
     "name": "table_two_byte_index",
@@ -825,8 +1179,12 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "str", "v": "s0"}, {"t": "str", "v": "s1"}, {"t": "str", "v": "s2"}, {"t": "str", "v": "s3"}, {"t": "str", "v": "s4"}, {"t": "str", "v": "s5"}, {"t": "str", "v": "s6"}, {"t": "str", "v": "s7"}, {"t": "str", "v": "s8"}, {"t": "str", "v": "s9"}, {"t": "str", "v": "s10"}, {"t": "str", "v": "s11"}, {"t": "str", "v": "s12"}, {"t": "str", "v": "s13"}, {"t": "str", "v": "s14"}, {"t": "str", "v": "s15"}, {"t": "str", "v": "s16"}, {"t": "str", "v": "s17"}, {"t": "str", "v": "s18"}, {"t": "str", "v": "s19"}, {"t": "str", "v": "s20"}, {"t": "str", "v": "s21"}, {"t": "str", "v": "s22"}, {"t": "str", "v": "s23"}, {"t": "str", "v": "s24"}, {"t": "str", "v": "s25"}, {"t": "str", "v": "s26"}, {"t": "str", "v": "s27"}, {"t": "str", "v": "s28"}, {"t": "str", "v": "s29"}, {"t": "str", "v": "s30"}, {"t": "str", "v": "s31"}, {"t": "str", "v": "s32"}, {"t": "str", "v": "s33"}, {"t": "str", "v": "s34"}, {"t": "str", "v": "s35"}, {"t": "str", "v": "s36"}, {"t": "str", "v": "s37"}, {"t": "str", "v": "s38"}, {"t": "str", "v": "s39"}, {"t": "str", "v": "s40"}, {"t": "str", "v": "s41"}, {"t": "str", "v": "s42"}, {"t": "str", "v": "s43"}, {"t": "str", "v": "s44"}, {"t": "str", "v": "s45"}, {"t": "str", "v": "s46"}, {"t": "str", "v": "s47"}, {"t": "str", "v": "s48"}, {"t": "str", "v": "s49"}, {"t": "str", "v": "s50"}, {"t": "str", "v": "s51"}, {"t": "str", "v": "s52"}, {"t": "str", "v": "s53"}, {"t": "str", "v": "s54"}, {"t": "str", "v": "s55"}, {"t": "str", "v": "s56"}, {"t": "str", "v": "s57"}, {"t": "str", "v": "s58"}, {"t": "str", "v": "s59"}, {"t": "str", "v": "s60"}, {"t": "str", "v": "s61"}, {"t": "str", "v": "s62"}, {"t": "str", "v": "s63"}, {"t": "str", "v": "s64"}, {"t": "str", "v": "s65"}, {"t": "str", "v": "s66"}, {"t": "str", "v": "s67"}, {"t": "str", "v": "s68"}, {"t": "str", "v": "s69"}, {"t": "str", "v": "s64"}, {"t": "str", "v": "s0"}]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 352,
-    "binary_file": "binary/table_two_byte_index.sdat"
+    "binary_file": "binary/table_two_byte_index.sdat",
+    "binary_v2_len": 351,
+    "binary_v2_file": "binary_v2/table_two_byte_index.sdat"
   },
   {
     "name": "ints_packed_empty",
@@ -835,9 +1193,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": []},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "53444154010a00",
     "binary_len": 7,
-    "binary_file": "binary/ints_packed_empty.sdat"
+    "binary_file": "binary/ints_packed_empty.sdat",
+    "binary_v2": "53444154020a00",
+    "binary_v2_len": 7,
+    "binary_v2_file": "binary_v2/ints_packed_empty.sdat"
   },
   {
     "name": "ints_packed_small",
@@ -846,9 +1209,14 @@
     "text_is_written": true,
     "value": {"t": "ints", "v": [0, -1, 1, 63, -64]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010a050001027e7f",
     "binary_len": 12,
-    "binary_file": "binary/ints_packed_small.sdat"
+    "binary_file": "binary/ints_packed_small.sdat",
+    "binary_v2": "53444154020a050001027e7f",
+    "binary_v2_len": 12,
+    "binary_v2_file": "binary_v2/ints_packed_small.sdat"
   },
   {
     "name": "ints_packed_varints",
@@ -857,9 +1225,14 @@
     "text_is_written": true,
     "value": {"t": "ints", "v": [64, -65, 8192, 2147483648]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010a04800181018080018080808010",
     "binary_len": 19,
-    "binary_file": "binary/ints_packed_varints.sdat"
+    "binary_file": "binary/ints_packed_varints.sdat",
+    "binary_v2": "53444154020a04800181018080018080808010",
+    "binary_v2_len": 19,
+    "binary_v2_file": "binary_v2/ints_packed_varints.sdat"
   },
   {
     "name": "ints_packed_extremes",
@@ -868,9 +1241,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "int", "v": "-9223372036854775808"}, {"t": "int", "v": "9223372036854775807"}, {"t": "int", "v": "0"}]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010a03ffffffffffffffffff01feffffffffffffffff0100",
     "binary_len": 28,
-    "binary_file": "binary/ints_packed_extremes.sdat"
+    "binary_file": "binary/ints_packed_extremes.sdat",
+    "binary_v2": "53444154020a03ffffffffffffffffff01feffffffffffffffff0100",
+    "binary_v2_len": 28,
+    "binary_v2_file": "binary_v2/ints_packed_extremes.sdat"
   },
   {
     "name": "float32_single",
@@ -879,9 +1257,14 @@
     "text_is_written": true,
     "value": {"t": "float", "bits": "3fe0000000000000", "v": "0.5"},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010c0000003f",
     "binary_len": 10,
-    "binary_file": "binary/float32_single.sdat"
+    "binary_file": "binary/float32_single.sdat",
+    "binary_v2": "53444154020c0000003f",
+    "binary_v2_len": 10,
+    "binary_v2_file": "binary_v2/float32_single.sdat"
   },
   {
     "name": "floats_packed_narrow",
@@ -890,9 +1273,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3ff8000000000000", "v": "1.5"}, {"t": "float", "bits": "8000000000000000", "v": "-0.0"}]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010e030000003f0000c03f00000080",
     "binary_len": 19,
-    "binary_file": "binary/floats_packed_narrow.sdat"
+    "binary_file": "binary/floats_packed_narrow.sdat",
+    "binary_v2": "53444154020e030000003f0000c03f00000080",
+    "binary_v2_len": 19,
+    "binary_v2_file": "binary_v2/floats_packed_narrow.sdat"
   },
   {
     "name": "floats_packed_wide",
@@ -901,9 +1289,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "float", "bits": "3fb999999999999a", "v": "0.1"}, {"t": "float", "bits": "3fc999999999999a", "v": "0.2"}]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010d029a9999999999b93f9a9999999999c93f",
     "binary_len": 23,
-    "binary_file": "binary/floats_packed_wide.sdat"
+    "binary_file": "binary/floats_packed_wide.sdat",
+    "binary_v2": "53444154020d029a9999999999b93f9a9999999999c93f",
+    "binary_v2_len": 23,
+    "binary_v2_file": "binary_v2/floats_packed_wide.sdat"
   },
   {
     "name": "floats_packed_mixed",
@@ -912,9 +1305,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3fb999999999999a", "v": "0.1"}]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010d02000000000000e03f9a9999999999b93f",
     "binary_len": 23,
-    "binary_file": "binary/floats_packed_mixed.sdat"
+    "binary_file": "binary/floats_packed_mixed.sdat",
+    "binary_v2": "53444154020d02000000000000e03f9a9999999999b93f",
+    "binary_v2_len": 23,
+    "binary_v2_file": "binary_v2/floats_packed_mixed.sdat"
   },
   {
     "name": "floats_packed_empty",
@@ -923,9 +1321,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": []},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "53444154010e00",
     "binary_len": 7,
-    "binary_file": "binary/floats_packed_empty.sdat"
+    "binary_file": "binary/floats_packed_empty.sdat",
+    "binary_v2": "53444154020e00",
+    "binary_v2_len": 7,
+    "binary_v2_file": "binary_v2/floats_packed_empty.sdat"
   },
   {
     "name": "floats32_packed",
@@ -934,18 +1337,28 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "47efffffe0000000", "v": "3.4028234663852886e38"}]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010e020000003fffff7f7f",
     "binary_len": 15,
-    "binary_file": "binary/floats32_packed.sdat"
+    "binary_file": "binary/floats32_packed.sdat",
+    "binary_v2": "53444154020e020000003fffff7f7f",
+    "binary_v2_len": 15,
+    "binary_v2_file": "binary_v2/floats32_packed.sdat"
   },
   {
     "name": "floats_packed_non_finite",
-    "description": "Binary only (text writes null for them): a quiet NaN and infinity survive f32 bit for bit, so the narrow tag 14 is used.",
+    "description": "Binary only (text writes null for them): a quiet NaN and infinity survive f32 bit for bit, so a typed writer uses the narrow tag 14. A model value's writer never narrows a NaN (see the floats rule in the format).",
     "value": {"t": "list", "v": [{"t": "float", "bits": "7ff8000000000000"}, {"t": "float", "bits": "7ff0000000000000"}]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "53444154010e020000c07f0000807f",
     "binary_len": 15,
-    "binary_file": "binary/floats_packed_non_finite.sdat"
+    "binary_file": "binary/floats_packed_non_finite.sdat",
+    "binary_v2": "53444154020e020000c07f0000807f",
+    "binary_v2_len": 15,
+    "binary_v2_file": "binary_v2/floats_packed_non_finite.sdat"
   },
   {
     "name": "stream_empty",
@@ -954,9 +1367,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["name", {"t": "str", "v": "audit"}], ["entries", {"t": "list", "v": []}]]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "53444154010702096e616d65050b61756469740f656e74726965730b0100000000",
     "binary_len": 33,
-    "binary_file": "binary/stream_empty.sdat"
+    "binary_file": "binary/stream_empty.sdat",
+    "binary_v2": "53444154020f05096e616d650f656e7472696573050b61756469740b0100000000",
+    "binary_v2_len": 33,
+    "binary_v2_file": "binary_v2/stream_empty.sdat"
   },
   {
     "name": "stream_own_table",
@@ -965,20 +1383,406 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["name", {"t": "str", "v": "audit"}], ["entries", {"t": "list", "v": [{"t": "str", "v": "opened"}, {"t": "str", "v": "saved"}, {"t": "str", "v": "opened"}, {"t": "str", "v": "audit"}]}]]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "53444154010702096e616d65050b61756469740f656e74726965730b1900000004050d6f70656e6564050b73617665640500050b6175646974",
     "binary_len": 57,
-    "binary_file": "binary/stream_own_table.sdat"
+    "binary_file": "binary/stream_own_table.sdat",
+    "binary_v2": "53444154020f05096e616d650f656e7472696573050b61756469740b1800000004050d6f70656e6564050b736176656420050b6175646974",
+    "binary_v2_len": 56,
+    "binary_v2_file": "binary_v2/stream_own_table.sdat"
   },
   {
     "name": "stream_ints",
-    "description": "Stream items are values: six ints, each tag 3 and a zigzag varint.",
+    "description": "Stream items are values: six ints, each tag 3 and a zigzag varint in version 1; a small int is one byte in version 2.",
     "text": "{\"hits\":[0,1000,2000,3000,4000,5000]}",
     "text_is_written": true,
     "value": {"t": "map", "v": [["hits", {"t": "ints", "v": [0, 1000, 2000, 3000, 4000, 5000]}]]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "5344415401070109686974730b1200000006030003d00f03a01f03f02e03c03e03904e",
     "binary_len": 35,
-    "binary_file": "binary/stream_ints.sdat"
+    "binary_file": "binary/stream_ints.sdat",
+    "binary_v2": "53444154020f0309686974730b11000000069003d00f03a01f03f02e03c03e03904e",
+    "binary_v2_len": 34,
+    "binary_v2_file": "binary_v2/stream_ints.sdat"
+  },
+  {
+    "name": "int_inline_edges",
+    "description": "Version 2: an int from -16 to 111 is one byte, the tag 128 + (n + 16); -17 and 112 take tag 3 and a varint. The list has a null in it so that it is not packed.",
+    "text": "[-17,-16,0,111,112,null]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "int", "v": "-17"}, {"t": "int", "v": "-16"}, {"t": "int", "v": "0"}, {"t": "int", "v": "111"}, {"t": "int", "v": "112"}, {"t": "null"}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "534441540106060321031f030003de0103e00100",
+    "binary_len": 20,
+    "binary_file": "binary/int_inline_edges.sdat",
+    "binary_v2": "5344415402060603218090ff03e00100",
+    "binary_v2_len": 16,
+    "binary_v2_file": "binary_v2/int_inline_edges.sdat"
+  },
+  {
+    "name": "string_index_in_tag",
+    "description": "Version 2: a string already in the table whose index is under 32 is one byte, the tag 32 + index; from 32 on it is tag 5 and the index as a varint. Here the 40 strings are written, then strings 0, 31, 32 and 39 again.",
+    "text": "[\"s0\",\"s1\",\"s2\",\"s3\",\"s4\",\"s5\",\"s6\",\"s7\",\"s8\",\"s9\",\"s10\",\"s11\",\"s12\",\"s13\",\"s14\",\"s15\",\"s16\",\"s17\",\"s18\",\"s19\",\"s20\",\"s21\",\"s22\",\"s23\",\"s24\",\"s25\",\"s26\",\"s27\",\"s28\",\"s29\",\"s30\",\"s31\",\"s32\",\"s33\",\"s34\",\"s35\",\"s36\",\"s37\",\"s38\",\"s39\",\"s0\",\"s31\",\"s32\",\"s39\"]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "str", "v": "s0"}, {"t": "str", "v": "s1"}, {"t": "str", "v": "s2"}, {"t": "str", "v": "s3"}, {"t": "str", "v": "s4"}, {"t": "str", "v": "s5"}, {"t": "str", "v": "s6"}, {"t": "str", "v": "s7"}, {"t": "str", "v": "s8"}, {"t": "str", "v": "s9"}, {"t": "str", "v": "s10"}, {"t": "str", "v": "s11"}, {"t": "str", "v": "s12"}, {"t": "str", "v": "s13"}, {"t": "str", "v": "s14"}, {"t": "str", "v": "s15"}, {"t": "str", "v": "s16"}, {"t": "str", "v": "s17"}, {"t": "str", "v": "s18"}, {"t": "str", "v": "s19"}, {"t": "str", "v": "s20"}, {"t": "str", "v": "s21"}, {"t": "str", "v": "s22"}, {"t": "str", "v": "s23"}, {"t": "str", "v": "s24"}, {"t": "str", "v": "s25"}, {"t": "str", "v": "s26"}, {"t": "str", "v": "s27"}, {"t": "str", "v": "s28"}, {"t": "str", "v": "s29"}, {"t": "str", "v": "s30"}, {"t": "str", "v": "s31"}, {"t": "str", "v": "s32"}, {"t": "str", "v": "s33"}, {"t": "str", "v": "s34"}, {"t": "str", "v": "s35"}, {"t": "str", "v": "s36"}, {"t": "str", "v": "s37"}, {"t": "str", "v": "s38"}, {"t": "str", "v": "s39"}, {"t": "str", "v": "s0"}, {"t": "str", "v": "s31"}, {"t": "str", "v": "s32"}, {"t": "str", "v": "s39"}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "5344415401062c050573300505733105057332050573330505733405057335050573360505733705057338050573390507733130050773313105077331320507733133050773313405077331350507733136050773313705077331380507733139050773323005077332310507733232050773323305077332340507733235050773323605077332370507733238050773323905077333300507733331050773333205077333330507733334050773333505077333360507733337050773333805077333390500053e0540054e",
+    "binary_len": 205,
+    "binary_file": "binary/string_index_in_tag.sdat",
+    "binary_v2": "5344415402062c05057330050573310505733205057333050573340505733505057336050573370505733805057339050773313005077331310507733132050773313305077331340507733135050773313605077331370507733138050773313905077332300507733231050773323205077332330507733234050773323505077332360507733237050773323805077332390507733330050773333105077333320507733333050773333405077333350507733336050773333705077333380507733339203f0540054e",
+    "binary_v2_len": 203,
+    "binary_v2_file": "binary_v2/string_index_in_tag.sdat"
+  },
+  {
+    "name": "list_ints_packed_by_value_writer",
+    "description": "Version 2: a list of ints, all of them ints, is tag 10 (count, then a varint each) in a model value too; version 1 wrote a tag per item.",
+    "text": "[1,-2,300,9223372036854775807,-9223372036854775808]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "int", "v": "1"}, {"t": "int", "v": "-2"}, {"t": "int", "v": "300"}, {"t": "int", "v": "9223372036854775807"}, {"t": "int", "v": "-9223372036854775808"}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "534441540106050302030303d80403feffffffffffffffff0103ffffffffffffffffff01",
+    "binary_len": 36,
+    "binary_file": "binary/list_ints_packed_by_value_writer.sdat",
+    "binary_v2": "53444154020a050203d804feffffffffffffffff01ffffffffffffffffff01",
+    "binary_v2_len": 31,
+    "binary_v2_file": "binary_v2/list_ints_packed_by_value_writer.sdat"
+  },
+  {
+    "name": "list_ints_single",
+    "description": "A list of one int is packed as well: tag 10, count 1.",
+    "text": "[5]",
+    "text_is_written": true,
+    "value": {"t": "ints", "v": [5]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "53444154010601030a",
+    "binary_len": 9,
+    "binary_file": "binary/list_ints_single.sdat",
+    "binary_v2": "53444154020a010a",
+    "binary_v2_len": 8,
+    "binary_v2_file": "binary_v2/list_ints_single.sdat"
+  },
+  {
+    "name": "list_floats_narrow",
+    "description": "Version 2: a list of floats, all of them floats, is tag 14 when every one is an f32 exactly (count, 4 bytes each) ...",
+    "text": "[0.5,-1.5,0.0,-0.0,3e38]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "bff8000000000000", "v": "-1.5"}, {"t": "float", "bits": "0000000000000000", "v": "0.0"}, {"t": "float", "bits": "8000000000000000", "v": "-0.0"}, {"t": "float", "bits": "47ec363cbf21f28a", "v": "3e38"}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "5344415401060504000000000000e03f04000000000000f8bf040000000000000000040000000000000080048af221bf3c36ec47",
+    "binary_len": 52,
+    "binary_file": "binary/list_floats_narrow.sdat",
+    "binary_v2": "53444154020d05000000000000e03f000000000000f8bf000000000000000000000000000000808af221bf3c36ec47",
+    "binary_v2_len": 47,
+    "binary_v2_file": "binary_v2/list_floats_narrow.sdat"
+  },
+  {
+    "name": "list_floats_wide",
+    "description": "... and tag 13 (8 bytes each) when one is not: 0.1 is not an f32.",
+    "text": "[0.5,0.1]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3fb999999999999a", "v": "0.1"}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "5344415401060204000000000000e03f049a9999999999b93f",
+    "binary_len": 25,
+    "binary_file": "binary/list_floats_wide.sdat",
+    "binary_v2": "53444154020d02000000000000e03f9a9999999999b93f",
+    "binary_v2_len": 23,
+    "binary_v2_file": "binary_v2/list_floats_wide.sdat"
+  },
+  {
+    "name": "list_floats_infinite",
+    "description": "Infinities are f32 exactly, so they narrow: tag 14. Binary only: text writes them as null.",
+    "value": {"t": "list", "v": [{"t": "float", "bits": "7ff0000000000000"}, {"t": "float", "bits": "fff0000000000000"}, {"t": "float", "bits": "3fe0000000000000", "v": "0.5"}]},
+    "binary_v2_is_encoded": true,
+    "binary_v2": "53444154020e030000807f000080ff0000003f",
+    "binary_v2_len": 19,
+    "binary_v2_file": "binary_v2/list_floats_infinite.sdat"
+  },
+  {
+    "name": "list_floats_with_nan",
+    "description": "A NaN is never narrowed (it makes the whole list wide), so its bits are kept as they are. Binary only: text writes a NaN as null.",
+    "value": {"t": "list", "v": [{"t": "float", "bits": "7ff8000000000000"}, {"t": "float", "bits": "3fe0000000000000", "v": "0.5"}]},
+    "binary_v2_is_encoded": true,
+    "binary_v2": "53444154020d02000000000000f87f000000000000e03f",
+    "binary_v2_len": 23,
+    "binary_v2_file": "binary_v2/list_floats_with_nan.sdat"
+  },
+  {
+    "name": "float_single_narrow",
+    "description": "Version 2: a float that is an f32 exactly (here 0.1f32 widened to f64) is tag 12 and four bytes; 0.1 as an f64 is not, and stays tag 4.",
+    "text": "[0.10000000149011612,0.1,null]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "float", "bits": "3fb99999a0000000", "v": "0.10000000149011612"}, {"t": "float", "bits": "3fb999999999999a", "v": "0.1"}, {"t": "null"}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "5344415401060304000000a09999b93f049a9999999999b93f00",
+    "binary_len": 26,
+    "binary_file": "binary/float_single_narrow.sdat",
+    "binary_v2": "534441540206030ccdcccc3d049a9999999999b93f00",
+    "binary_v2_len": 22,
+    "binary_v2_file": "binary_v2/float_single_narrow.sdat"
+  },
+  {
+    "name": "list_mixed_numbers",
+    "description": "A list of ints and floats is not packed: a tag per item, an int inline.",
+    "text": "[1,0.5]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "int", "v": "1"}, {"t": "float", "bits": "3fe0000000000000", "v": "0.5"}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "53444154010602030204000000000000e03f",
+    "binary_len": 18,
+    "binary_file": "binary/list_mixed_numbers.sdat",
+    "binary_v2": "53444154020602910c0000003f",
+    "binary_v2_len": 13,
+    "binary_v2_file": "binary_v2/list_mixed_numbers.sdat"
+  },
+  {
+    "name": "map_shaped",
+    "description": "Version 2: a map is tag 15, then its keys once as a shape (marker `count << 1 | 1`, then each key as a string), then one value per key.",
+    "text": "{\"name\":\"alice\",\"age\":30}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["age", {"t": "int", "v": "30"}]]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "53444154010702096e616d65050b616c69636507616765033c",
+    "binary_len": 25,
+    "binary_file": "binary/map_shaped.sdat",
+    "binary_v2": "53444154020f05096e616d6507616765050b616c696365ae",
+    "binary_v2_len": 24,
+    "binary_v2_file": "binary_v2/map_shaped.sdat"
+  },
+  {
+    "name": "map_shape_reused",
+    "description": "A second map with the same keys, in the same order, names the shape by its number (marker `number << 1`) and writes no keys.",
+    "text": "{\"first\":{\"name\":\"alice\",\"age\":30},\"second\":{\"name\":\"bob\",\"age\":25}}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["first", {"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["age", {"t": "int", "v": "30"}]]}], ["second", {"t": "map", "v": [["name", {"t": "str", "v": "bob"}], ["age", {"t": "int", "v": "25"}]]}]]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "534441540107020b66697273740702096e616d65050b616c69636507616765033c0d7365636f6e640702020507626f62060332",
+    "binary_len": 51,
+    "binary_file": "binary/map_shape_reused.sdat",
+    "binary_v2": "53444154020f050b66697273740d7365636f6e640f05096e616d6507616765050b616c696365ae0f020507626f62a9",
+    "binary_v2_len": 47,
+    "binary_v2_file": "binary_v2/map_shape_reused.sdat"
+  },
+  {
+    "name": "map_shape_key_was_a_value",
+    "description": "A shape's key is a string of the table like any other: `name` was written as a value first, so the key is its number.",
+    "text": "{\"a\":\"name\",\"b\":{\"name\":1}}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["a", {"t": "str", "v": "name"}], ["b", {"t": "map", "v": [["name", {"t": "int", "v": "1"}]]}]]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "53444154010702036105096e616d6503620701020302",
+    "binary_len": 22,
+    "binary_file": "binary/map_shape_key_was_a_value.sdat",
+    "binary_v2": "53444154020f050361036205096e616d650f030491",
+    "binary_v2_len": 21,
+    "binary_v2_file": "binary_v2/map_shape_key_was_a_value.sdat"
+  },
+  {
+    "name": "map_many_keys",
+    "description": "A map of 20 keys: a shape of 20, its marker `20 << 1 | 1`.",
+    "text": "{\"key0\":0,\"key1\":1,\"key2\":2,\"key3\":3,\"key4\":4,\"key5\":5,\"key6\":6,\"key7\":7,\"key8\":8,\"key9\":9,\"key10\":10,\"key11\":11,\"key12\":12,\"key13\":13,\"key14\":14,\"key15\":15,\"key16\":16,\"key17\":17,\"key18\":18,\"key19\":19}",
+    "text_is_written": true,
+    "value": {"t": "map", "v": [["key0", {"t": "int", "v": "0"}], ["key1", {"t": "int", "v": "1"}], ["key2", {"t": "int", "v": "2"}], ["key3", {"t": "int", "v": "3"}], ["key4", {"t": "int", "v": "4"}], ["key5", {"t": "int", "v": "5"}], ["key6", {"t": "int", "v": "6"}], ["key7", {"t": "int", "v": "7"}], ["key8", {"t": "int", "v": "8"}], ["key9", {"t": "int", "v": "9"}], ["key10", {"t": "int", "v": "10"}], ["key11", {"t": "int", "v": "11"}], ["key12", {"t": "int", "v": "12"}], ["key13", {"t": "int", "v": "13"}], ["key14", {"t": "int", "v": "14"}], ["key15", {"t": "int", "v": "15"}], ["key16", {"t": "int", "v": "16"}], ["key17", {"t": "int", "v": "17"}], ["key18", {"t": "int", "v": "18"}], ["key19", {"t": "int", "v": "19"}]]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "53444154010714096b6579300300096b6579310302096b6579320304096b6579330306096b6579340308096b657935030a096b657936030c096b657937030e096b6579380310096b65793903120b6b6579313003140b6b6579313103160b6b6579313203180b6b65793133031a0b6b65793134031c0b6b65793135031e0b6b6579313603200b6b6579313703220b6b6579313803240b6b657931390326",
+    "binary_len": 157,
+    "binary_file": "binary/map_many_keys.sdat",
+    "binary_v2": "53444154020f29096b657930096b657931096b657932096b657933096b657934096b657935096b657936096b657937096b657938096b6579390b6b657931300b6b657931310b6b657931320b6b657931330b6b657931340b6b657931350b6b657931360b6b657931370b6b657931380b6b65793139909192939495969798999a9b9c9d9e9fa0a1a2a3",
+    "binary_v2_len": 137,
+    "binary_v2_file": "binary_v2/map_many_keys.sdat"
+  },
+  {
+    "name": "records_users",
+    "description": "Version 2: a list of maps that all have the same keys in the same order is tag 16: a count, the shape once, then the values of each map with no tag of its own.",
+    "text": "[{\"name\":\"alice\",\"age\":30},{\"name\":\"bob\",\"age\":25},{\"name\":\"carol\",\"age\":41}]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["age", {"t": "int", "v": "30"}]]}, {"t": "map", "v": [["name", {"t": "str", "v": "bob"}], ["age", {"t": "int", "v": "25"}]]}, {"t": "map", "v": [["name", {"t": "str", "v": "carol"}], ["age", {"t": "int", "v": "41"}]]}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "534441540106030702096e616d65050b616c69636507616765033c0702000507626f62040332070200050b6361726f6c040352",
+    "binary_len": 51,
+    "binary_file": "binary/records_users.sdat",
+    "binary_v2": "5344415402100305096e616d6507616765050b616c696365ae0507626f62a9050b6361726f6cb9",
+    "binary_v2_len": 39,
+    "binary_v2_file": "binary_v2/records_users.sdat"
+  },
+  {
+    "name": "records_key_order_differs",
+    "description": "A map with the keys in another order is another shape, so the list is a plain list (tag 6) of two shaped maps.",
+    "text": "[{\"name\":\"alice\",\"age\":30},{\"age\":25,\"name\":\"bob\"}]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["age", {"t": "int", "v": "30"}]]}, {"t": "map", "v": [["age", {"t": "int", "v": "25"}], ["name", {"t": "str", "v": "bob"}]]}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "534441540106020702096e616d65050b616c69636507616765033c0702040332000507626f62",
+    "binary_len": 38,
+    "binary_file": "binary/records_key_order_differs.sdat",
+    "binary_v2": "534441540206020f05096e616d6507616765050b616c696365ae0f050200a90507626f62",
+    "binary_v2_len": 36,
+    "binary_v2_file": "binary_v2/records_key_order_differs.sdat"
+  },
+  {
+    "name": "records_single",
+    "description": "A list of one map is records too.",
+    "text": "[{\"name\":\"alice\",\"age\":30}]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["age", {"t": "int", "v": "30"}]]}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "534441540106010702096e616d65050b616c69636507616765033c",
+    "binary_len": 27,
+    "binary_file": "binary/records_single.sdat",
+    "binary_v2": "5344415402100105096e616d6507616765050b616c696365ae",
+    "binary_v2_len": 25,
+    "binary_v2_file": "binary_v2/records_single.sdat"
+  },
+  {
+    "name": "records_nested",
+    "description": "Records inside records: the inner shape is written the first time it is met, inside the first record.",
+    "text": "[{\"who\":{\"name\":\"alice\",\"age\":30},\"n\":1},{\"who\":{\"name\":\"bob\",\"age\":25},\"n\":2}]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "map", "v": [["who", {"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["age", {"t": "int", "v": "30"}]]}], ["n", {"t": "int", "v": "1"}]]}, {"t": "map", "v": [["who", {"t": "map", "v": [["name", {"t": "str", "v": "bob"}], ["age", {"t": "int", "v": "25"}]]}], ["n", {"t": "int", "v": "2"}]]}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "5344415401060207020777686f0702096e616d65050b616c69636507616765033c036e03020702000702020507626f62060332080304",
+    "binary_len": 54,
+    "binary_file": "binary/records_nested.sdat",
+    "binary_v2": "53444154021002050777686f036e0f05096e616d6507616765050b616c696365ae910f020507626f62a992",
+    "binary_v2_len": 43,
+    "binary_v2_file": "binary_v2/records_nested.sdat"
+  },
+  {
+    "name": "records_with_an_empty_map",
+    "description": "A list with an empty map in it is not records (a shape has at least one key): a plain list of a map and an empty map (tag 7, count 0).",
+    "text": "[{\"name\":\"alice\",\"age\":30},{}]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["age", {"t": "int", "v": "30"}]]}, {"t": "map", "v": []}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "534441540106020702096e616d65050b616c69636507616765033c0700",
+    "binary_len": 29,
+    "binary_file": "binary/records_with_an_empty_map.sdat",
+    "binary_v2": "534441540206020f05096e616d6507616765050b616c696365ae0700",
+    "binary_v2_len": 28,
+    "binary_v2_file": "binary_v2/records_with_an_empty_map.sdat"
+  },
+  {
+    "name": "records_of_empty_maps",
+    "description": "A list of empty maps is a plain list.",
+    "text": "[{},{}]",
+    "text_is_written": true,
+    "value": {"t": "list", "v": [{"t": "map", "v": []}, {"t": "map", "v": []}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "5344415401060207000700",
+    "binary_len": 11,
+    "binary_file": "binary/records_of_empty_maps.sdat",
+    "binary_v2": "5344415402060207000700",
+    "binary_v2_len": 11,
+    "binary_v2_file": "binary_v2/records_of_empty_maps.sdat"
+  },
+  {
+    "name": "upgrade_records",
+    "description": "A version 1 document read and written as version 2: two maps with the same keys, each written out in full in version 1, are records in version 2.",
+    "value": {"t": "list", "v": [{"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["age", {"t": "int", "v": "30"}]]}, {"t": "map", "v": [["name", {"t": "str", "v": "bob"}], ["age", {"t": "int", "v": "25"}]]}]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "534441540106020702096e616d65050b616c69636507616765033c0702000507626f62040332",
+    "binary_len": 38,
+    "binary_file": "binary/upgrade_records.sdat",
+    "binary_v2": "5344415402100205096e616d6507616765050b616c696365ae0507626f62a9",
+    "binary_v2_len": 31,
+    "binary_v2_file": "binary_v2/upgrade_records.sdat"
+  },
+  {
+    "name": "upgrade_stream",
+    "description": "A version 1 stream (tag 11, its own string table) is read as the list of its items and written as a list: a stream is how a typed writer keeps a list, not a value of its own.",
+    "value": {"t": "map", "v": [["name", {"t": "str", "v": "audit"}], ["entries", {"t": "list", "v": [{"t": "map", "v": [["n", {"t": "int", "v": "1"}]]}, {"t": "map", "v": [["n", {"t": "int", "v": "2"}]]}, {"t": "map", "v": [["n", {"t": "int", "v": "3"}]]}]}]]},
+    "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "53444154010702096e616d65050b61756469740f656e74726965730b11000000030701036e030207010003040701000306",
+    "binary_len": 49,
+    "binary_file": "binary/upgrade_stream.sdat",
+    "binary_v2": "53444154020f05096e616d650f656e7472696573050b6175646974100303036e919293",
+    "binary_v2_len": 35,
+    "binary_v2_file": "binary_v2/upgrade_stream.sdat"
+  },
+  {
+    "name": "upgrade_packed_lists",
+    "description": "Packed lists of version 1 (tags 10, 13, 14) read as lists and are packed again the way version 2 chooses: the f32 list stays narrow, the others as before.",
+    "value": {"t": "map", "v": [["a", {"t": "ints", "v": [1, 2, 3]}], ["b", {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3ff8000000000000", "v": "1.5"}]}], ["c", {"t": "list", "v": [{"t": "float", "bits": "3fd0000000000000", "v": "0.25"}]}]]},
+    "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "5344415401070303610a0302040603620e020000003f0000c03f03630e010000803e",
+    "binary_len": 34,
+    "binary_file": "binary/upgrade_packed_lists.sdat",
+    "binary_v2": "53444154020f070361036203630a030204060e020000003f0000c03f0e010000803e",
+    "binary_v2_len": 34,
+    "binary_v2_file": "binary_v2/upgrade_packed_lists.sdat"
+  },
+  {
+    "name": "upgrade_single_floats",
+    "description": "A version 1 float of four bytes (tag 12) and the same number as eight (tag 4) read as the same float, and are written alike (four bytes) in version 2.",
+    "value": {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3fe0000000000000", "v": "0.5"}]},
+    "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "534441540106020c0000003f04000000000000e03f",
+    "binary_len": 21,
+    "binary_file": "binary/upgrade_single_floats.sdat",
+    "binary_v2": "53444154020e020000003f0000003f",
+    "binary_v2_len": 15,
+    "binary_v2_file": "binary_v2/upgrade_single_floats.sdat"
+  },
+  {
+    "name": "upgrade_strings_and_refs",
+    "description": "Strings, references and ints keep their meaning: the string table is rebuilt in the order version 2 writes first uses, and a small int is one byte.",
+    "value": {"t": "map", "v": [["logo", {"t": "ref", "kind": "file", "id": "images/logo.png"}], ["n", {"t": "int", "v": "-1000"}], ["name", {"t": "str", "v": "file"}]]},
+    "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
+    "binary": "53444154010703096c6f676f080966696c651f696d616765732f6c6f676f2e706e67036e03cf0f096e616d650502",
+    "binary_len": 46,
+    "binary_file": "binary/upgrade_strings_and_refs.sdat",
+    "binary_v2": "53444154020f07096c6f676f036e096e616d65080966696c651f696d616765732f6c6f676f2e706e6703cf0f23",
+    "binary_v2_len": 45,
+    "binary_v2_file": "binary_v2/upgrade_strings_and_refs.sdat"
   },
   {
     "name": "syntax_comments",
@@ -1050,9 +1854,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["flag", {"t": "bool", "v": true}], ["count", {"t": "int", "v": "-300"}], ["big", {"t": "int", "v": "4000000000"}], ["ratio", {"t": "float", "bits": "3fd0000000000000", "v": "0.25"}], ["precise", {"t": "float", "bits": "3fb999999999999a", "v": "0.1"}], ["name", {"t": "str", "v": "alice"}]]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401070609666c6167020b636f756e7403d704076269670380a0d9e61d0b726174696f0c0000803e0f70726563697365049a9999999999b93f096e616d65050b616c696365",
     "binary_len": 72,
     "binary_file": "binary/frame_scalars.sdat",
+    "binary_v2": "53444154020f0d09666c61670b636f756e74076269670b726174696f0f70726563697365096e616d650203d7040380a0d9e61d0c0000803e049a9999999999b93f050b616c696365",
+    "binary_v2_len": 72,
+    "binary_v2_file": "binary_v2/frame_scalars.sdat",
     "frame": {
       "schema": "scalars",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Scalars\"},\"defs\":{\"Scalars\":{\"kind\":\"struct\",\"doc\":\"One of each plain scalar.\",\"fields\":[{\"name\":\"flag\",\"shape\":{\"kind\":\"bool\"},\"required\":true},{\"name\":\"count\",\"shape\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647},\"required\":true},{\"name\":\"big\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807},\"required\":true},{\"name\":\"ratio\",\"shape\":{\"kind\":\"float\",\"bits\":32},\"required\":true},{\"name\":\"precise\",\"shape\":{\"kind\":\"float\",\"bits\":64},\"required\":true},{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]}}}",
@@ -1069,9 +1878,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["flag", {"t": "bool", "v": false}], ["count", {"t": "int", "v": "-2147483648"}], ["big", {"t": "int", "v": "9223372036854775807"}], ["ratio", {"t": "float", "bits": "8000000000000000", "v": "-0.0"}], ["precise", {"t": "float", "bits": "0010000000000000", "v": "2.2250738585072014e-308"}], ["name", {"t": "str", "v": ""}]]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401070609666c6167010b636f756e7403ffffffff0f0762696703feffffffffffffffff010b726174696f0c000000800f70726563697365040000000000001000096e616d650501",
     "binary_len": 75,
     "binary_file": "binary/frame_scalars_extremes.sdat",
+    "binary_v2": "53444154020f0d09666c61670b636f756e74076269670b726174696f0f70726563697365096e616d650103ffffffff0f03feffffffffffffffff010c000000800400000000000010000501",
+    "binary_v2_len": 75,
+    "binary_v2_file": "binary_v2/frame_scalars_extremes.sdat",
     "frame": {
       "schema": "scalars",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Scalars\"},\"defs\":{\"Scalars\":{\"kind\":\"struct\",\"doc\":\"One of each plain scalar.\",\"fields\":[{\"name\":\"flag\",\"shape\":{\"kind\":\"bool\"},\"required\":true},{\"name\":\"count\",\"shape\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647},\"required\":true},{\"name\":\"big\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807},\"required\":true},{\"name\":\"ratio\",\"shape\":{\"kind\":\"float\",\"bits\":32},\"required\":true},{\"name\":\"precise\",\"shape\":{\"kind\":\"float\",\"bits\":64},\"required\":true},{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]}}}",
@@ -1088,9 +1902,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["count", {"t": "int", "v": "7"}], ["missing", {"t": "int", "v": "0"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540107020b636f756e74030e0f6d697373696e670300",
     "binary_len": 25,
     "binary_file": "binary/frame_options_present.sdat",
+    "binary_v2": "53444154020f050b636f756e740f6d697373696e679790",
+    "binary_v2_len": 23,
+    "binary_v2_file": "binary_v2/frame_options_present.sdat",
     "frame": {
       "schema": "options",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Options\"},\"defs\":{\"Options\":{\"kind\":\"struct\",\"doc\":\"Optional fields, present and absent.\",\"fields\":[{\"name\":\"count\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"required\":false},{\"name\":\"note\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"string\"}},\"required\":false},{\"name\":\"missing\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":255}},\"required\":false}]}}}",
@@ -1107,9 +1926,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["note", {"t": "str", "v": "n"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010701096e6f746505036e",
     "binary_len": 15,
     "binary_file": "binary/frame_options_absent.sdat",
+    "binary_v2": "53444154020f03096e6f746505036e",
+    "binary_v2_len": 15,
+    "binary_v2_file": "binary_v2/frame_options_absent.sdat",
     "frame": {
       "schema": "options",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Options\"},\"defs\":{\"Options\":{\"kind\":\"struct\",\"doc\":\"Optional fields, present and absent.\",\"fields\":[{\"name\":\"count\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"required\":false},{\"name\":\"note\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"string\"}},\"required\":false},{\"name\":\"missing\",\"shape\":{\"kind\":\"optional\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":255}},\"required\":false}]}}}",
@@ -1126,9 +1950,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["name", {"t": "str", "v": "logo"}], ["data", {"t": "bytes", "hex": "000102ff"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010702096e616d6505096c6f676f09646174610904000102ff",
     "binary_len": 29,
     "binary_file": "binary/frame_bytes.sdat",
+    "binary_v2": "53444154020f05096e616d65096461746105096c6f676f0904000102ff",
+    "binary_v2_len": 29,
+    "binary_v2_file": "binary_v2/frame_bytes.sdat",
     "frame": {
       "schema": "blob",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Blob\"},\"defs\":{\"Blob\":{\"kind\":\"struct\",\"doc\":\"A payload kept as bytes.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"data\",\"shape\":{\"kind\":\"bytes\"},\"required\":false}]}}}",
@@ -1145,9 +1974,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["title", {"t": "str", "v": "Intro"}], ["author", {"t": "str", "v": "alice"}], ["editor", {"t": "str", "v": "alice"}], ["tags", {"t": "list", "v": [{"t": "str", "v": "a"}, {"t": "str", "v": "b"}, {"t": "str", "v": "a"}, {"t": "str", "v": "Intro"}]}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540107040b7469746c65050b496e74726f0d617574686f72050b616c6963650d656469746f72050609746167730604050361050362050c0502",
     "binary_len": 60,
     "binary_file": "binary/frame_strings_shared.sdat",
+    "binary_v2": "53444154020f090b7469746c650d617574686f720d656469746f720974616773050b496e74726f050b616c6963652506040503610503622624",
+    "binary_v2_len": 57,
+    "binary_v2_file": "binary_v2/frame_strings_shared.sdat",
     "frame": {
       "schema": "page",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Page\"},\"defs\":{\"Page\":{\"kind\":\"struct\",\"doc\":\"Strings that repeat, and a list of them.\",\"fields\":[{\"name\":\"title\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"author\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"editor\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"tags\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"string\"}},\"required\":true}]}}}",
@@ -1164,9 +1998,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["title", {"t": "str", "v": ""}], ["author", {"t": "str", "v": ""}], ["editor", {"t": "str", "v": "ü"}], ["tags", {"t": "list", "v": []}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540107040b7469746c6505010d617574686f7205020d656469746f720505c3bc09746167730600",
     "binary_len": 42,
     "binary_file": "binary/frame_strings_empty_and_unicode.sdat",
+    "binary_v2": "53444154020f090b7469746c650d617574686f720d656469746f7209746167730501240505c3bc0600",
+    "binary_v2_len": 41,
+    "binary_v2_file": "binary_v2/frame_strings_empty_and_unicode.sdat",
     "frame": {
       "schema": "page",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Page\"},\"defs\":{\"Page\":{\"kind\":\"struct\",\"doc\":\"Strings that repeat, and a list of them.\",\"fields\":[{\"name\":\"title\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"author\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"editor\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"tags\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"string\"}},\"required\":true}]}}}",
@@ -1183,9 +2022,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["title", {"t": "str", "v": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"}], ["author", {"t": "str", "v": "alice"}], ["editor", {"t": "str", "v": "alice"}], ["tags", {"t": "list", "v": []}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540107040b7469746c65058502747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474740d617574686f72050b616c6963650d656469746f72050609746167730600",
     "binary_len": 176,
     "binary_file": "binary/frame_table_length_two_bytes.sdat",
+    "binary_v2": "53444154020f090b7469746c650d617574686f720d656469746f72097461677305850274747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474747474050b616c696365250600",
+    "binary_v2_len": 175,
+    "binary_v2_file": "binary_v2/frame_table_length_two_bytes.sdat",
     "frame": {
       "schema": "page",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Page\"},\"defs\":{\"Page\":{\"kind\":\"struct\",\"doc\":\"Strings that repeat, and a list of them.\",\"fields\":[{\"name\":\"title\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"author\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"editor\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"tags\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"string\"}},\"required\":true}]}}}",
@@ -1202,9 +2046,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["owner", {"t": "ref", "kind": "user", "id": "7"}], ["parent", {"t": "ref", "kind": "doc", "id": "guides/intro"}], ["attachment", {"t": "ref", "kind": "file", "id": "images/logo.png"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540107030b6f776e657208097573657203370d706172656e740807646f63196775696465732f696e74726f156174746163686d656e74080966696c651f696d616765732f6c6f676f2e706e67",
     "binary_len": 79,
     "binary_file": "binary/frame_links.sdat",
+    "binary_v2": "53444154020f070b6f776e65720d706172656e74156174746163686d656e7408097573657203370807646f63196775696465732f696e74726f080966696c651f696d616765732f6c6f676f2e706e67",
+    "binary_v2_len": 79,
+    "binary_v2_file": "binary_v2/frame_links.sdat",
     "frame": {
       "schema": "links",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Links\"},\"defs\":{\"Links\":{\"kind\":\"struct\",\"doc\":\"References: a numeric id, a text id and one of any kind.\",\"fields\":[{\"name\":\"owner\",\"shape\":{\"kind\":\"ref\",\"of\":[\"user\"],\"id\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"required\":true},{\"name\":\"parent\",\"shape\":{\"kind\":\"ref\",\"of\":[\"doc\"],\"id\":{\"kind\":\"string\"}},\"required\":true},{\"name\":\"attachment\",\"shape\":{\"kind\":\"ref\",\"of\":[],\"id\":{\"kind\":\"string\"}},\"required\":true}]}}}",
@@ -1221,9 +2070,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["owner", {"t": "ref", "kind": "user", "id": "300"}], ["parent", {"t": "ref", "kind": "doc", "id": "x"}], ["attachment", {"t": "ref", "kind": "user", "id": "alice"}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540107030b6f776e6572080975736572073330300d706172656e740807646f630378156174746163686d656e7408020b616c696365",
     "binary_len": 56,
     "binary_file": "binary/frame_links_wide_ids.sdat",
+    "binary_v2": "53444154020f070b6f776e65720d706172656e74156174746163686d656e74080975736572073330300807646f63037808060b616c696365",
+    "binary_v2_len": 56,
+    "binary_v2_file": "binary_v2/frame_links_wide_ids.sdat",
     "frame": {
       "schema": "links",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Links\"},\"defs\":{\"Links\":{\"kind\":\"struct\",\"doc\":\"References: a numeric id, a text id and one of any kind.\",\"fields\":[{\"name\":\"owner\",\"shape\":{\"kind\":\"ref\",\"of\":[\"user\"],\"id\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"required\":true},{\"name\":\"parent\",\"shape\":{\"kind\":\"ref\",\"of\":[\"doc\"],\"id\":{\"kind\":\"string\"}},\"required\":true},{\"name\":\"attachment\",\"shape\":{\"kind\":\"ref\",\"of\":[],\"id\":{\"kind\":\"string\"}},\"required\":true}]}}}",
@@ -1240,9 +2094,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["name", {"t": "str", "v": "team"}], ["members", {"t": "list", "v": [{"t": "map", "v": [["name", {"t": "str", "v": "alice"}], ["role", {"t": "str", "v": "admin"}]]}, {"t": "map", "v": [["name", {"t": "str", "v": "bob"}], ["role", {"t": "str", "v": "reader"}]]}, {"t": "map", "v": [["name", {"t": "str", "v": "carol"}], ["role", {"t": "str", "v": "editor"}]]}]}], ["tags", {"t": "list", "v": [{"t": "str", "v": "x"}]}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "53444154010703096e616d6505097465616d0f6d656d626572730603070200050b616c69636509726f6c65050b61646d696e0702000507626f6208050d726561646572070200050b6361726f6c08050d656469746f7209746167730601050378",
     "binary_len": 96,
     "binary_file": "binary/frame_folder.sdat",
+    "binary_v2": "53444154020f07096e616d650f6d656d62657273097461677305097465616d06030f050009726f6c65050b616c696365050b61646d696e0f020507626f62050d7265616465720f02050b6361726f6c050d656469746f720601050378",
+    "binary_v2_len": 92,
+    "binary_v2_file": "binary_v2/frame_folder.sdat",
     "frame": {
       "schema": "folder",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Folder\"},\"defs\":{\"Folder\":{\"kind\":\"struct\",\"doc\":\"A record of records.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"members\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"def\",\"name\":\"Member\"}},\"required\":true},{\"name\":\"tags\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"string\"}},\"required\":true}]},\"Member\":{\"kind\":\"struct\",\"doc\":\"A record with an enum, listed in a folder.\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true},{\"name\":\"role\",\"shape\":{\"kind\":\"def\",\"name\":\"Role\"},\"required\":true}]},\"Role\":{\"kind\":\"enum\",\"doc\":\"A unit enum.\",\"variants\":[{\"name\":\"reader\"},{\"name\":\"editor\"},{\"name\":\"admin\"}]}}}",
@@ -1259,16 +2118,24 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["id", {"t": "int", "v": "1"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "opened"}], ["at", {"t": "int", "v": "9"}]]}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401070205696403020b6576656e7407020974797065050d6f70656e65640561740312",
     "binary_len": 38,
     "binary_file": "binary/frame_event_with_fields.sdat",
+    "binary_v2": "53444154020f050569640b6576656e74910f050974797065056174050d6f70656e656499",
+    "binary_v2_len": 36,
+    "binary_v2_file": "binary_v2/frame_event_with_fields.sdat",
     "frame": {
       "schema": "activity",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Activity\"},\"defs\":{\"Activity\":{\"kind\":\"struct\",\"doc\":\"A record holding a tagged enum.\",\"fields\":[{\"name\":\"id\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true},{\"name\":\"event\",\"shape\":{\"kind\":\"def\",\"name\":\"Event\"},\"required\":true}]},\"Event\":{\"kind\":\"enum\",\"doc\":\"A tagged enum: a frame holds it in its binary form.\",\"tag\":\"type\",\"variants\":[{\"name\":\"opened\",\"fields\":[{\"name\":\"at\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true}]},{\"name\":\"renamed\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]},{\"name\":\"closed\",\"fields\":[]}]}}}",
       "value": {"t": "map", "v": [["id", {"t": "int", "v": "1"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "opened"}], ["at", {"t": "int", "v": "9"}]]}]]},
       "bytes": "16021407020974797065050d6f70656e6564056174031200",
       "bytes_len": 24,
-      "bytes_file": "frames/frame_event_with_fields.frame"
+      "bytes_file": "frames/frame_event_with_fields.frame",
+      "bytes_v2": "1502130f050974797065056174050d6f70656e65649900",
+      "bytes_v2_len": 23,
+      "bytes_v2_file": "frames_v2/frame_event_with_fields.frame"
     }
   },
   {
@@ -1278,16 +2145,24 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["id", {"t": "int", "v": "2"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "renamed"}], ["name", {"t": "str", "v": "notes"}]]}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401070205696403040b6576656e7407020974797065050f72656e616d6564096e616d65050b6e6f746573",
     "binary_len": 46,
     "binary_file": "binary/frame_event_with_string.sdat",
+    "binary_v2": "53444154020f050569640b6576656e74920f050974797065096e616d65050f72656e616d6564050b6e6f746573",
+    "binary_v2_len": 45,
+    "binary_v2_file": "binary_v2/frame_event_with_string.sdat",
     "frame": {
       "schema": "activity",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Activity\"},\"defs\":{\"Activity\":{\"kind\":\"struct\",\"doc\":\"A record holding a tagged enum.\",\"fields\":[{\"name\":\"id\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true},{\"name\":\"event\",\"shape\":{\"kind\":\"def\",\"name\":\"Event\"},\"required\":true}]},\"Event\":{\"kind\":\"enum\",\"doc\":\"A tagged enum: a frame holds it in its binary form.\",\"tag\":\"type\",\"variants\":[{\"name\":\"opened\",\"fields\":[{\"name\":\"at\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true}]},{\"name\":\"renamed\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]},{\"name\":\"closed\",\"fields\":[]}]}}}",
       "value": {"t": "map", "v": [["id", {"t": "int", "v": "2"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "renamed"}], ["name", {"t": "str", "v": "notes"}]]}]]},
       "bytes": "1e041c07020974797065050f72656e616d6564096e616d65050b6e6f74657300",
       "bytes_len": 32,
-      "bytes_file": "frames/frame_event_with_string.frame"
+      "bytes_file": "frames/frame_event_with_string.frame",
+      "bytes_v2": "1e041c0f050974797065096e616d65050f72656e616d6564050b6e6f74657300",
+      "bytes_v2_len": 32,
+      "bytes_v2_file": "frames_v2/frame_event_with_string.frame"
     }
   },
   {
@@ -1297,16 +2172,24 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["id", {"t": "int", "v": "3"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "closed"}]]}]]},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401070205696403060b6576656e7407010974797065050d636c6f736564",
     "binary_len": 33,
     "binary_file": "binary/frame_event_unit.sdat",
+    "binary_v2": "53444154020f050569640b6576656e74930f030974797065050d636c6f736564",
+    "binary_v2_len": 32,
+    "binary_v2_file": "binary_v2/frame_event_unit.sdat",
     "frame": {
       "schema": "activity",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Activity\"},\"defs\":{\"Activity\":{\"kind\":\"struct\",\"doc\":\"A record holding a tagged enum.\",\"fields\":[{\"name\":\"id\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true},{\"name\":\"event\",\"shape\":{\"kind\":\"def\",\"name\":\"Event\"},\"required\":true}]},\"Event\":{\"kind\":\"enum\",\"doc\":\"A tagged enum: a frame holds it in its binary form.\",\"tag\":\"type\",\"variants\":[{\"name\":\"opened\",\"fields\":[{\"name\":\"at\",\"shape\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"required\":true}]},{\"name\":\"renamed\",\"fields\":[{\"name\":\"name\",\"shape\":{\"kind\":\"string\"},\"required\":true}]},{\"name\":\"closed\",\"fields\":[]}]}}}",
       "value": {"t": "map", "v": [["id", {"t": "int", "v": "3"}], ["event", {"t": "map", "v": [["type", {"t": "str", "v": "closed"}]]}]]},
       "bytes": "11060f07010974797065050d636c6f73656400",
       "bytes_len": 19,
-      "bytes_file": "frames/frame_event_unit.frame"
+      "bytes_file": "frames/frame_event_unit.frame",
+      "bytes_v2": "11060f0f030974797065050d636c6f73656400",
+      "bytes_v2_len": 19,
+      "bytes_v2_file": "frames_v2/frame_event_unit.frame"
     }
   },
   {
@@ -1316,9 +2199,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["narrow", {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3ff8000000000000", "v": "1.5"}]}], ["exact", {"t": "list", "v": [{"t": "float", "bits": "3fe0000000000000", "v": "0.5"}, {"t": "float", "bits": "3fd0000000000000", "v": "0.25"}]}], ["wide", {"t": "list", "v": [{"t": "float", "bits": "3fb999999999999a", "v": "0.1"}, {"t": "float", "bits": "3fc999999999999a", "v": "0.2"}]}], ["signed", {"t": "ints", "v": [-1, 0, 1, -2, 70000]}], ["unsigned", {"t": "ints", "v": [1, 2, 65535]}]]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540107050d6e6172726f770e020000003f0000c03f0b65786163740e020000003f0000803e09776964650d029a9999999999b93f9a9999999999c93f0d7369676e65640a0501000203e0c50811756e7369676e65640a030204feff07",
     "binary_len": 95,
     "binary_file": "binary/frame_samples.sdat",
+    "binary_v2": "53444154020f0b0d6e6172726f770b657861637409776964650d7369676e656411756e7369676e65640e020000003f0000c03f0e020000003f0000803e0d029a9999999999b93f9a9999999999c93f0a0501000203e0c5080a030204feff07",
+    "binary_v2_len": 95,
+    "binary_v2_file": "binary_v2/frame_samples.sdat",
     "frame": {
       "schema": "samples",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Samples\"},\"defs\":{\"Samples\":{\"kind\":\"struct\",\"doc\":\"Lists of floats and ints.\",\"fields\":[{\"name\":\"narrow\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":32}},\"required\":true},{\"name\":\"exact\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"wide\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"signed\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647}},\"required\":true},{\"name\":\"unsigned\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":65535}},\"required\":true}]}}}",
@@ -1335,9 +2223,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["narrow", {"t": "list", "v": []}], ["exact", {"t": "list", "v": []}], ["wide", {"t": "list", "v": []}], ["signed", {"t": "list", "v": []}], ["unsigned", {"t": "list", "v": []}]]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "534441540107050d6e6172726f770e000b65786163740e0009776964650e000d7369676e65640a0011756e7369676e65640a00",
     "binary_len": 51,
     "binary_file": "binary/frame_samples_empty.sdat",
+    "binary_v2": "53444154020f0b0d6e6172726f770b657861637409776964650d7369676e656411756e7369676e65640e000e000e000a000a00",
+    "binary_v2_len": 51,
+    "binary_v2_file": "binary_v2/frame_samples_empty.sdat",
     "frame": {
       "schema": "samples",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Samples\"},\"defs\":{\"Samples\":{\"kind\":\"struct\",\"doc\":\"Lists of floats and ints.\",\"fields\":[{\"name\":\"narrow\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":32}},\"required\":true},{\"name\":\"exact\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"wide\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"signed\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647}},\"required\":true},{\"name\":\"unsigned\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":65535}},\"required\":true}]}}}",
@@ -1354,9 +2247,14 @@
     "text_is_written": true,
     "value": {"t": "map", "v": [["narrow", {"t": "list", "v": []}], ["exact", {"t": "list", "v": []}], ["wide", {"t": "list", "v": [{"t": "float", "bits": "3fb999999999999a", "v": "0.1"}, {"t": "float", "bits": "3ff199999999999a", "v": "1.1"}, {"t": "float", "bits": "4000cccccccccccd", "v": "2.1"}, {"t": "float", "bits": "4008cccccccccccd", "v": "3.1"}, {"t": "float", "bits": "4010666666666666", "v": "4.1"}, {"t": "float", "bits": "4014666666666666", "v": "5.1"}, {"t": "float", "bits": "4018666666666666", "v": "6.1"}, {"t": "float", "bits": "401c666666666666", "v": "7.1"}, {"t": "float", "bits": "4020333333333333", "v": "8.1"}, {"t": "float", "bits": "4022333333333333", "v": "9.1"}, {"t": "float", "bits": "4024333333333333", "v": "10.1"}, {"t": "float", "bits": "4026333333333333", "v": "11.1"}, {"t": "float", "bits": "4028333333333333", "v": "12.1"}, {"t": "float", "bits": "402a333333333333", "v": "13.1"}, {"t": "float", "bits": "402c333333333333", "v": "14.1"}, {"t": "float", "bits": "402e333333333333", "v": "15.1"}, {"t": "float", "bits": "403019999999999a", "v": "16.1"}, {"t": "float", "bits": "403119999999999a", "v": "17.1"}, {"t": "float", "bits": "403219999999999a", "v": "18.1"}, {"t": "float", "bits": "403319999999999a", "v": "19.1"}]}], ["signed", {"t": "list", "v": []}], ["unsigned", {"t": "list", "v": []}]]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "534441540107050d6e6172726f770e000b65786163740e0009776964650d149a9999999999b93f9a9999999999f13fcdcccccccccc0040cdcccccccccc08406666666666661040666666666666144066666666666618406666666666661c40333333333333204033333333333322403333333333332440333333333333264033333333333328403333333333332a403333333333332c403333333333332e409a999999991930409a999999991931409a999999991932409a999999991933400d7369676e65640a0011756e7369676e65640a00",
     "binary_len": 211,
     "binary_file": "binary/frame_record_length_two_bytes.sdat",
+    "binary_v2": "53444154020f0b0d6e6172726f770b657861637409776964650d7369676e656411756e7369676e65640e000e000d149a9999999999b93f9a9999999999f13fcdcccccccccc0040cdcccccccccc08406666666666661040666666666666144066666666666618406666666666661c40333333333333204033333333333322403333333333332440333333333333264033333333333328403333333333332a403333333333332c403333333333332e409a999999991930409a999999991931409a999999991932409a999999991933400a000a00",
+    "binary_v2_len": 211,
+    "binary_v2_file": "binary_v2/frame_record_length_two_bytes.sdat",
     "frame": {
       "schema": "samples",
       "shape": "{\"root\":{\"kind\":\"def\",\"name\":\"Samples\"},\"defs\":{\"Samples\":{\"kind\":\"struct\",\"doc\":\"Lists of floats and ints.\",\"fields\":[{\"name\":\"narrow\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":32}},\"required\":true},{\"name\":\"exact\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"wide\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"float\",\"bits\":64}},\"required\":true},{\"name\":\"signed\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647}},\"required\":true},{\"name\":\"unsigned\",\"shape\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":65535}},\"required\":true}]}}}",
@@ -1399,9 +2297,14 @@
     "text_is_written": true,
     "value": {"t": "int", "v": "300"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540103d804",
     "binary_len": 8,
     "binary_file": "binary/frame_root_uint.sdat",
+    "binary_v2": "534441540203d804",
+    "binary_v2_len": 8,
+    "binary_v2_file": "binary_v2/frame_root_uint.sdat",
     "frame": {
       "schema": "uint",
       "shape": "{\"root\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295},\"defs\":{}}",
@@ -1418,9 +2321,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "hi"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "534441540105056869",
     "binary_len": 9,
     "binary_file": "binary/frame_root_text.sdat",
+    "binary_v2": "534441540205056869",
+    "binary_v2_len": 9,
+    "binary_v2_file": "binary_v2/frame_root_text.sdat",
     "frame": {
       "schema": "text",
       "shape": "{\"root\":{\"kind\":\"string\"},\"defs\":{}}",
@@ -1437,9 +2345,14 @@
     "text_is_written": true,
     "value": {"t": "str", "v": "@@home"},
     "binary_is_encoded": true,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "5344415401050d4040686f6d65",
     "binary_len": 13,
     "binary_file": "binary/frame_root_text_at.sdat",
+    "binary_v2": "5344415402050d4040686f6d65",
+    "binary_v2_len": 13,
+    "binary_v2_file": "binary_v2/frame_root_text_at.sdat",
     "frame": {
       "schema": "text",
       "shape": "{\"root\":{\"kind\":\"string\"},\"defs\":{}}",
@@ -1454,8 +2367,12 @@
     "description": "255 unsigned ints of 1 bits: count, the width byte, then no full group: numbers one after another.",
     "value": {"t": "ints", "v": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 263,
     "binary_file": "binary/frame_ints_w1_n255.sdat",
+    "binary_v2_len": 263,
+    "binary_v2_file": "binary_v2/frame_ints_w1_n255.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1470,8 +2387,12 @@
     "description": "256 unsigned ints of 1 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 264,
     "binary_file": "binary/frame_ints_w1_n256.sdat",
+    "binary_v2_len": 264,
+    "binary_v2_file": "binary_v2/frame_ints_w1_n256.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1486,8 +2407,12 @@
     "description": "257 unsigned ints of 1 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 265,
     "binary_file": "binary/frame_ints_w1_n257.sdat",
+    "binary_v2_len": 265,
+    "binary_v2_file": "binary_v2/frame_ints_w1_n257.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1502,8 +2427,12 @@
     "description": "255 unsigned ints of 7 bits: count, the width byte, then no full group: numbers one after another.",
     "value": {"t": "ints", "v": [127, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 392,
     "binary_file": "binary/frame_ints_w7_n255.sdat",
+    "binary_v2_len": 392,
+    "binary_v2_file": "binary_v2/frame_ints_w7_n255.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1518,8 +2447,12 @@
     "description": "256 unsigned ints of 7 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [127, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 393,
     "binary_file": "binary/frame_ints_w7_n256.sdat",
+    "binary_v2_len": 393,
+    "binary_v2_file": "binary_v2/frame_ints_w7_n256.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1534,8 +2467,12 @@
     "description": "257 unsigned ints of 7 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [127, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57, 106, 27, 76, 125, 46, 95, 16, 65, 114, 35, 84, 5, 54, 103, 24, 73, 122, 43, 92, 13, 62, 111, 32, 81, 2, 51, 100, 21, 70, 119, 40, 89, 10, 59, 108, 29, 78, 127, 48, 97, 18, 67, 116, 37, 86, 7, 56, 105, 26, 75, 124, 45, 94, 15, 64, 113, 34, 83, 4, 53, 102, 23, 72, 121, 42, 91, 12, 61, 110, 31, 80, 1, 50, 99, 20, 69, 118, 39, 88, 9, 58, 107, 28, 77, 126, 47, 96, 17, 66, 115, 36, 85, 6, 55, 104, 25, 74, 123, 44, 93, 14, 63, 112, 33, 82, 3, 52, 101, 22, 71, 120, 41, 90, 11, 60, 109, 30, 79, 0, 49, 98, 19, 68, 117, 38, 87, 8, 57]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 394,
     "binary_file": "binary/frame_ints_w7_n257.sdat",
+    "binary_v2_len": 394,
+    "binary_v2_file": "binary_v2/frame_ints_w7_n257.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1550,8 +2487,12 @@
     "description": "255 unsigned ints of 8 bits: count, the width byte, then no full group: numbers one after another.",
     "value": {"t": "ints", "v": [255, 234, 155, 76, 253, 174, 95, 16, 193, 114, 35, 212, 133, 54, 231, 152, 73, 250, 171, 92, 13, 190, 111, 32, 209, 130, 51, 228, 149, 70, 247, 168, 89, 10, 187, 108, 29, 206, 127, 48, 225, 146, 67, 244, 165, 86, 7, 184, 105, 26, 203, 124, 45, 222, 143, 64, 241, 162, 83, 4, 181, 102, 23, 200, 121, 42, 219, 140, 61, 238, 159, 80, 1, 178, 99, 20, 197, 118, 39, 216, 137, 58, 235, 156, 77, 254, 175, 96, 17, 194, 115, 36, 213, 134, 55, 232, 153, 74, 251, 172, 93, 14, 191, 112, 33, 210, 131, 52, 229, 150, 71, 248, 169, 90, 11, 188, 109, 30, 207, 128, 49, 226, 147, 68, 245, 166, 87, 8, 185, 106, 27, 204, 125, 46, 223, 144, 65, 242, 163, 84, 5, 182, 103, 24, 201, 122, 43, 220, 141, 62, 239, 160, 81, 2, 179, 100, 21, 198, 119, 40, 217, 138, 59, 236, 157, 78, 255, 176, 97, 18, 195, 116, 37, 214, 135, 56, 233, 154, 75, 252, 173, 94, 15, 192, 113, 34, 211, 132, 53, 230, 151, 72, 249, 170, 91, 12, 189, 110, 31, 208, 129, 50, 227, 148, 69, 246, 167, 88, 9, 186, 107, 28, 205, 126, 47, 224, 145, 66, 243, 164, 85, 6, 183, 104, 25, 202, 123, 44, 221, 142, 63, 240, 161, 82, 3, 180, 101, 22, 199, 120, 41, 218, 139, 60, 237, 158, 79, 0, 177, 98, 19, 196, 117, 38, 215]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 455,
     "binary_file": "binary/frame_ints_w8_n255.sdat",
+    "binary_v2_len": 455,
+    "binary_v2_file": "binary_v2/frame_ints_w8_n255.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1565,8 +2506,12 @@
     "description": "256 unsigned ints of 8 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [255, 234, 155, 76, 253, 174, 95, 16, 193, 114, 35, 212, 133, 54, 231, 152, 73, 250, 171, 92, 13, 190, 111, 32, 209, 130, 51, 228, 149, 70, 247, 168, 89, 10, 187, 108, 29, 206, 127, 48, 225, 146, 67, 244, 165, 86, 7, 184, 105, 26, 203, 124, 45, 222, 143, 64, 241, 162, 83, 4, 181, 102, 23, 200, 121, 42, 219, 140, 61, 238, 159, 80, 1, 178, 99, 20, 197, 118, 39, 216, 137, 58, 235, 156, 77, 254, 175, 96, 17, 194, 115, 36, 213, 134, 55, 232, 153, 74, 251, 172, 93, 14, 191, 112, 33, 210, 131, 52, 229, 150, 71, 248, 169, 90, 11, 188, 109, 30, 207, 128, 49, 226, 147, 68, 245, 166, 87, 8, 185, 106, 27, 204, 125, 46, 223, 144, 65, 242, 163, 84, 5, 182, 103, 24, 201, 122, 43, 220, 141, 62, 239, 160, 81, 2, 179, 100, 21, 198, 119, 40, 217, 138, 59, 236, 157, 78, 255, 176, 97, 18, 195, 116, 37, 214, 135, 56, 233, 154, 75, 252, 173, 94, 15, 192, 113, 34, 211, 132, 53, 230, 151, 72, 249, 170, 91, 12, 189, 110, 31, 208, 129, 50, 227, 148, 69, 246, 167, 88, 9, 186, 107, 28, 205, 126, 47, 224, 145, 66, 243, 164, 85, 6, 183, 104, 25, 202, 123, 44, 221, 142, 63, 240, 161, 82, 3, 180, 101, 22, 199, 120, 41, 218, 139, 60, 237, 158, 79, 0, 177, 98, 19, 196, 117, 38, 215, 136]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 457,
     "binary_file": "binary/frame_ints_w8_n256.sdat",
+    "binary_v2_len": 457,
+    "binary_v2_file": "binary_v2/frame_ints_w8_n256.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1580,8 +2525,12 @@
     "description": "257 unsigned ints of 8 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [255, 234, 155, 76, 253, 174, 95, 16, 193, 114, 35, 212, 133, 54, 231, 152, 73, 250, 171, 92, 13, 190, 111, 32, 209, 130, 51, 228, 149, 70, 247, 168, 89, 10, 187, 108, 29, 206, 127, 48, 225, 146, 67, 244, 165, 86, 7, 184, 105, 26, 203, 124, 45, 222, 143, 64, 241, 162, 83, 4, 181, 102, 23, 200, 121, 42, 219, 140, 61, 238, 159, 80, 1, 178, 99, 20, 197, 118, 39, 216, 137, 58, 235, 156, 77, 254, 175, 96, 17, 194, 115, 36, 213, 134, 55, 232, 153, 74, 251, 172, 93, 14, 191, 112, 33, 210, 131, 52, 229, 150, 71, 248, 169, 90, 11, 188, 109, 30, 207, 128, 49, 226, 147, 68, 245, 166, 87, 8, 185, 106, 27, 204, 125, 46, 223, 144, 65, 242, 163, 84, 5, 182, 103, 24, 201, 122, 43, 220, 141, 62, 239, 160, 81, 2, 179, 100, 21, 198, 119, 40, 217, 138, 59, 236, 157, 78, 255, 176, 97, 18, 195, 116, 37, 214, 135, 56, 233, 154, 75, 252, 173, 94, 15, 192, 113, 34, 211, 132, 53, 230, 151, 72, 249, 170, 91, 12, 189, 110, 31, 208, 129, 50, 227, 148, 69, 246, 167, 88, 9, 186, 107, 28, 205, 126, 47, 224, 145, 66, 243, 164, 85, 6, 183, 104, 25, 202, 123, 44, 221, 142, 63, 240, 161, 82, 3, 180, 101, 22, 199, 120, 41, 218, 139, 60, 237, 158, 79, 0, 177, 98, 19, 196, 117, 38, 215, 136, 57]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 458,
     "binary_file": "binary/frame_ints_w8_n257.sdat",
+    "binary_v2_len": 458,
+    "binary_v2_file": "binary_v2/frame_ints_w8_n257.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1595,8 +2544,12 @@
     "description": "255 unsigned ints of 13 bits: count, the width byte, then no full group: numbers one after another.",
     "value": {"t": "ints", "v": [8191, 2538, 923, 7500, 5885, 4270, 2655, 1040, 7617, 6002, 4387, 2772, 1157, 7734, 6119, 4504, 2889, 1274, 7851, 6236, 4621, 3006, 1391, 7968, 6353, 4738, 3123, 1508, 8085, 6470, 4855, 3240, 1625, 10, 6587, 4972, 3357, 1742, 127, 6704, 5089, 3474, 1859, 244, 6821, 5206, 3591, 1976, 361, 6938, 5323, 3708, 2093, 478, 7055, 5440, 3825, 2210, 595, 7172, 5557, 3942, 2327, 712, 7289, 5674, 4059, 2444, 829, 7406, 5791, 4176, 2561, 946, 7523, 5908, 4293, 2678, 1063, 7640, 6025, 4410, 2795, 1180, 7757, 6142, 4527, 2912, 1297, 7874, 6259, 4644, 3029, 1414, 7991, 6376, 4761, 3146, 1531, 8108, 6493, 4878, 3263, 1648, 33, 6610, 4995, 3380, 1765, 150, 6727, 5112, 3497, 1882, 267, 6844, 5229, 3614, 1999, 384, 6961, 5346, 3731, 2116, 501, 7078, 5463, 3848, 2233, 618, 7195, 5580, 3965, 2350, 735, 7312, 5697, 4082, 2467, 852, 7429, 5814, 4199, 2584, 969, 7546, 5931, 4316, 2701, 1086, 7663, 6048, 4433, 2818, 1203, 7780, 6165, 4550, 2935, 1320, 7897, 6282, 4667, 3052, 1437, 8014, 6399, 4784, 3169, 1554, 8131, 6516, 4901, 3286, 1671, 56, 6633, 5018, 3403, 1788, 173, 6750, 5135, 3520, 1905, 290, 6867, 5252, 3637, 2022, 407, 6984, 5369, 3754, 2139, 524, 7101, 5486, 3871, 2256, 641, 7218, 5603, 3988, 2373, 758, 7335, 5720, 4105, 2490, 875, 7452, 5837, 4222, 2607, 992, 7569, 5954, 4339, 2724, 1109, 7686, 6071, 4456, 2841, 1226, 7803, 6188, 4573, 2958, 1343, 7920, 6305, 4690, 3075, 1460, 8037, 6422, 4807, 3192, 1577, 8154, 6539, 4924, 3309, 1694, 79, 6656, 5041, 3426, 1811, 196, 6773, 5158, 3543]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 515,
     "binary_file": "binary/frame_ints_w13_n255.sdat",
+    "binary_v2_len": 515,
+    "binary_v2_file": "binary_v2/frame_ints_w13_n255.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1610,8 +2563,12 @@
     "description": "256 unsigned ints of 13 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [8191, 2538, 923, 7500, 5885, 4270, 2655, 1040, 7617, 6002, 4387, 2772, 1157, 7734, 6119, 4504, 2889, 1274, 7851, 6236, 4621, 3006, 1391, 7968, 6353, 4738, 3123, 1508, 8085, 6470, 4855, 3240, 1625, 10, 6587, 4972, 3357, 1742, 127, 6704, 5089, 3474, 1859, 244, 6821, 5206, 3591, 1976, 361, 6938, 5323, 3708, 2093, 478, 7055, 5440, 3825, 2210, 595, 7172, 5557, 3942, 2327, 712, 7289, 5674, 4059, 2444, 829, 7406, 5791, 4176, 2561, 946, 7523, 5908, 4293, 2678, 1063, 7640, 6025, 4410, 2795, 1180, 7757, 6142, 4527, 2912, 1297, 7874, 6259, 4644, 3029, 1414, 7991, 6376, 4761, 3146, 1531, 8108, 6493, 4878, 3263, 1648, 33, 6610, 4995, 3380, 1765, 150, 6727, 5112, 3497, 1882, 267, 6844, 5229, 3614, 1999, 384, 6961, 5346, 3731, 2116, 501, 7078, 5463, 3848, 2233, 618, 7195, 5580, 3965, 2350, 735, 7312, 5697, 4082, 2467, 852, 7429, 5814, 4199, 2584, 969, 7546, 5931, 4316, 2701, 1086, 7663, 6048, 4433, 2818, 1203, 7780, 6165, 4550, 2935, 1320, 7897, 6282, 4667, 3052, 1437, 8014, 6399, 4784, 3169, 1554, 8131, 6516, 4901, 3286, 1671, 56, 6633, 5018, 3403, 1788, 173, 6750, 5135, 3520, 1905, 290, 6867, 5252, 3637, 2022, 407, 6984, 5369, 3754, 2139, 524, 7101, 5486, 3871, 2256, 641, 7218, 5603, 3988, 2373, 758, 7335, 5720, 4105, 2490, 875, 7452, 5837, 4222, 2607, 992, 7569, 5954, 4339, 2724, 1109, 7686, 6071, 4456, 2841, 1226, 7803, 6188, 4573, 2958, 1343, 7920, 6305, 4690, 3075, 1460, 8037, 6422, 4807, 3192, 1577, 8154, 6539, 4924, 3309, 1694, 79, 6656, 5041, 3426, 1811, 196, 6773, 5158, 3543, 1928]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 517,
     "binary_file": "binary/frame_ints_w13_n256.sdat",
+    "binary_v2_len": 517,
+    "binary_v2_file": "binary_v2/frame_ints_w13_n256.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1625,8 +2582,12 @@
     "description": "257 unsigned ints of 13 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [8191, 2538, 923, 7500, 5885, 4270, 2655, 1040, 7617, 6002, 4387, 2772, 1157, 7734, 6119, 4504, 2889, 1274, 7851, 6236, 4621, 3006, 1391, 7968, 6353, 4738, 3123, 1508, 8085, 6470, 4855, 3240, 1625, 10, 6587, 4972, 3357, 1742, 127, 6704, 5089, 3474, 1859, 244, 6821, 5206, 3591, 1976, 361, 6938, 5323, 3708, 2093, 478, 7055, 5440, 3825, 2210, 595, 7172, 5557, 3942, 2327, 712, 7289, 5674, 4059, 2444, 829, 7406, 5791, 4176, 2561, 946, 7523, 5908, 4293, 2678, 1063, 7640, 6025, 4410, 2795, 1180, 7757, 6142, 4527, 2912, 1297, 7874, 6259, 4644, 3029, 1414, 7991, 6376, 4761, 3146, 1531, 8108, 6493, 4878, 3263, 1648, 33, 6610, 4995, 3380, 1765, 150, 6727, 5112, 3497, 1882, 267, 6844, 5229, 3614, 1999, 384, 6961, 5346, 3731, 2116, 501, 7078, 5463, 3848, 2233, 618, 7195, 5580, 3965, 2350, 735, 7312, 5697, 4082, 2467, 852, 7429, 5814, 4199, 2584, 969, 7546, 5931, 4316, 2701, 1086, 7663, 6048, 4433, 2818, 1203, 7780, 6165, 4550, 2935, 1320, 7897, 6282, 4667, 3052, 1437, 8014, 6399, 4784, 3169, 1554, 8131, 6516, 4901, 3286, 1671, 56, 6633, 5018, 3403, 1788, 173, 6750, 5135, 3520, 1905, 290, 6867, 5252, 3637, 2022, 407, 6984, 5369, 3754, 2139, 524, 7101, 5486, 3871, 2256, 641, 7218, 5603, 3988, 2373, 758, 7335, 5720, 4105, 2490, 875, 7452, 5837, 4222, 2607, 992, 7569, 5954, 4339, 2724, 1109, 7686, 6071, 4456, 2841, 1226, 7803, 6188, 4573, 2958, 1343, 7920, 6305, 4690, 3075, 1460, 8037, 6422, 4807, 3192, 1577, 8154, 6539, 4924, 3309, 1694, 79, 6656, 5041, 3426, 1811, 196, 6773, 5158, 3543, 1928, 313]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 519,
     "binary_file": "binary/frame_ints_w13_n257.sdat",
+    "binary_v2_len": 519,
+    "binary_v2_file": "binary_v2/frame_ints_w13_n257.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1642,9 +2603,14 @@
     "text_is_written": true,
     "value": {"t": "ints", "v": [4294967295, 2654448106, 1013916571]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010a03feffffff1fd4a7bde313b68ef9c607",
     "binary_len": 22,
     "binary_file": "binary/frame_ints_w32_n3.sdat",
+    "binary_v2": "53444154020a03feffffff1fd4a7bde313b68ef9c607",
+    "binary_v2_len": 22,
+    "binary_v2_file": "binary_v2/frame_ints_w32_n3.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1659,8 +2625,12 @@
     "description": "256 unsigned ints of 32 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [4294967295, 2654448106, 1013916571, 3668352332, 2027820797, 387289262, 3041725023, 1401193488, 4055629249, 2415097714, 774566179, 3429001940, 1788470405, 147938870, 2802374631, 1161843096, 3816278857, 2175747322, 535215787, 3189651548, 1549120013, 4203555774, 2563024239, 922492704, 3576928465, 1936396930, 295865395, 2950301156, 1309769621, 3964205382, 2323673847, 683142312, 3337578073, 1697046538, 56515003, 2710950764, 1070419229, 3724854990, 2084323455, 443791920, 3098227681, 1457696146, 4112131907, 2471600372, 831068837, 3485504598, 1844973063, 204441528, 2858877289, 1218345754, 3872781515, 2232249980, 591718445, 3246154206, 1605622671, 4260058432, 2619526897, 978995362, 3633431123, 1992899588, 352368053, 3006803814, 1366272279, 4020708040, 2380176505, 739644970, 3394080731, 1753549196, 113017661, 2767453422, 1126921887, 3781357648, 2140826113, 500294578, 3154730339, 1514198804, 4168634565, 2528103030, 887571495, 3542007256, 1901475721, 260944186, 2915379947, 1274848412, 3929284173, 2288752638, 648221103, 3302656864, 1662125329, 21593794, 2676029555, 1035498020, 3689933781, 2049402246, 408870711, 3063306472, 1422774937, 4077210698, 2436679163, 796147628, 3450583389, 1810051854, 169520319, 2823956080, 1183424545, 3837860306, 2197328771, 556797236, 3211232997, 1570701462, 4225137223, 2584605688, 944074153, 3598509914, 1957978379, 317446844, 2971882605, 1331351070, 3985786831, 2345255296, 704723761, 3359159522, 1718627987, 78096452, 2732532213, 1092000678, 3746436439, 2105904904, 465373369, 3119809130, 1479277595, 4133713356, 2493181821, 852650286, 3507086047, 1866554512, 226022977, 2880458738, 1239927203, 3894362964, 2253831429, 613299894, 3267735655, 1627204120, 4281639881, 2641108346, 1000576811, 3655012572, 2014481037, 373949502, 3028385263, 1387853728, 4042289489, 2401757954, 761226419, 3415662180, 1775130645, 134599110, 2789034871, 1148503336, 3802939097, 2162407562, 521876027, 3176311788, 1535780253, 4190216014, 2549684479, 909152944, 3563588705, 1923057170, 282525635, 2936961396, 1296429861, 3950865622, 2310334087, 669802552, 3324238313, 1683706778, 43175243, 2697611004, 1057079469, 3711515230, 2070983695, 430452160, 3084887921, 1444356386, 4098792147, 2458260612, 817729077, 3472164838, 1831633303, 191101768, 2845537529, 1205005994, 3859441755, 2218910220, 578378685, 3232814446, 1592282911, 4246718672, 2606187137, 965655602, 3620091363, 1979559828, 339028293, 2993464054, 1352932519, 4007368280, 2366836745, 726305210, 3380740971, 1740209436, 99677901, 2754113662, 1113582127, 3768017888, 2127486353, 486954818, 3141390579, 1500859044, 4155294805, 2514763270, 874231735, 3528667496, 1888135961, 247604426, 2902040187, 1261508652, 3915944413, 2275412878, 634881343, 3289317104, 1648785569, 8254034, 2662689795, 1022158260, 3676594021, 2036062486, 395530951, 3049966712, 1409435177, 4063870938, 2423339403, 782807868, 3437243629, 1796712094, 156180559, 2810616320, 1170084785, 3824520546, 2183989011, 543457476, 3197893237, 1557361702, 4211797463, 2571265928]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 1281,
     "binary_file": "binary/frame_ints_w32_n256.sdat",
+    "binary_v2_len": 1281,
+    "binary_v2_file": "binary_v2/frame_ints_w32_n256.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1674,8 +2644,12 @@
     "description": "257 unsigned ints of 32 bits: count, the width byte, then a full group in lanes, then the rest one by one.",
     "value": {"t": "ints", "v": [4294967295, 2654448106, 1013916571, 3668352332, 2027820797, 387289262, 3041725023, 1401193488, 4055629249, 2415097714, 774566179, 3429001940, 1788470405, 147938870, 2802374631, 1161843096, 3816278857, 2175747322, 535215787, 3189651548, 1549120013, 4203555774, 2563024239, 922492704, 3576928465, 1936396930, 295865395, 2950301156, 1309769621, 3964205382, 2323673847, 683142312, 3337578073, 1697046538, 56515003, 2710950764, 1070419229, 3724854990, 2084323455, 443791920, 3098227681, 1457696146, 4112131907, 2471600372, 831068837, 3485504598, 1844973063, 204441528, 2858877289, 1218345754, 3872781515, 2232249980, 591718445, 3246154206, 1605622671, 4260058432, 2619526897, 978995362, 3633431123, 1992899588, 352368053, 3006803814, 1366272279, 4020708040, 2380176505, 739644970, 3394080731, 1753549196, 113017661, 2767453422, 1126921887, 3781357648, 2140826113, 500294578, 3154730339, 1514198804, 4168634565, 2528103030, 887571495, 3542007256, 1901475721, 260944186, 2915379947, 1274848412, 3929284173, 2288752638, 648221103, 3302656864, 1662125329, 21593794, 2676029555, 1035498020, 3689933781, 2049402246, 408870711, 3063306472, 1422774937, 4077210698, 2436679163, 796147628, 3450583389, 1810051854, 169520319, 2823956080, 1183424545, 3837860306, 2197328771, 556797236, 3211232997, 1570701462, 4225137223, 2584605688, 944074153, 3598509914, 1957978379, 317446844, 2971882605, 1331351070, 3985786831, 2345255296, 704723761, 3359159522, 1718627987, 78096452, 2732532213, 1092000678, 3746436439, 2105904904, 465373369, 3119809130, 1479277595, 4133713356, 2493181821, 852650286, 3507086047, 1866554512, 226022977, 2880458738, 1239927203, 3894362964, 2253831429, 613299894, 3267735655, 1627204120, 4281639881, 2641108346, 1000576811, 3655012572, 2014481037, 373949502, 3028385263, 1387853728, 4042289489, 2401757954, 761226419, 3415662180, 1775130645, 134599110, 2789034871, 1148503336, 3802939097, 2162407562, 521876027, 3176311788, 1535780253, 4190216014, 2549684479, 909152944, 3563588705, 1923057170, 282525635, 2936961396, 1296429861, 3950865622, 2310334087, 669802552, 3324238313, 1683706778, 43175243, 2697611004, 1057079469, 3711515230, 2070983695, 430452160, 3084887921, 1444356386, 4098792147, 2458260612, 817729077, 3472164838, 1831633303, 191101768, 2845537529, 1205005994, 3859441755, 2218910220, 578378685, 3232814446, 1592282911, 4246718672, 2606187137, 965655602, 3620091363, 1979559828, 339028293, 2993464054, 1352932519, 4007368280, 2366836745, 726305210, 3380740971, 1740209436, 99677901, 2754113662, 1113582127, 3768017888, 2127486353, 486954818, 3141390579, 1500859044, 4155294805, 2514763270, 874231735, 3528667496, 1888135961, 247604426, 2902040187, 1261508652, 3915944413, 2275412878, 634881343, 3289317104, 1648785569, 8254034, 2662689795, 1022158260, 3676594021, 2036062486, 395530951, 3049966712, 1409435177, 4063870938, 2423339403, 782807868, 3437243629, 1796712094, 156180559, 2810616320, 1170084785, 3824520546, 2183989011, 543457476, 3197893237, 1557361702, 4211797463, 2571265928, 930734393]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 1286,
     "binary_file": "binary/frame_ints_w32_n257.sdat",
+    "binary_v2_len": 1286,
+    "binary_v2_file": "binary_v2/frame_ints_w32_n257.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1691,9 +2665,14 @@
     "text_is_written": true,
     "value": {"t": "ints", "v": [8589934591, 2654448106, 5308883867, 7963319628, 2027820797]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010a05feffffff3fd4a7bde313b68ef9c62798f5b4aa3bfadbf08d0f",
     "binary_len": 32,
     "binary_file": "binary/frame_ints_w33_n5.sdat",
+    "binary_v2": "53444154020a05feffffff3fd4a7bde313b68ef9c62798f5b4aa3bfadbf08d0f",
+    "binary_v2_len": 32,
+    "binary_v2_file": "binary_v2/frame_ints_w33_n5.sdat",
     "frame": {
       "schema": "ulong_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"defs\":{}}",
@@ -1708,8 +2687,12 @@
     "description": "257 unsigned ints of 33 bits: wider than 32 bits never use lanes, the numbers follow one another.",
     "value": {"t": "ints", "v": [8589934591, 2654448106, 5308883867, 7963319628, 2027820797, 4682256558, 7336692319, 1401193488, 4055629249, 6710065010, 774566179, 3429001940, 6083437701, 147938870, 2802374631, 5456810392, 8111246153, 2175747322, 4830183083, 7484618844, 1549120013, 4203555774, 6857991535, 922492704, 3576928465, 6231364226, 295865395, 2950301156, 5604736917, 8259172678, 2323673847, 4978109608, 7632545369, 1697046538, 4351482299, 7005918060, 1070419229, 3724854990, 6379290751, 443791920, 3098227681, 5752663442, 8407099203, 2471600372, 5126036133, 7780471894, 1844973063, 4499408824, 7153844585, 1218345754, 3872781515, 6527217276, 591718445, 3246154206, 5900589967, 8555025728, 2619526897, 5273962658, 7928398419, 1992899588, 4647335349, 7301771110, 1366272279, 4020708040, 6675143801, 739644970, 3394080731, 6048516492, 113017661, 2767453422, 5421889183, 8076324944, 2140826113, 4795261874, 7449697635, 1514198804, 4168634565, 6823070326, 887571495, 3542007256, 6196443017, 260944186, 2915379947, 5569815708, 8224251469, 2288752638, 4943188399, 7597624160, 1662125329, 4316561090, 6970996851, 1035498020, 3689933781, 6344369542, 408870711, 3063306472, 5717742233, 8372177994, 2436679163, 5091114924, 7745550685, 1810051854, 4464487615, 7118923376, 1183424545, 3837860306, 6492296067, 556797236, 3211232997, 5865668758, 8520104519, 2584605688, 5239041449, 7893477210, 1957978379, 4612414140, 7266849901, 1331351070, 3985786831, 6640222592, 704723761, 3359159522, 6013595283, 78096452, 2732532213, 5386967974, 8041403735, 2105904904, 4760340665, 7414776426, 1479277595, 4133713356, 6788149117, 852650286, 3507086047, 6161521808, 226022977, 2880458738, 5534894499, 8189330260, 2253831429, 4908267190, 7562702951, 1627204120, 4281639881, 6936075642, 1000576811, 3655012572, 6309448333, 373949502, 3028385263, 5682821024, 8337256785, 2401757954, 5056193715, 7710629476, 1775130645, 4429566406, 7084002167, 1148503336, 3802939097, 6457374858, 521876027, 3176311788, 5830747549, 8485183310, 2549684479, 5204120240, 7858556001, 1923057170, 4577492931, 7231928692, 1296429861, 3950865622, 6605301383, 669802552, 3324238313, 5978674074, 43175243, 2697611004, 5352046765, 8006482526, 2070983695, 4725419456, 7379855217, 1444356386, 4098792147, 6753227908, 817729077, 3472164838, 6126600599, 191101768, 2845537529, 5499973290, 8154409051, 2218910220, 4873345981, 7527781742, 1592282911, 4246718672, 6901154433, 965655602, 3620091363, 6274527124, 339028293, 2993464054, 5647899815, 8302335576, 2366836745, 5021272506, 7675708267, 1740209436, 4394645197, 7049080958, 1113582127, 3768017888, 6422453649, 486954818, 3141390579, 5795826340, 8450262101, 2514763270, 5169199031, 7823634792, 1888135961, 4542571722, 7197007483, 1261508652, 3915944413, 6570380174, 634881343, 3289317104, 5943752865, 8254034, 2662689795, 5317125556, 7971561317, 2036062486, 4690498247, 7344934008, 1409435177, 4063870938, 6718306699, 782807868, 3437243629, 6091679390, 156180559, 2810616320, 5465052081, 8119487842, 2183989011, 4838424772, 7492860533, 1557361702, 4211797463, 6866233224, 930734393]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary_len": 1289,
     "binary_file": "binary/frame_ints_w33_n257.sdat",
+    "binary_v2_len": 1289,
+    "binary_v2_file": "binary_v2/frame_ints_w33_n257.sdat",
     "frame": {
       "schema": "ulong_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"defs\":{}}",
@@ -1725,9 +2708,14 @@
     "text_is_written": true,
     "value": {"t": "ints", "v": [281474976710655, 2654448106, 5308883867, 7963319628, 10617755389]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010a05feffffffffff7fd4a7bde313b68ef9c62798f5b4aa3bfadbf08d4f",
     "binary_len": 34,
     "binary_file": "binary/frame_ints_w48_n5.sdat",
+    "binary_v2": "53444154020a05feffffffffff7fd4a7bde313b68ef9c62798f5b4aa3bfadbf08d4f",
+    "binary_v2_len": 34,
+    "binary_v2_file": "binary_v2/frame_ints_w48_n5.sdat",
     "frame": {
       "schema": "ulong_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"defs\":{}}",
@@ -1744,9 +2732,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": [{"t": "int", "v": "9223372036854775807"}, {"t": "int", "v": "2654448106"}, {"t": "int", "v": "5308883867"}, {"t": "int", "v": "7963319628"}, {"t": "int", "v": "10617755389"}]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010a05feffffffffffffffff01d4a7bde313b68ef9c62798f5b4aa3bfadbf08d4f",
     "binary_len": 37,
     "binary_file": "binary/frame_ints_w63_n5.sdat",
+    "binary_v2": "53444154020a05feffffffffffffffff01d4a7bde313b68ef9c62798f5b4aa3bfadbf08d4f",
+    "binary_v2_len": 37,
+    "binary_v2_file": "binary_v2/frame_ints_w63_n5.sdat",
     "frame": {
       "schema": "ulong_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":9223372036854775807}},\"defs\":{}}",
@@ -1763,9 +2756,14 @@
     "text_is_written": true,
     "value": {"t": "list", "v": []},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": false,
+    "binary_upgrades": false,
     "binary": "53444154010a00",
     "binary_len": 7,
     "binary_file": "binary/frame_ints_empty.sdat",
+    "binary_v2": "53444154020a00",
+    "binary_v2_len": 7,
+    "binary_v2_file": "binary_v2/frame_ints_empty.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1782,9 +2780,14 @@
     "text_is_written": true,
     "value": {"t": "ints", "v": [1]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010a0102",
     "binary_len": 8,
     "binary_file": "binary/frame_ints_one.sdat",
+    "binary_v2": "53444154020a0102",
+    "binary_v2_len": 8,
+    "binary_v2_file": "binary_v2/frame_ints_one.sdat",
     "frame": {
       "schema": "uint_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":0,\"max\":4294967295}},\"defs\":{}}",
@@ -1801,9 +2804,14 @@
     "text_is_written": true,
     "value": {"t": "ints", "v": [-3, 5, -70000, 0, -2147483648, 2147483647]},
     "binary_is_encoded": false,
+    "binary_v2_is_encoded": true,
+    "binary_upgrades": true,
     "binary": "53444154010a06050adfc50800ffffffff0ffeffffff0f",
     "binary_len": 23,
     "binary_file": "binary/frame_ints_signed.sdat",
+    "binary_v2": "53444154020a06050adfc50800ffffffff0ffeffffff0f",
+    "binary_v2_len": 23,
+    "binary_v2_file": "binary_v2/frame_ints_signed.sdat",
     "frame": {
       "schema": "int_list",
       "shape": "{\"root\":{\"kind\":\"list\",\"of\":{\"kind\":\"int\",\"min\":-2147483648,\"max\":2147483647}},\"defs\":{}}",
@@ -1821,6 +2829,17 @@
       "bytes_len": 48,
       "bytes_file": "io/io_two_messages.stream",
       "messages": ["53444154010702056f70050970696e67036e0302", "53444154010702056f700509706f6e67036e0302"],
+      "end": "clean"
+    }
+  },
+  {
+    "name": "io_two_messages_v2",
+    "description": "The same two messages as version 2 documents: the stream layer does not care which version a message is.",
+    "io": {
+      "bytes": "1300000053444154020f05056f70036e050970696e67911300000053444154020f05056f70036e0509706f6e6791",
+      "bytes_len": 46,
+      "bytes_file": "io/io_two_messages_v2.stream",
+      "messages": ["53444154020f05056f70036e050970696e6791", "53444154020f05056f70036e0509706f6e6791"],
       "end": "clean"
     }
   },
@@ -2320,37 +3339,37 @@
   },
   {
     "name": "binary_version_0",
-    "description": "Only version 1 is read; any other version byte is an error at byte 5.",
+    "description": "Only versions 1 and 2 are read; any other version byte is an error at byte 5.",
     "error": {
       "form": "binary",
       "input": "5344415400",
       "kind": "bad_version",
       "offset": 5,
-      "message": "Substrate Data version 0, this reads version 1",
+      "message": "Substrate Data version 0, this reads versions 1 and 2",
       "schema_code": "SD0009"
     }
   },
   {
-    "name": "binary_version_2",
-    "description": "Only version 1 is read; any other version byte is an error at byte 5.",
+    "name": "binary_version_3",
+    "description": "Only versions 1 and 2 are read; any other version byte is an error at byte 5.",
     "error": {
       "form": "binary",
-      "input": "5344415402",
+      "input": "5344415403",
       "kind": "bad_version",
       "offset": 5,
-      "message": "Substrate Data version 2, this reads version 1",
+      "message": "Substrate Data version 3, this reads versions 1 and 2",
       "schema_code": "SD0009"
     }
   },
   {
     "name": "binary_version_255",
-    "description": "Only version 1 is read; any other version byte is an error at byte 5.",
+    "description": "Only versions 1 and 2 are read; any other version byte is an error at byte 5.",
     "error": {
       "form": "binary",
       "input": "53444154ff",
       "kind": "bad_version",
       "offset": 5,
-      "message": "Substrate Data version 255, this reads version 1",
+      "message": "Substrate Data version 255, this reads versions 1 and 2",
       "schema_code": "SD0009"
     }
   },
@@ -2360,6 +3379,18 @@
     "error": {
       "form": "binary",
       "input": "5344415401",
+      "kind": "unexpected_end",
+      "offset": 5,
+      "message": "unexpected end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_header_only",
+    "description": "A header and no value. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "5344415402",
       "kind": "unexpected_end",
       "offset": 5,
       "message": "unexpected end",
@@ -2619,8 +3650,572 @@
     }
   },
   {
+    "name": "binary_v2_map_key_repeated_by_index",
+    "description": "A map whose second key is the first one again, by its table index. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "5344415402070203610302000302",
+      "kind": "duplicate_key",
+      "offset": 11,
+      "message": "`a` is already set in this map",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_map_key_repeated_as_text",
+    "description": "A map whose second key spells the first one's text again as a new string. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "534441540207020361030203610302",
+      "kind": "duplicate_key",
+      "offset": 11,
+      "message": "`a` is already set in this map",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_cut_float",
+    "description": "A float with three of its eight bytes. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "534441540204000000",
+      "kind": "unexpected_end",
+      "offset": 6,
+      "message": "unexpected end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_cut_float32",
+    "description": "A 32-bit float with one of its four bytes. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020c00",
+      "kind": "unexpected_end",
+      "offset": 6,
+      "message": "unexpected end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_cut_int",
+    "description": "An int whose varint continues past the end. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020380",
+      "kind": "bad_varint",
+      "offset": 7,
+      "message": "a varint cut short or longer than 64 bits",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_cut_bytes",
+    "description": "Bytes that say length 2 and have 1. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "5344415402090201",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "bytes past the end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_cut_string",
+    "description": "A new string of 2 bytes with 1 left. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "5344415402050541",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "bytes past the end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_list_count_past_end",
+    "description": "A list of 5 items with none left. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020605",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "length 5 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_trailing_bytes",
+    "description": "A whole value followed by one more byte. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020000",
+      "kind": "trailing_bytes",
+      "offset": 6,
+      "message": "bytes after the value",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_ints_trailing",
+    "description": "A packed int list shorter than the bytes after it. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020a02020300",
+      "kind": "trailing_bytes",
+      "offset": 9,
+      "message": "bytes after the value",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_string_not_utf8",
+    "description": "A string whose bytes are not UTF-8. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020505fffe",
+      "kind": "bad_utf8",
+      "offset": 7,
+      "message": "a string isn't UTF-8",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_string_index_missing",
+    "description": "A string index (here 1) with nothing in the table yet. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020502",
+      "kind": "bad_string_index",
+      "offset": 7,
+      "message": "string 1 isn't in the table",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_string_index_after_end",
+    "description": "Index 1 when only one string is in the table. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "534441540206020503610502",
+      "kind": "bad_string_index",
+      "offset": 12,
+      "message": "string 1 isn't in the table",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_ref_bad_kind",
+    "description": "A reference kind must be lower case. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020803580361",
+      "kind": "bad_reference",
+      "offset": 6,
+      "message": "`X` isn't a kind (lower case letters, digits and `_`: `user`, `doc`, `file`, ...)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_ref_empty_id",
+    "description": "A reference id may not be empty. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020805616201",
+      "kind": "bad_reference",
+      "offset": 9,
+      "message": "`` isn't a reference's id",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_ref_space_in_id",
+    "description": "A reference id may not hold whitespace. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "5344415402080561620320",
+      "kind": "bad_reference",
+      "offset": 9,
+      "message": "` ` isn't a reference's id",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_ref_control_in_id",
+    "description": "A reference id may not hold control characters. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "5344415402080561620300",
+      "kind": "bad_reference",
+      "offset": 9,
+      "message": "`\u0000` isn't a reference's id",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_stream_length_past_end",
+    "description": "A stream that says 9 bytes and has 1. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020b0900000001",
+      "kind": "bad_length",
+      "offset": 10,
+      "message": "bytes past the end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_stream_trailing",
+    "description": "A stream body longer than its items: the offset is within the stream's own body. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020b020000000001",
+      "kind": "trailing_bytes",
+      "offset": 1,
+      "message": "bytes after the value",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_map_key_missing",
+    "description": "A map of one entry with no key. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020701",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "length 1 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_ints_count_past_end",
+    "description": "A packed int list of 2 items with one varint. (A version 2 document.)",
+    "error": {
+      "form": "binary",
+      "input": "53444154020a0202",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "length 2 past the end (1 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_undefined",
+    "description": "A shaped map that names shape 0 before any shape is defined.",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f00",
+      "kind": "bad_shape_index",
+      "offset": 7,
+      "message": "shape 0 isn't defined",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_undefined_second",
+    "description": "The second map names shape 1 when only shape 0 exists.",
+    "error": {
+      "form": "binary",
+      "input": "534441540206020f030361820f0282",
+      "kind": "bad_shape_index",
+      "offset": 14,
+      "message": "shape 1 isn't defined",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_no_keys",
+    "description": "A shape that says it has no keys: a map with no keys is tag 7, count 0.",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f01",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "a shape with no keys",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_keys_past_end",
+    "description": "A shape that says 5 keys with 2 bytes left.",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f0b0361",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "length 5 past the end (2 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_key_repeated_as_text",
+    "description": "A shape whose second key spells the first one's text again as a new string.",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f05036103618282",
+      "kind": "duplicate_key",
+      "offset": 9,
+      "message": "`a` is already set in this map",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_key_repeated_by_index",
+    "description": "A shape whose second key is the first one again, by its table index.",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f050361008282",
+      "kind": "duplicate_key",
+      "offset": 9,
+      "message": "`a` is already set in this map",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_key_not_utf8",
+    "description": "A shape's key that is not UTF-8.",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f0305fffe82",
+      "kind": "bad_utf8",
+      "offset": 8,
+      "message": "a string isn't UTF-8",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_values_missing",
+    "description": "A shape of one key and no value after it: checked against the bytes left.",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f030361",
+      "kind": "bad_length",
+      "offset": 9,
+      "message": "length 1 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_values_cut",
+    "description": "A shape of two keys and one byte left for the values: more values than bytes.",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f050361036282",
+      "kind": "bad_length",
+      "offset": 11,
+      "message": "length 2 past the end (1 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_shape_value_cut",
+    "description": "A shape of two keys whose second value is a float with no bytes.",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f05036103628204",
+      "kind": "unexpected_end",
+      "offset": 13,
+      "message": "unexpected end",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_records_count_past_end",
+    "description": "Records that say 9 maps of one value each with none left.",
+    "error": {
+      "form": "binary",
+      "input": "53444154021009030361",
+      "kind": "bad_length",
+      "offset": 7,
+      "message": "length 9 past the end (3 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_records_values_cut",
+    "description": "Records that say 2 maps of one value each with one value left.",
+    "error": {
+      "form": "binary",
+      "input": "5344415402100203036182",
+      "kind": "bad_length",
+      "offset": 10,
+      "message": "length 2 past the end (1 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_records_shape_undefined",
+    "description": "Records that name shape 0 before it is defined.",
+    "error": {
+      "form": "binary",
+      "input": "5344415402100100",
+      "kind": "bad_shape_index",
+      "offset": 8,
+      "message": "shape 0 isn't defined",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_records_no_keys",
+    "description": "Records of a shape with no keys.",
+    "error": {
+      "form": "binary",
+      "input": "5344415402100101",
+      "kind": "bad_length",
+      "offset": 8,
+      "message": "a shape with no keys",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_string_tag_missing",
+    "description": "Tag 32 is the table string 0, with nothing in the table yet.",
+    "error": {
+      "form": "binary",
+      "input": "534441540220",
+      "kind": "bad_string_index",
+      "offset": 6,
+      "message": "string 0 isn't in the table",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_string_tag_after_end",
+    "description": "Tag 33 is table string 1 when only string 0 is in the table.",
+    "error": {
+      "form": "binary",
+      "input": "5344415402060205036121",
+      "kind": "bad_string_index",
+      "offset": 11,
+      "message": "string 1 isn't in the table",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_trailing_after_inline_int",
+    "description": "A tag that is an int by itself, then one more byte.",
+    "error": {
+      "form": "binary",
+      "input": "53444154028200",
+      "kind": "trailing_bytes",
+      "offset": 6,
+      "message": "bytes after the value",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_trailing_after_records",
+    "description": "Records followed by one more byte.",
+    "error": {
+      "form": "binary",
+      "input": "534441540210010303618200",
+      "kind": "trailing_bytes",
+      "offset": 11,
+      "message": "bytes after the value",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_unknown_tag_17",
+    "description": "A tag byte version 2 does not use: 0..=16, 32..=63 and 128..=255 are tags.",
+    "error": {
+      "form": "binary",
+      "input": "534441540211",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 17",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_unknown_tag_31",
+    "description": "A tag byte version 2 does not use: 0..=16, 32..=63 and 128..=255 are tags.",
+    "error": {
+      "form": "binary",
+      "input": "53444154021f",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 31",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_unknown_tag_64",
+    "description": "A tag byte version 2 does not use: 0..=16, 32..=63 and 128..=255 are tags.",
+    "error": {
+      "form": "binary",
+      "input": "534441540240",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 64",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_unknown_tag_127",
+    "description": "A tag byte version 2 does not use: 0..=16, 32..=63 and 128..=255 are tags.",
+    "error": {
+      "form": "binary",
+      "input": "53444154027f",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 127",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_depth_257_shaped_maps",
+    "description": "Shaped maps nested 257 deep: more than MAX_DEPTH (256).",
+    "error": {
+      "form": "binary",
+      "input": "53444154020f03036b0f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f0082",
+      "kind": "too_deep",
+      "offset": 521,
+      "message": "nested deeper than 256 levels",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_depth_records",
+    "description": "Records count two levels each (the list and its maps): 129 of them are 258 deep.",
+    "error": {
+      "form": "binary",
+      "input": "5344415402100103036b10010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010010082",
+      "kind": "too_deep",
+      "offset": 394,
+      "message": "nested deeper than 256 levels",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_v2_depth_256_shaped_maps",
+    "description": "Nested exactly 256 deep (MAX_DEPTH) decodes; the innermost holds the int 2. No value is given (the manifest cannot nest that deep): it decodes, and writing what it decodes to gives the same bytes.",
+    "binary_v2_len": 520,
+    "binary_v2_file": "binary_v2/binary_v2_depth_256_shaped_maps.sdat"
+  },
+  {
+    "name": "binary_v2_depth_256_records",
+    "description": "Nested exactly 256 deep (MAX_DEPTH) decodes; the innermost holds the int 2. No value is given (the manifest cannot nest that deep): it decodes, and writing what it decodes to gives the same bytes.",
+    "binary_v2_len": 392,
+    "binary_v2_file": "binary_v2/binary_v2_depth_256_records.sdat"
+  },
+  {
+    "name": "binary_v2_records_count_huge",
+    "description": "Records that say 2^63-1 maps: an error, no allocation.",
+    "error": {
+      "form": "binary",
+      "input": "534441540210ffffffffffffffff7f",
+      "kind": "bad_length",
+      "offset": 15,
+      "message": "length 9223372036854775807 past the end (0 bytes left)",
+      "schema_code": "SD0009"
+    }
+  },
+  {
     "name": "binary_unknown_tag_15",
-    "description": "A tag byte that is none of 0..=14.",
+    "description": "A tag byte that is none of 0..=14 in a version 1 document.",
     "error": {
       "form": "binary",
       "input": "53444154010f",
@@ -2631,8 +4226,44 @@
     }
   },
   {
+    "name": "binary_unknown_tag_16",
+    "description": "A tag byte that is none of 0..=14 in a version 1 document.",
+    "error": {
+      "form": "binary",
+      "input": "534441540110",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 16",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_unknown_tag_32",
+    "description": "A tag byte that is none of 0..=14 in a version 1 document.",
+    "error": {
+      "form": "binary",
+      "input": "534441540120",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 32",
+      "schema_code": "SD0009"
+    }
+  },
+  {
+    "name": "binary_unknown_tag_128",
+    "description": "A tag byte that is none of 0..=14 in a version 1 document.",
+    "error": {
+      "form": "binary",
+      "input": "534441540180",
+      "kind": "unknown_tag",
+      "offset": 5,
+      "message": "unknown tag 128",
+      "schema_code": "SD0009"
+    }
+  },
+  {
     "name": "binary_unknown_tag_200",
-    "description": "A tag byte that is none of 0..=14.",
+    "description": "A tag byte that is none of 0..=14 in a version 1 document.",
     "error": {
       "form": "binary",
       "input": "5344415401c8",
@@ -2644,7 +4275,7 @@
   },
   {
     "name": "binary_unknown_tag_255",
-    "description": "A tag byte that is none of 0..=14.",
+    "description": "A tag byte that is none of 0..=14 in a version 1 document.",
     "error": {
       "form": "binary",
       "input": "5344415401ff",
@@ -2764,9 +4395,12 @@
   },
   {
     "name": "binary_depth_256",
-    "description": "Lists nested exactly 256 deep (MAX_DEPTH) decode; the innermost holds null.",
+    "description": "Lists nested exactly 256 deep (MAX_DEPTH) decode; the innermost holds null. A version 1 document, with its version 2 form beside it.",
+    "binary_upgrades": true,
     "binary_len": 518,
-    "binary_file": "binary/binary_depth_256.sdat"
+    "binary_file": "binary/binary_depth_256.sdat",
+    "binary_v2_len": 518,
+    "binary_v2_file": "binary_v2/binary_depth_256.sdat"
   },
   {
     "name": "frame_empty",

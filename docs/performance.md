@@ -268,7 +268,7 @@ settings. Noise 10 %. Order of magnitude only.
 | typed `docs_large` encode | sd_frame 570 us, sd_binary 908 us, json 677 us, msgpack 280 us, postcard 133 us |
 | typed `docs_large` decode | postcard 0.89 ms, sd_frame 0.95 ms, sd_binary 1.09 ms, json 1.93 ms, cbor 2.66 ms, sd_text 12.6 ms |
 | frame views | `docs_read_view` about 100 ns (lazy: nothing is decoded until read) |
-| lanes, 16K elements | AVX-512 7 to 11 Gelem/s, AVX2 5 to 8, portable about 4 |
+| lanes, 16K elements | AVX-512 7 to 11 Gelem/s, AVX2 5 to 8, portable about 4 (per width and group count: the lanes table below) |
 | UTF-8, 500 KB ASCII | std 13.9 us, simdutf8 5.1 us |
 | UTF-8, 500 KB mixed | std 495 us, simdutf8 39 us (about 12x); `source::text` 410 us without `simd-utf8`, 49 us with |
 | `Map` get | 4 keys 8 ns, 16 keys 19 ns (linear), 256 and 4096 keys 19 to 24 ns (hash index) |
@@ -278,6 +278,66 @@ settings. Noise 10 %. Order of magnitude only.
 
 Pick the instruction-count tables for a regression, and these only to say
 roughly how fast something is.
+
+### Lanes: AVX-512 against AVX2, per width and group count
+
+`Backend::for_pack` and `for_unpack` (in `lanes/backend.rs`) choose, for each
+call, between the 512-bit kernels (two groups per call) and the 256-bit ones.
+The table is what was measured, and what the code does:
+
+| operation | width | groups left | backend | AVX-512 time / AVX2 time |
+|---|---|---|---|---|
+| pack, unpack | 1 to 31 | 2 or more | AVX-512 | 0.45 to 0.92, mostly 0.5 to 0.75 |
+| pack, unpack | any | 1 | AVX2 (the 512-bit kernel takes two) | not run |
+| pack | 32 | any | AVX2 | 1.2 to 1.6 (about 1.0 at 2 to 3 groups) |
+| unpack | 32 | 2 to 24 | AVX-512 | 0.43 to 0.63 |
+| unpack | 32 | more than 24 | AVX2 | 0.66 to 1.35, by how the buffers fall |
+
+At 64 groups (16 K numbers) a width-16 pack takes 2.9 us on AVX2 and 1.8 us on
+AVX-512 (5.6 against 9.1 Gelem/s), and a width-16 unpack 2.9 and 1.8 us. A list
+that is not a multiple of two groups runs its last group on AVX2; the two-group
+and three-group runs still keep most of the gain (0.5 to 0.85).
+
+Width 32 is a copy, and the gain of AVX-512 is the wrong one to chase there:
+packing needs the two rows shuffled into one register and out again, which a
+256-bit load and store does not. Unpacking is 2x faster on AVX-512 while the
+groups fit the first-level cache (24 groups in and 24 out is 48 KiB, the
+constant `COPY_AVX512_GROUPS`); beyond that the loop is bound by memory and the
+winner changed from run to run with the addresses of the buffers (five runs of
+the same 64-group unpack gave 0.66, 0.67, 0.90, 1.34 and 1.35), so AVX2, never
+much worse, keeps it. A plain copy of the bytes for width 32 would beat both
+(118 ns against 163 and 268 for 16 groups packed, 118 against 574 and 304
+unpacked, on the same machine, in a quick experiment that was not kept); it is
+not done here because it changes the portable path too.
+
+How this was measured, and what it is not:
+
+- **Not instruction counts.** Valgrind 3.22 does not decode AVX-512 (`vex
+  amd64->IR: unhandled instruction bytes: 0x62 ...`, "Unrecognised
+  instruction" on a single `vpxord zmm0`), so `iai-callgrind` cannot run the
+  512-bit kernels, and a count of the AVX2 kernels alone says nothing about
+  which is faster: they execute fewer instructions on AVX-512 and the point is
+  how long each takes. The numbers above are wall-clock.
+- **Wall-clock, made steadier.** Xeon at 2.1 GHz with `avx512f/bw/vl/vbmi2/
+  bitalg/fp16` (Sapphire Rapids class), 4 vCPUs, one process pinned with
+  `taskset -c 2`. For every width and group count, AVX2 and AVX-512 were run
+  alternately, many iterations per sample, the minimum of 8 to 60 samples
+  taken, and the whole repeated with six different positions of the buffers in
+  the heap (the ratio in the table is the mean of the six; their spread was mostly
+  under 10 % (up to 25 % in a few cells) except at width 32 beyond the first-level cache, as said above).
+  Two full runs (60 samples) of every width at 1, 2, 3, 4, 8 and 64 groups
+  differed by 1.3 % at the median and 7.8 % at the 90th percentile.
+- **Still a virtual machine.** The clock and the neighbours are not under
+  control, and AVX-512 heavy code may clock down on other processors (this
+  one shows no such effect in these runs); the ratios, not the nanoseconds,
+  are what carries over. Reproduce with
+  `LANES_GROUPS=3 LANES_WIDTHS=all taskset -c 2 cargo bench -p substrate-data
+  --bench lanes -- 'lanes/(un)?pack/(AVX2|AVX-512)'` (a bench that runs the
+  backends through `Backend::pack_groups`, so it measures the dispatch as it
+  ships; `LANES_GROUPS` is the group count, 64 by default).
+- Every backend still writes the same bytes: `tests/lane_backends.rs` compares
+  each with the portable code at 1, 2, 3, 23 to 27 and 58 groups, at widths 1,
+  17, 31 and 32, the counts around each cut-off above.
 
 ## Notes on how the comparison is made
 

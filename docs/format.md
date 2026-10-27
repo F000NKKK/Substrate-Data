@@ -291,7 +291,10 @@ reference writes now (`frames_v2/`).
 
 **Evolution rule:** fields are only ever appended. A record carries its
 length, so a reader that knows fewer fields skips the rest and one that
-knows more takes their defaults. Variants are only ever appended too.
+knows more takes the defaults of the fields the record ends before: a field
+with `default`, `None` for an `Option`; any other missing field makes the
+frame unreadable. Variants are only ever appended too. What else may change,
+and what each form does with it, is in [evolution.md](evolution.md).
 
 `frame::to_frame` / `read_frame` for owned values; `#[data(view)]` on a
 struct generates a zero-copy view (`frame::View`) over a frame's bytes.

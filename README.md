@@ -31,7 +31,7 @@ Write a format once as a Rust type. Read it from hand-edited text with the line 
 | Schema | [`substrate-data`](crates/substrate-data) | a format as a type: read with the path of every problem, written, described for editors |
 | Derive | [`substrate-data-derive`](crates/substrate-data-derive) | `#[derive(Schema)]` |
 
-The format specification: [docs/format.md](docs/format.md). Language-neutral test vectors for ports are in [conformance/](conformance/README.md). How it is benchmarked, and the numbers: [docs/performance.md](docs/performance.md).
+The format specification: [docs/format.md](docs/format.md). What may change in a type between versions, proven by tests: [docs/evolution.md](docs/evolution.md). Language-neutral test vectors for ports are in [conformance/](conformance/README.md). How it is benchmarked, and the numbers: [docs/performance.md](docs/performance.md).
 
 ## 🚀 Getting Started
 

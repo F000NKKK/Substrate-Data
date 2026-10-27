@@ -36,6 +36,16 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 - `benches/io_async.rs` (needs the feature); see
   [docs/performance.md](docs/performance.md).
 
+### Added (schema evolution)
+
+- [docs/evolution.md](docs/evolution.md): what a derived type may change
+  between versions, per form, as a matrix written from the
+  `tests/evolution` rows (the test fails when the page is stale).
+  Documents, with tests, that frames skip appended fields but do not detect
+  a reorder or a retype, that the named forms refuse unknown fields, that
+  records inside tagged enums and tuples are not skipped by length, and that
+  a `Stream`'s items are checked only when read.
+
 ### Added (text form)
 
 - `text::parse_ref(text, &arena)`: parses straight to a `ValueRef` (no

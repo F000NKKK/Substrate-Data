@@ -11,6 +11,11 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ### Added
 
+- `simd-utf8` feature: SIMD UTF-8 validation (`simdutf8`) for source files,
+  the binary form and frames; results and errors are identical to the
+  standard library's.
+- The text parser's string, comment and line searches use `memchr`
+  (runtime-dispatched SIMD); behaviour, errors and positions are unchanged.
 - `binary::NEW_STRING`, `binary::STREAM_LEN_BYTES`, `schema::RESULT_OK` and
   `schema::RESULT_ERR` are public, for readers in other languages.
 

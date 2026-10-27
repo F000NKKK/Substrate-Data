@@ -18,19 +18,38 @@ fn map(entries: &[(&str, Value)]) -> Value {
     )
 }
 
+/// What the resolver does with an id it knows.
+#[derive(Clone, Copy)]
+enum Rule {
+    Missing,
+    Refused,
+    Number,
+}
+
+const RULES: [(&str, Rule); 3] = [
+    ("gone", Rule::Missing),
+    ("locked", Rule::Refused),
+    ("number", Rule::Number),
+];
+
 /// Rewrites ids, refuses some, misses others.
 struct Rewriter;
 
 impl Resolve for Rewriter {
     fn reference(&mut self, r: &Ref, path: &Path) -> Result<RefKey, Unresolved> {
-        match r.id.as_str() {
-            "gone" => Err(Unresolved::Missing(r.clone())),
-            "locked" => Err(Unresolved::Refused {
+        let id = r.id.as_str();
+        let rule = RULES
+            .iter()
+            .find(|(name, _)| *name == id)
+            .map(|(_, rule)| *rule);
+        match rule {
+            Some(Rule::Missing) => Err(Unresolved::Missing(r.clone())),
+            Some(Rule::Refused) => Err(Unresolved::Refused {
                 reference: r.clone(),
                 reason: format!("not at {path}"),
             }),
-            "number" => Ok(RefKey::new("x1").expect("a key")),
-            other => Ok(RefKey::new(&format!("{other}-resolved")).expect("a key")),
+            Some(Rule::Number) => Ok(RefKey::new("x1").expect("a key")),
+            None => Ok(RefKey::new(&format!("{id}-resolved")).expect("a key")),
         }
     }
 }

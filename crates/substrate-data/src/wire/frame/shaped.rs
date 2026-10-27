@@ -83,6 +83,11 @@ fn list(u: &mut Unpacker<'_>, item: &Shape) -> Option<Value> {
         Shape::Int { min, .. } if *min < 0 => {
             u.uints(|v| Some(Value::Int(crate::binary::unzigzag(v))))?
         }
+        // A 64-bit unsigned list keeps its bits as the model's `Int` does
+        // (`u64::MAX` is `Int(-1)`); a narrower one only holds what fits.
+        Shape::Int { max, .. } if *max == i64::MAX => {
+            u.uints(|v| Some(Value::Int(v.cast_signed())))?
+        }
         Shape::Int { .. } => u.uints(|v| i64::try_from(v).ok().map(Value::Int))?,
         Shape::Float { bits } if *bits == F32_BITS => u
             .f32s()?

@@ -28,7 +28,7 @@ A value ([`Value`]) is one of:
 |---|---|---|
 | null | `null` | |
 | bool | `true`, `false` | |
-| int | `42`, `-7` | `i64` |
+| int | `42`, `-7` | `i64`; a `u64` above `i64::MAX` is carried as its bits (`u64::MAX` is `-1`) |
 | float | `0.5`, `1e9` | `f64`; a schema may say `f32` |
 | string | `"Ruby"` | as spelled — see [Typed values](#typed-values) |
 | list | `[1, 2]` | |
@@ -388,15 +388,6 @@ Codes from this crate:
 
 Tools add their own codes; a `Diagnostic` is itself a `Schema`, so it
 crosses a protocol like any other message.
-
----
-
-## Origin
-
-Extracted from `yog-data` (Yog Mod Loader), with everything specific to
-Yog removed: content namespaces, tags, mod resources, translation keys,
-Yog text, image sources and colours as built-in typed values. Those become a domain layer over this crate. The binary tags and
-magic were renumbered (`SDAT` v1); nothing reads the old `YOGD` bytes.
 
 [`Value`]: ../crates/substrate-data/src/model/value.rs
 [`Schema`]: ../crates/substrate-data/src/schema/mod.rs

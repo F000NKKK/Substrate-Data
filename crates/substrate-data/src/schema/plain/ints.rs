@@ -1,6 +1,7 @@
 //! The schemas of integers: checked against their type's range, bit-packed in lists.
 
 use crate::binary::{Decoder, Writer};
+use crate::diagnostic::Problem;
 use crate::frame::{Packer, Unpacker};
 use crate::model::borrowed::ValueRef;
 use crate::model::value::Value;
@@ -116,7 +117,10 @@ macro_rules! int_schema {
                     return None;
                 };
                 <$t as Int>::of_i64(n).or_else(|| {
-                    cx.problem(format!("{n} is out of range ({}..={})", <$t>::MIN, <$t>::MAX));
+                    cx.problem_of(
+                        Problem::OutOfRange,
+                        format!("{n} is out of range ({}..={})", <$t>::MIN, <$t>::MAX),
+                    );
                     None
                 })
             }

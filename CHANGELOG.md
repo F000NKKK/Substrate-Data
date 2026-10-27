@@ -9,6 +9,8 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-27
+
 ### Added
 
 - `io::FrameWriter` (`send` for the named form, `send_packed` for the frame

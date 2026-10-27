@@ -129,6 +129,9 @@ table entry; when even, it is table entry `v >> 1`. Repeated keys, kinds
 and ids cost one varint after their first use, and the writer never
 seeks back.
 
+A varint is LEB128 of a `u64`: at most ten bytes, the tenth `0` or `1`. A
+longer one, or one that doesn't fit 64 bits, is malformed.
+
 | Tag | Value | Payload |
 |---:|---|---|
 | 0 | null | — |

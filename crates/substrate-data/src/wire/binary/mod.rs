@@ -31,6 +31,7 @@ pub use decoder::Decoder;
 pub use layout::{MAGIC, MAX_DEPTH, VERSION};
 pub(crate) use layout::{NEW_STRING, STREAM_LEN_BYTES};
 pub(crate) use varint::{
-    VARINT_BITS, VARINT_MAX_SHIFT, VARINT_MORE, VARINT_SHIFT, read_varint, unzigzag, varint, zigzag,
+    VARINT_BITS, VARINT_LAST_SHIFT, VARINT_MAX_SHIFT, VARINT_MORE, VARINT_SHIFT, read_varint,
+    unzigzag, varint, zigzag,
 };
 pub use writer::Writer;

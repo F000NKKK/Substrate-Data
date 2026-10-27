@@ -4,7 +4,7 @@
 use super::avx2;
 use super::portable;
 use crate::sync::OnceLock;
-use crate::wire::frame::sizes::{F32_BYTES, F64_BYTES};
+use crate::wire::frame::sizes::F32_BYTES;
 
 struct Kernels {
     /// Whether every `f64` is an `f32` exactly (bit for bit back).
@@ -47,32 +47,14 @@ pub fn put_narrow(out: &mut Vec<u8>, items: &[f64]) {
     (kernels().narrow)(items, &mut out[at..]);
 }
 
-/// `items` as they are onto `out`.
+/// `items` as they are onto `out`: written once, with no zeroing first.
 pub fn put_wide(out: &mut Vec<u8>, items: &[f64]) {
-    let at = out.len();
-    out.resize(at + items.len() * F64_BYTES, 0);
-    for (dst, f) in out[at..]
-        .as_chunks_mut::<F64_BYTES>()
-        .0
-        .iter_mut()
-        .zip(items)
-    {
-        *dst = f.to_le_bytes();
-    }
+    out.extend(items.iter().flat_map(|f| f.to_le_bytes()));
 }
 
 /// `f32`s as they are onto `out`.
 pub fn put_f32s(out: &mut Vec<u8>, items: &[f32]) {
-    let at = out.len();
-    out.resize(at + items.len() * F32_BYTES, 0);
-    for (dst, f) in out[at..]
-        .as_chunks_mut::<F32_BYTES>()
-        .0
-        .iter_mut()
-        .zip(items)
-    {
-        *dst = f.to_le_bytes();
-    }
+    out.extend(items.iter().flat_map(|f| f.to_le_bytes()));
 }
 
 /// The `f32`s of `raw` as `f64`s.

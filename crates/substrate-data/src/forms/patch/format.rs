@@ -1,6 +1,8 @@
 //! [`format`]: a value written the way editors write it; [`same`]: values equal as written.
 
-use crate::model::value::Value;
+use std::fmt;
+
+use crate::model::value::{Map, Value};
 use crate::text::write_string;
 
 /// A line no longer than this is written on one line by [`format`].
@@ -12,27 +14,56 @@ pub(super) const INDENT: &str = "  ";
 /// short lists of numbers and short objects of scalars on one line
 /// (`"margins": [0, 0, 16, 16]`), the rest one entry a line.
 pub fn format(value: &Value, level: usize) -> String {
-    if let Some(one) = inline(value) {
-        return one;
+    let mut out = String::new();
+    write_value(value, level, &mut out);
+    out
+}
+
+/// `value` onto `out`: on one line if it fits, else an entry a line.
+fn write_value(value: &Value, level: usize, out: &mut String) {
+    let start = out.len();
+    if write_inline(value, out) {
+        return;
     }
-    let pad = INDENT.repeat(level + 1);
-    let end = INDENT.repeat(level);
+    out.truncate(start);
     match value {
         Value::List(items) => {
-            let body: Vec<String> = items
-                .iter()
-                .map(|v| format!("{pad}{}", format(v, level + 1)))
-                .collect();
-            format!("[\n{}\n{end}]", body.join(",\n"))
+            out.push_str("[\n");
+            for (i, v) in items.iter().enumerate() {
+                if i > 0 {
+                    out.push_str(",\n");
+                }
+                push_indent(out, level + 1);
+                write_value(v, level + 1, out);
+            }
+            out.push('\n');
+            push_indent(out, level);
+            out.push(']');
         }
         Value::Map(map) => {
-            let body: Vec<String> = map
-                .iter()
-                .map(|(k, v)| format!("{pad}{}: {}", quoted(k), format(v, level + 1)))
-                .collect();
-            format!("{{\n{}\n{end}}}", body.join(",\n"))
+            out.push_str("{\n");
+            for (i, (k, v)) in map.iter().enumerate() {
+                if i > 0 {
+                    out.push_str(",\n");
+                }
+                push_indent(out, level + 1);
+                write_string(k, out);
+                out.push_str(": ");
+                write_value(v, level + 1, out);
+            }
+            out.push('\n');
+            push_indent(out, level);
+            out.push('}');
         }
-        other => scalar(other).unwrap_or_default(),
+        other => {
+            write_scalar(other, out);
+        }
+    }
+}
+
+fn push_indent(out: &mut String, level: usize) {
+    for _ in 0..level {
+        out.push_str(INDENT);
     }
 }
 
@@ -50,55 +81,83 @@ pub(super) fn number(n: f64) -> String {
     crate::text::float_string(n)
 }
 
-fn scalar(v: &Value) -> Option<String> {
+/// A scalar onto `out`; `false` (nothing written) for a list or a map.
+fn write_scalar(v: &Value, out: &mut String) -> bool {
     match v {
-        Value::Bool(b) => Some(b.to_string()),
-        Value::Int(n) => Some(n.to_string()),
-        Value::Float(f) if f.is_finite() => Some(number(*f)),
-        Value::Null | Value::Float(_) => Some("null".into()),
-        Value::List(_) | Value::Map(_) => None,
+        Value::Bool(b) => out.push_str(if *b { "true" } else { "false" }),
+        Value::Int(n) => {
+            fmt::Write::write_fmt(out, format_args!("{n}")).ok();
+        }
+        Value::Float(f) if f.is_finite() => out.push_str(&number(*f)),
+        Value::Null | Value::Float(_) => out.push_str("null"),
+        Value::List(_) | Value::Map(_) => return false,
         // As the source has it: a typed value (`@file:…`) or an escaped `@@`, unread.
-        Value::Str(s) => Some(quoted(s)),
-        other => Some(crate::text::to_string(other)),
+        Value::Str(s) => write_string(s, out),
+        other => out.push_str(&crate::text::to_string(other)),
     }
+    true
 }
 
-fn inline(v: &Value) -> Option<String> {
-    if let Some(s) = scalar(v) {
-        return Some(s);
+/// `v` onto `out` on one line, if it can be and fits ([`ONE_LINE`]); else
+/// `false`, with part of it written.
+fn write_inline(v: &Value, out: &mut String) -> bool {
+    if write_scalar(v, out) {
+        return true;
     }
-    let out = match v {
-        Value::List(items) if items.is_empty() => return Some("[]".into()),
-        Value::List(items) => {
-            if !items
-                .iter()
-                .all(|x| matches!(x, Value::Int(_) | Value::Float(_) | Value::Bool(_)))
-            {
-                return None;
-            }
-            format!(
-                "[{}]",
-                items
-                    .iter()
-                    .filter_map(scalar)
-                    .collect::<Vec<_>>()
-                    .join(", ")
-            )
+    let start = out.len();
+    let written = match v {
+        Value::List(items) if items.is_empty() => {
+            out.push_str("[]");
+            return true;
         }
-        Value::Map(map) if map.is_empty() => return Some("{}".into()),
-        Value::Map(map) => {
-            let mut parts = Vec::with_capacity(map.len());
-            for (k, x) in map.iter() {
-                if matches!(x, Value::Map(_)) {
-                    return None;
-                }
-                parts.push(format!("{}: {}", quoted(k), inline(x)?));
-            }
-            format!("{{ {} }}", parts.join(", "))
+        Value::List(items) => write_numbers(items, out),
+        Value::Map(map) if map.is_empty() => {
+            out.push_str("{}");
+            return true;
         }
-        _ => return None,
+        Value::Map(map) => write_scalars(map, out),
+        _ => false,
     };
-    (out.len() <= ONE_LINE).then_some(out)
+    written && out.len() - start <= ONE_LINE
+}
+
+/// A list of numbers and bools as `[1, 2]`; `false` if it has anything else.
+fn write_numbers(items: &[Value], out: &mut String) -> bool {
+    if !items
+        .iter()
+        .all(|x| matches!(x, Value::Int(_) | Value::Float(_) | Value::Bool(_)))
+    {
+        return false;
+    }
+    out.push('[');
+    for (i, x) in items.iter().enumerate() {
+        if i > 0 {
+            out.push_str(", ");
+        }
+        write_scalar(x, out);
+    }
+    out.push(']');
+    true
+}
+
+/// A map with no map in it as `{ "a": 1 }`; `false` if an entry can't be on one line.
+fn write_scalars(map: &Map, out: &mut String) -> bool {
+    out.push_str("{ ");
+    for (i, (k, x)) in map.iter().enumerate() {
+        if matches!(x, Value::Map(_)) {
+            return false;
+        }
+        if i > 0 {
+            out.push_str(", ");
+        }
+        write_string(k, out);
+        out.push_str(": ");
+        if !write_inline(x, out) {
+            return false;
+        }
+    }
+    out.push_str(" }");
+    true
 }
 
 /// `value` as compact JSON for a tool: maps in their order, strings as the

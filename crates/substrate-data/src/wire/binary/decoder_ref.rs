@@ -1,12 +1,15 @@
 //! [`Decoder`] reading a value borrowed: strings point into the bytes,
 //! lists and maps go in an arena.
 
+use std::collections::HashSet;
+
 use bumpalo::Bump;
 
 use super::decoder::{F32_BYTES, F64_BYTES, MAP_ENTRY_MIN};
 use super::decoder_value::inline_int;
 use super::{DecodeError, Decoder, tag, unzigzag};
 use crate::model::borrowed::{MapRef, ValueRef};
+use crate::model::quick_hash::QuickBuild;
 
 /// Maps up to this many keys are checked for a repeat by scanning.
 const SCAN_MAX: usize = 16;
@@ -225,7 +228,7 @@ impl<'b> Decoder<'b> {
 fn repeats<'a>(
     entries: &bumpalo::collections::Vec<'_, (&'a str, ValueRef<'_>)>,
     key: &'a str,
-    set: &mut Option<std::collections::HashSet<&'a str>>,
+    set: &mut Option<HashSet<&'a str, QuickBuild>>,
 ) -> bool {
     if let Some(set) = set {
         return !set.insert(key);
@@ -234,7 +237,7 @@ fn repeats<'a>(
         return true;
     }
     if entries.len() >= SCAN_MAX {
-        let mut all: std::collections::HashSet<&str> = entries.iter().map(|(k, _)| *k).collect();
+        let mut all: HashSet<&str, QuickBuild> = entries.iter().map(|(k, _)| *k).collect();
         all.insert(key);
         *set = Some(all);
     }

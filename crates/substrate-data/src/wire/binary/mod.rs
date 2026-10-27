@@ -16,16 +16,20 @@ mod codec;
 mod decode_error;
 mod decoder;
 mod decoder_ref;
+mod decoder_reference;
 mod decoder_straight;
 mod decoder_value;
 mod layout;
 mod shape;
+mod shape_cache;
+mod static_shape;
 pub(crate) mod table;
 pub mod tag;
 #[cfg(test)]
 mod tests;
 mod varint;
 pub(crate) mod writer;
+mod writer_packed;
 mod writer_record;
 mod writer_value;
 

@@ -1,14 +1,8 @@
 //! [`Decoder`] reading a value as an owned [`Value`].
 
-use std::collections::HashSet;
-
 use super::decoder::{F32_BYTES, F64_BYTES, MAP_ENTRY_MIN};
 use super::{DecodeError, Decoder, tag, unzigzag};
 use crate::model::value::{Map, Ref, RefKey, Value};
-
-/// Maps up to this many keys are checked for a repeat by scanning the keys
-/// already read; bigger ones by a set.
-const SCAN_MAX: usize = 16;
 
 /// The int a tag of its own is (`tag` at least [`tag::INT_INLINE`]).
 pub(super) fn inline_int(t: u8) -> i64 {
@@ -65,32 +59,14 @@ impl Decoder<'_> {
         Ok(Value::List(items))
     }
 
-    /// Whether the map being read has `key` already (when it doesn't, `key`
-    /// is noted in `set`, if the map is big enough to keep one).
-    fn repeats(map: &Map, key: &str, set: &mut Option<HashSet<String>>) -> bool {
-        if let Some(set) = set {
-            return !set.insert(key.to_owned());
-        }
-        if map.keys().any(|k| k == key) {
-            return true;
-        }
-        if map.len() >= SCAN_MAX {
-            let mut all: HashSet<String> = map.keys().map(str::to_owned).collect();
-            all.insert(key.to_owned());
-            *set = Some(all);
-        }
-        false
-    }
-
     fn map_value(&mut self) -> Result<Value, DecodeError> {
         let n = self.count(MAP_ENTRY_MIN)?;
         self.deeper()?;
         let mut map = Map::with_capacity(n);
-        let mut set = None;
         for _ in 0..n {
             let at = self.i;
             let i = self.string_index()?;
-            if Self::repeats(&map, self.strings[i], &mut set) {
+            if map.index_of(self.strings[i]).is_some() {
                 return Err(DecodeError::duplicate_key(self.strings[i], at));
             }
             let k = self.shared_key_at(i);

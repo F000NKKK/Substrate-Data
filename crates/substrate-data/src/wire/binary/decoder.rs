@@ -8,7 +8,7 @@ use super::{
     DecodeError, LEGACY_VERSION, MAGIC, MAX_DEPTH, NEW_STRING, STR_INDEX_COUNT, STREAM_LEN_BYTES,
     VERSION, read_varint, tag,
 };
-use crate::model::value::{KindName, RefKey, Value};
+use crate::model::value::{KindName, Value};
 use crate::sync::Arc;
 
 /// Strings a decoder makes room for at once: a message's keys and values.
@@ -32,6 +32,8 @@ pub struct Decoder<'b> {
     pub(super) strings: Vec<&'b str>,
     /// Map keys made so far, by table index: each key is allocated once.
     pub(super) keys: Vec<Option<Arc<str>>>,
+    /// Reference kinds checked so far, by table index of their string.
+    pub(super) kinds: Vec<Option<KindName>>,
     pub(super) depth: usize,
     /// Whether the tags of version 2 are accepted (a version 1 document is
     /// read with only the tags it was written with).
@@ -77,6 +79,7 @@ impl<'b> Decoder<'b> {
             i: 0,
             strings: Vec::with_capacity(STRINGS_START),
             keys: Vec::new(),
+            kinds: Vec::new(),
             depth: 0,
             v2: true,
             shapes: Shapes::default(),
@@ -246,24 +249,6 @@ impl<'b> Decoder<'b> {
         self.keys[i]
             .get_or_insert_with(|| self.strings[i].into())
             .clone()
-    }
-
-    /// A reference's kind and id, each checked: a malformed one is an error.
-    pub(super) fn reference(&mut self) -> Result<(KindName, &'b str), DecodeError> {
-        let kind_at = self.i;
-        let kind = KindName::new(self.string()?).map_err(|e| DecodeError {
-            message: e.to_string(),
-            offset: kind_at,
-        })?;
-        let id_at = self.i;
-        let id = self.string()?;
-        if !RefKey::is_valid(id) {
-            return Err(DecodeError {
-                message: format!("`{id}` isn't a reference's id"),
-                offset: id_at,
-            });
-        }
-        Ok((kind, id))
     }
 
     pub(super) fn deeper(&mut self) -> Result<(), DecodeError> {

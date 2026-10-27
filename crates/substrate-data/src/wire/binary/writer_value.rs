@@ -21,16 +21,16 @@ enum ListForm {
 
 impl ListForm {
     fn of(items: &[Value]) -> ListForm {
-        match items.first() {
-            Some(Value::Int(_)) if items.iter().all(|v| matches!(v, Value::Int(_))) => {
+        match items.split_first() {
+            Some((Value::Int(_), rest)) if rest.iter().all(|v| matches!(v, Value::Int(_))) => {
                 ListForm::Ints
             }
-            Some(Value::Float(_)) if items.iter().all(|v| matches!(v, Value::Float(_))) => {
+            Some((Value::Float(_), rest)) if rest.iter().all(|v| matches!(v, Value::Float(_))) => {
                 ListForm::Floats
             }
-            Some(Value::Map(first))
+            Some((Value::Map(first), rest))
                 if !first.is_empty()
-                    && items
+                    && rest
                         .iter()
                         .all(|v| matches!(v, Value::Map(m) if m.keys().eq(first.keys()))) =>
             {

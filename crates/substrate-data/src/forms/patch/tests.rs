@@ -202,3 +202,28 @@ fn floats_are_written_exactly() {
     });
     assert_eq!(signed, "{\n  \"z\": -0.0,\n  \"n\": 1\n}");
 }
+
+#[test]
+fn format_picks_one_line_or_many_by_what_fits() {
+    let v = parse_value(
+        r#"{
+            "empty_list": [], "empty_map": {}, "mixed": [1, "a"], "nums": [1, true, 2.5],
+            "ref": "@file:a.png", "long": [100000000000, 200000000000, 300000000000, 400000000000, 500000000000, 600000000000],
+            "pair": { "a": [1, 2], "b": { "c": 1 } },
+            "flat": { "a": [1, 2], "b": "x\"y", "c": null }
+        }"#,
+    )
+    .unwrap();
+    let out = format(&v, 1);
+    let lines: Vec<&str> = out.lines().collect();
+    assert!(lines.contains(&"    \"empty_list\": [],"));
+    assert!(lines.contains(&"    \"empty_map\": {},"));
+    assert!(lines.contains(&"    \"nums\": [1, true, 2.5],"));
+    assert!(lines.contains(&"    \"flat\": { \"a\": [1, 2], \"b\": \"x\\\"y\", \"c\": null }"));
+    // A list with a string in it, a map with a map in it, and a line past 72 columns: an entry a line.
+    assert!(out.contains("\"mixed\": [\n      1,\n      \"a\"\n    ]"));
+    assert!(out.contains("\"b\": { \"c\": 1 }"));
+    assert!(out.contains("\"pair\": {\n"));
+    assert!(out.contains("\"long\": [\n      100000000000,"));
+    assert_eq!(parse_value(&out).unwrap(), v);
+}

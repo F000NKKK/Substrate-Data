@@ -1,11 +1,12 @@
 //! The table a process keeps itself: the runtime's, or a tool's.
 use std::collections::HashMap;
 
+use crate::model::quick_hash::QuickBuild;
 use crate::sync::{OnceLock, RwLock};
 
 #[derive(Default)]
 struct Names {
-    numbers: HashMap<&'static str, u32>,
+    numbers: HashMap<&'static str, u32, QuickBuild>,
     names: Vec<&'static str>,
 }
 

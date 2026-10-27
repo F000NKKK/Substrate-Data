@@ -26,7 +26,20 @@ pub(crate) const VARINT_MAX_SHIFT: u32 = 64;
 pub(crate) const VARINT_LAST_SHIFT: u32 = 63;
 
 /// The varint at `*i` in `b`, `*i` moved past it; `None` cut short or longer than 64 bits.
+#[inline]
 pub(crate) fn read_varint(b: &[u8], i: &mut usize) -> Option<u64> {
+    if let Some(&byte) = b.get(*i)
+        && byte & VARINT_MORE == 0
+    {
+        *i += 1;
+        return Some(u64::from(byte));
+    }
+    read_varint_long(b, i)
+}
+
+/// [`read_varint`] for a varint of more than a byte, or a cut short one.
+#[inline(never)]
+fn read_varint_long(b: &[u8], i: &mut usize) -> Option<u64> {
     let mut n = 0u64;
     let mut shift = 0;
     while shift < VARINT_MAX_SHIFT {

@@ -22,10 +22,14 @@ impl ShapeTable {
 
     /// The shape whose keys are the strings numbered `keys`: its number.
     pub(crate) fn find(&self, keys: &[usize]) -> Option<usize> {
-        self.index.find(hash_numbers(keys), |shape| {
-            let start = shape.checked_sub(1).map_or(0, |before| self.ends[before]);
-            self.keys[start..self.ends[shape]] == *keys
-        })
+        self.index
+            .find(hash_numbers(keys), |shape| self.keys_of(shape) == keys)
+    }
+
+    /// The string numbers of shape `shape`'s keys.
+    pub(crate) fn keys_of(&self, shape: usize) -> &[usize] {
+        let start = shape.checked_sub(1).map_or(0, |before| self.ends[before]);
+        &self.keys[start..self.ends[shape]]
     }
 
     /// Starts a shape of keys that are already written: [`ShapeTable::key`] each, then [`ShapeTable::seal`].

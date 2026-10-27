@@ -6,7 +6,6 @@ crates/substrate-data/src/diagnostic.rs	C108	Code	1
 crates/substrate-data/src/diagnostic.rs	C108	Errors	1
 crates/substrate-data/src/diagnostic.rs	C108	Problem	1
 crates/substrate-data/src/diagnostic.rs	C108	Severity	1
-crates/substrate-data/src/forms/patch/format.rs	S701		2
 crates/substrate-data/src/forms/patch/rewrite.rs	S701		1
 crates/substrate-data/src/forms/text/parser.rs	C101		1
 crates/substrate-data/src/model/borrowed.rs	C108	MapRef	1

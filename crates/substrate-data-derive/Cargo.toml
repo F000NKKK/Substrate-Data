@@ -22,5 +22,7 @@ proc-macro-crate = { workspace = true }
 workspace = true
 
 [dev-dependencies]
-# What the derive expands against; the dependency cycle is dev-only.
-substrate-data = { workspace = true }
+# What the derive expands against. Path only, no version: the dependency
+# cycle is dev-only, and cargo drops a versionless dev-dependency on publish,
+# so the derive can be published before the crate that re-exports it.
+substrate-data = { path = "../substrate-data" }

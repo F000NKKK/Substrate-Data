@@ -50,16 +50,14 @@ fn parse_ref_refuses_what_parse_value_refuses_the_same_way() {
 
 #[test]
 fn a_big_map_refuses_a_repeated_key_and_shares_repeated_keys() {
-    let keys = (0..40)
-        .map(|i| format!("k{i}: {i}"))
-        .collect::<Vec<_>>()
-        .join(",")
-        + ",";
-    let text = format!("{{{keys}");
+    let keys: String = (0..40)
+        .map(|i| ["k", &i.to_string(), ": 0,"].concat())
+        .collect();
+    let text = ["{", &keys].concat();
     let arena = Bump::new();
-    assert!(parse_ref(&format!("{text}k7: 0}}"), &arena).is_err());
-    assert!(parse_value(&format!("{text}k39: 0}}")).is_err());
-    let list = parse_value(&format!("[{text}}}, {text}}}]")).unwrap();
+    assert!(parse_ref(&[&text, "k7: 0}"].concat(), &arena).is_err());
+    assert!(parse_value(&[&text, "k39: 0}"].concat()).is_err());
+    let list = parse_value(&["[", &text, "}, ", &text, "}]"].concat()).unwrap();
     assert_eq!(list.as_list().map(<[Value]>::len), Some(2));
 }
 

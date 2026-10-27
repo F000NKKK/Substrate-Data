@@ -9,6 +9,15 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ## [Unreleased]
 
+### Added
+
+- `binary::NEW_STRING`, `binary::STREAM_LEN_BYTES`, `schema::RESULT_OK` and
+  `schema::RESULT_ERR` are public, for readers in other languages.
+
+### Fixed
+
+- A stream cut inside a frame's length is an error, not a clean end.
+
 ## [0.1.0] - 2026-10-27
 
 First release of `substrate-data` and `substrate-data-derive`.

@@ -1,6 +1,6 @@
 # Substrate Data for Java
 
-A Java 21 port of the [Substrate Data](../../README.md) format with no runtime
+A Java 17 port (it runs on 17, 21 and 25) of the [Substrate Data](../../README.md) format with no runtime
 dependencies. It passes every case of the language-neutral
 [conformance vectors](../../conformance/README.md) (`conformance/cases.json`).
 
@@ -8,7 +8,7 @@ dependencies. It passes every case of the language-neutral
 <dependency>
   <groupId>io.github.f000nkkk</groupId>
   <artifactId>substrate-data</artifactId>
-  <version>0.3.0</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 
@@ -38,6 +38,8 @@ Value project = Typed.classify("@project:apps/notes");   // Ref("project", "apps
 String compact = Text.write(doc);          // {"name":"Release 1.0",...}
 byte[] sdat = Binary.encode(doc);          // "SDAT" 2 ...
 Value back = Binary.decode(sdat);          // throws DecodeException on malformed input
+byte[] body = Binary.encodeBody(doc);     // no header: what a frame holds of a value
+Value again = Binary.decodeBody(body);
 
 // A frame is read by the description of its shape (compact text of Shape::describe).
 Value msg = Frames.read(frameBytes, ShapeDocument.parse(shapeText));

@@ -3,7 +3,7 @@ resolver = "3"
 members = ["crates/*"]
 
 [workspace.package]
-version = "0.3.0"
+version = "0.3.1"
 edition = "2024"
 rust-version = "1.92"
 authors = ["F000NK"]
@@ -11,8 +11,8 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/F000NKKK/Substrate-Data"
 
 [workspace.dependencies]
-substrate-data = { path = "crates/substrate-data", version = "0.3.0" }
-substrate-data-derive = { path = "crates/substrate-data-derive", version = "0.3.0" }
+substrate-data = { path = "crates/substrate-data", version = "0.3.1" }
+substrate-data-derive = { path = "crates/substrate-data-derive", version = "0.3.1" }
 base64 = "0.23"
 memchr = "=2.8.3"
 # Shortest float digits (the text form's float spelling).

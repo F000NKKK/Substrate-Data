@@ -9,6 +9,21 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-28
+
+### Changed
+
+- The Java port targets Java 17 (`maven.compiler.release` 17): it runs on
+  17, 21 and 25 alike. Pattern switches are `instanceof` chains; all 325
+  conformance cases pass on JDK 17.
+
+### Added
+
+- Java port: `Binary.encodeBody`, a value without a header with a string
+  table of its own — what `Binary.decodeBody` reads (a value a frame holds
+  but doesn't pack). It writes version 2, as every writer does: there is no
+  version 1 writer.
+
 ## [0.3.0] - 2026-10-27
 
 0.3 is the performance and compactness release. The headline changes:

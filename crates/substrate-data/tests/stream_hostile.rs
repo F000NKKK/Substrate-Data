@@ -13,8 +13,7 @@ use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
 
 use stream_doc::{Narrow, Words, forged};
-use substrate_data::Schema;
-use substrate_data::{read_bytes, to_bytes};
+use substrate_data::{Schema, read_bytes, to_bytes};
 
 struct Largest;
 

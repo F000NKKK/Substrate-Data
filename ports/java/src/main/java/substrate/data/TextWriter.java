@@ -7,16 +7,24 @@ final class TextWriter {
     private TextWriter() {}
 
     static void write(Value value, StringBuilder out) {
-        switch (value) {
-            case Null n -> out.append("null");
-            case Bool b -> out.append(b.value());
-            case Int i -> out.append(i.value());
-            case Float f -> out.append(FloatSpelling.of(f.value()));
-            case Str s -> string(s.value(), out);
-            case ListValue l -> list(l, out);
-            case MapValue m -> map(m, out);
-            case Ref r -> string(r.spelling(), out);
-            case Bytes b -> string(Typed.spelling(b).orElseThrow(), out);
+        if (value instanceof Null) {
+            out.append("null");
+        } else if (value instanceof Bool b) {
+            out.append(b.value());
+        } else if (value instanceof Int i) {
+            out.append(i.value());
+        } else if (value instanceof Float f) {
+            out.append(FloatSpelling.of(f.value()));
+        } else if (value instanceof Str s) {
+            string(s.value(), out);
+        } else if (value instanceof ListValue l) {
+            list(l, out);
+        } else if (value instanceof MapValue m) {
+            map(m, out);
+        } else if (value instanceof Ref r) {
+            string(r.spelling(), out);
+        } else if (value instanceof Bytes b) {
+            string(Typed.spelling(b).orElseThrow(), out);
         }
     }
 

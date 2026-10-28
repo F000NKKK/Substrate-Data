@@ -43,21 +43,23 @@ public final class Typed {
 
     /** The string form of a typed value; empty for the untyped ones. */
     public static Optional<String> spelling(Value value) {
-        return switch (value) {
-            case Ref r -> Optional.of(r.spelling());
-            case Bytes b -> Optional.of(MARK + BYTES_KIND + ":" + Base64.getEncoder().encodeToString(b.data()));
-            default -> Optional.empty();
-        };
+        if (value instanceof Ref r) {
+            return Optional.of(r.spelling());
+        } else if (value instanceof Bytes b) {
+            return Optional.of(MARK + BYTES_KIND + ":" + Base64.getEncoder().encodeToString(b.data()));
+        }
+        return Optional.empty();
     }
 
     /** {@code value} with its typed values as their strings (plain values only). */
     public static Value flatten(Value value) {
-        return switch (value) {
-            case ListValue l -> new ListValue(l.items().stream().map(Typed::flatten).toList());
-            case MapValue m -> new MapValue(m.entries().stream()
+        if (value instanceof ListValue l) {
+            return new ListValue(l.items().stream().map(Typed::flatten).toList());
+        } else if (value instanceof MapValue m) {
+            return new MapValue(m.entries().stream()
                     .map(e -> new MapValue.Entry(e.key(), flatten(e.value()))).toList());
-            default -> spelling(value).<Value>map(Str::new).orElse(value);
-        };
+        }
+        return spelling(value).<Value>map(Str::new).orElse(value);
     }
 
     /** {@code text} with a leading {@code @} doubled, so it reads back as plain text. */

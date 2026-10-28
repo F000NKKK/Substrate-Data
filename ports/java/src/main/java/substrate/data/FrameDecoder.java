@@ -71,21 +71,30 @@ final class FrameDecoder {
     }
 
     private Value value(Shape shape) throws DecodeException {
-        return switch (shape) {
-            case Shape.BoolShape s -> new Bool(bool());
-            case Shape.IntShape s -> new Int(Varint.unzigzag(body.varint()));
-            case Shape.FloatShape s -> new Float(s.bits() == 32 ? f32() : f64());
-            case Shape.StringShape s -> new Str(Typed.escapeAt(string()));
-            case Shape.BytesShape s -> new Bytes(body.take(body.count(1)));
-            case Shape.OptionalShape s -> bool() ? value(s.of()) : Null.INSTANCE;
-            case Shape.ListShape s -> list(s.of());
-            case Shape.RefShape s -> reference(s);
-            case Shape.StructShape s -> record(s);
-            case Shape.DefShape s -> value(definition(s));
-            case Shape.EnumShape s when !s.tagged() -> variant(s);
-            case Shape.EnumShape s -> tagged();
-            case Shape.OtherShape s -> tagged();
-        };
+        if (shape instanceof Shape.BoolShape) {
+            return new Bool(bool());
+        } else if (shape instanceof Shape.IntShape) {
+            return new Int(Varint.unzigzag(body.varint()));
+        } else if (shape instanceof Shape.FloatShape s) {
+            return new Float(s.bits() == 32 ? f32() : f64());
+        } else if (shape instanceof Shape.StringShape) {
+            return new Str(Typed.escapeAt(string()));
+        } else if (shape instanceof Shape.BytesShape) {
+            return new Bytes(body.take(body.count(1)));
+        } else if (shape instanceof Shape.OptionalShape s) {
+            return bool() ? value(s.of()) : Null.INSTANCE;
+        } else if (shape instanceof Shape.ListShape s) {
+            return list(s.of());
+        } else if (shape instanceof Shape.RefShape s) {
+            return reference(s);
+        } else if (shape instanceof Shape.StructShape s) {
+            return record(s);
+        } else if (shape instanceof Shape.DefShape s) {
+            return value(definition(s));
+        } else if (shape instanceof Shape.EnumShape s && !s.tagged()) {
+            return variant(s);
+        }
+        return tagged();
     }
 
     private Shape definition(Shape.DefShape def) throws DecodeException {
@@ -161,12 +170,12 @@ final class FrameDecoder {
 
     private Value list(Shape item) throws DecodeException {
         Shape resolved = item instanceof Shape.DefShape def ? definition(def) : item;
-        return switch (resolved) {
-            case Shape.IntShape s -> ints(s);
-            case Shape.FloatShape s when s.bits() == 32 -> floats(false);
-            case Shape.FloatShape s -> floats(true);
-            default -> items(item);
-        };
+        if (resolved instanceof Shape.IntShape s) {
+            return ints(s);
+        } else if (resolved instanceof Shape.FloatShape s) {
+            return floats(s.bits() != 32);
+        }
+        return items(item);
     }
 
     private Value items(Shape item) throws DecodeException {

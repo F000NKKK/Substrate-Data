@@ -66,12 +66,13 @@ final class ShapeParser {
     }
 
     private static long integer(Value value) {
-        return switch (value) {
-            case Int i -> i.value();
+        if (value instanceof Int i) {
+            return i.value();
+        } else if (value instanceof Float f) {
             // Past i64 (a u64 bound): the largest an Int holds.
-            case Float f -> f.value() > 0 ? Long.MAX_VALUE : Long.MIN_VALUE;
-            default -> throw new IllegalArgumentException("a number was expected in a shape");
-        };
+            return f.value() > 0 ? Long.MAX_VALUE : Long.MIN_VALUE;
+        }
+        throw new IllegalArgumentException("a number was expected in a shape");
     }
 
     private static Value field(MapValue map, String key) {

@@ -32,25 +32,29 @@ final class BinaryEncoder {
     }
 
     private void value(Value value) {
-        switch (value) {
-            case Null n -> out.write(Tag.NULL);
-            case Bool b -> out.write(b.value() ? Tag.TRUE : Tag.FALSE);
-            case Int i -> integer(i.value());
-            case Float f -> floating(f.bits());
-            case Str s -> str(s.value());
-            case ListValue l -> list(l);
-            case MapValue m -> map(m);
-            case Ref r -> {
-                out.write(Tag.REF);
-                string(r.kind());
-                string(r.id());
-            }
-            case Bytes b -> {
-                byte[] data = b.data();
-                out.write(Tag.BYTES);
-                Varint.write(out, data.length);
-                out.writeBytes(data);
-            }
+        if (value instanceof Null) {
+            out.write(Tag.NULL);
+        } else if (value instanceof Bool b) {
+            out.write(b.value() ? Tag.TRUE : Tag.FALSE);
+        } else if (value instanceof Int i) {
+            integer(i.value());
+        } else if (value instanceof Float f) {
+            floating(f.bits());
+        } else if (value instanceof Str s) {
+            str(s.value());
+        } else if (value instanceof ListValue l) {
+            list(l);
+        } else if (value instanceof MapValue m) {
+            map(m);
+        } else if (value instanceof Ref r) {
+            out.write(Tag.REF);
+            string(r.kind());
+            string(r.id());
+        } else if (value instanceof Bytes b) {
+            byte[] data = b.data();
+            out.write(Tag.BYTES);
+            Varint.write(out, data.length);
+            out.writeBytes(data);
         }
     }
 

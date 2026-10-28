@@ -58,11 +58,15 @@ rewrites the matrix after a deliberate change).
   skipped.
 - **`frame::read_shaped`** over an older frame leaves the absent trailing
   fields out of the map; it does not default them.
-- **A `Stream<T>`** keeps its items as bytes but reads each one once when
-  the stream is decoded, so a stream of a newer item type read as the older
-  one is rejected, naming the first item that cannot be read (`items[0]`),
-  as text and frames do. Before this, the binary form kept the length and
-  gave no readable items.
+- **A `Stream<T>`** keeps its items as bytes and checks only its framing
+  when it is decoded, so a stream of a newer item type read as the older one
+  decodes; the item the older type cannot read is an error when it is asked
+  for (`Stream::iter` yields `Err(ItemError { index, offset })`; `to_vec` and
+  `validate` return the first). The text form and frames have no lazy path
+  and reject the document, naming the item (`items[0]`). Nothing is
+  silently dropped by iteration, but `write`, `pack` and `to_text` of a
+  stream with an unreadable item stop before it: call `validate` first when
+  a decoded stream must be whole.
 - **`u64` above `i64::MAX`** is carried as its bits (`format.md`), so
   an `i64` and a `u64` read each other's values by the same bits: a negative
   `i64` read as `u64` is a huge number, not an error.
@@ -79,7 +83,8 @@ two ways a change can meet old data:
   before it.
 
 `reads` is the value the writer meant. `rejects` is an error (`None` for a frame), loud and
-safe. **`garbage`** is a value that is not the one meant, with no error:
+safe. `fails when iterated` is a `Stream` that decodes and whose item then cannot
+be read: an error when asked for. **`garbage`** is a value that is not the one meant, with no error:
 the cases to avoid, since nothing flags them.
 
 <!-- matrix:start -->
@@ -147,7 +152,7 @@ the cases to avoid, since nothing flags them.
 | records in an array | reads / reads | reads / rejects |
 | records in a `Vec` | reads / reads | reads / rejects |
 | a record in a tuple | reads / reads | rejects / rejects |
-| records in a `Stream` | reads / reads | reads / rejects |
+| records in a `Stream` | reads / reads | reads / binary fails when iterated, text rejects |
 
 <!-- matrix:end -->
 

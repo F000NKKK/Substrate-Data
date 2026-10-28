@@ -38,7 +38,7 @@ The format specification: [docs/format.md](docs/format.md). What may change in a
 ```toml
 # Cargo.toml
 [dependencies]
-substrate-data = "0.3"
+substrate-data = "0.4"
 ```
 
 Features of `substrate-data`: `json` (JSON ⇄ the model), `toml` (TOML read into the model with spans), `tokio` (frames over async streams, `io::asynchronous`).

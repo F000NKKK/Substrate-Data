@@ -42,6 +42,11 @@ reason = "a test's counting global allocator: the allocator is process-wide by d
 codes = ["A501"]
 
 [[exempt]]
+path = "crates/substrate-data/tests/stream_hostile.rs"
+reason = "a test's counting global allocator: the allocator is process-wide by definition; the figure is per thread so parallel tests don't see each other's"
+codes = ["A501"]
+
+[[exempt]]
 path = "crates/substrate-data/Cargo.toml"
 reason = "the optional `tokio` feature (off by default) pulls tokio's `io-util` for `io::asynchronous`: the AsyncRead/AsyncWrite traits only, no runtime; the default build has no async dependency"
 codes = ["L604"]

@@ -9,6 +9,88 @@ only grow: a tag is never renumbered and a frame field is never reordered.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-28
+
+A breaking change to the Rust API of `Stream<T>`; the wire format, the text
+grammar, the frame layout and every conformance vector are unchanged, so
+everything 0.3 wrote reads, and what 0.4 writes reads in 0.3.
+
+### Changed (breaking)
+
+- `Stream::iter()` yields `Result<T, ItemError>` for each item, and
+  `Stream::to_vec()` returns `Result<Vec<T>, ItemError>`. An item that
+  cannot be read is found when it is read, not when the stream is decoded.
+  `ItemError` carries the item's `index` and the byte `offset` of its start,
+  counted from the first item; the iterator ends at the first error (it is
+  fused). Bytes left after the last counted item are one more `ItemError`,
+  at `index` equal to `len()`.
+- Decoding a binary `Stream<T>` no longer reads its items. It checks the
+  framing only (the byte length against the document, the item count
+  against the bytes, one byte at least per item, so a hostile count
+  allocates nothing) and copies the bytes. 0.3.0 read every item once at
+  decode, which made a stream that decodes always read; that pass is now
+  paid by whoever iterates. Decoding a stream of a million items is 7 to 24
+  times faster (below).
+- Consequently, a stream of a newer item type read as the older one, or with
+  a corrupt item, decodes; the error is at the item. `read_bytes` no longer
+  reports `items[0]` for it. The text form and frames have no lazy path and
+  still reject the whole document, naming the item.
+- `Stream::write`, `pack` and `to_text` (a `Value`, a frame and text have
+  no place for an error) hold the items up to the first that cannot be
+  read. `encode` copies the bytes, so a stream relayed in binary is
+  unchanged. Call `Stream::validate()` on a decoded stream when it must be
+  whole.
+- Equality is documented: two streams are equal when their count and bytes
+  are, not their items.
+
+### Added
+
+- `ItemError`, `Items` (the iterator `iter()` returns), `Stream::validate`,
+  and `IntoIterator for &Stream<T>`.
+- `benches/stream_decode.rs`: decoding and iterating a stream of a million
+  items (`u16`, `f32`, a three-field row).
+- Tests (`tests/stream_lazy.rs`): a bad item in the middle is found only
+  while iterating, with its index and offset; cut and corrupted streams
+  never panic; hostile counts and lengths allocate nothing large; equality;
+  the value, text and frame forms.
+
+### Migration from 0.3
+
+- `stream.iter()` items are `Result`s now. To get the items as before:
+  `stream.iter().collect::<Result<Vec<_>, _>>()?` (or `stream.to_vec()?`);
+  to skip the ones that fail: `stream.iter().flatten()` (it stops at the
+  first bad item anyway); to sum: `.map(|x| x.map(u64::from))` then
+  `sum::<Result<u64, _>>()`.
+- A reader that relied on `read_bytes` rejecting a stream with an unreadable
+  item now has it at the first iteration. To check at once after decoding,
+  call `stream.validate()?`, which is the pass 0.3 did inside the decode.
+- Code that implements `Schema` by hand around a `Stream` field needs no
+  change; `#[derive(Schema)]` output needs none (the derive never iterated).
+- Ports: neither the TypeScript nor the Java port has a `Stream<T>` type: a
+  stream (tag 11) is read into a `Value` list, every item at once, as
+  before. Their behaviour is
+  unchanged and nothing needs to change in them; they are versioned 0.4.0
+  with the crates, as in 0.3.1.
+
+### Measured
+
+Decoding a document holding one `Stream`, one million items; wall-clock
+(criterion, 30 samples, one core pinned with `taskset -c 2`, release
+build, median); no valgrind, since callgrind does not support AVX-512 on
+this machine. Before is 0.3.1, after is this release.
+
+| path | before (0.3.1) | after (0.4.0) | |
+|---|---:|---:|---:|
+| decode, `Stream<u16>` | 3.68 ms | 0.221 ms | 16.7x |
+| decode, `Stream<f32>` | 2.87 ms | 0.417 ms | 6.9x |
+| decode, `Stream<Row>` (`u32`, `f32`, `u8`) | 24.6 ms | 1.03 ms | 23.9x |
+| iterate and sum, 1M `u16` | 3.49 ms | 3.03 ms | within noise |
+| iterate and sum, 1M rows | 23.5 ms | 24.4 ms | within noise |
+
+Reading every item now costs the iteration once (decode plus iterate was
+3.68 + 3.49 ms for `u16` before, 0.22 + 3.03 ms now), and nothing for a
+reader that does not read them all.
+
 ## [0.3.1] - 2026-10-28
 
 ### Changed

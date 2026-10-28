@@ -1,4 +1,4 @@
-//! Streams: decoding a binary document that holds one (every item is
+//! Streams: decoding a binary document that holds one (its framing only is
 //! checked then) and reading its items.
 
 #![expect(
@@ -59,7 +59,7 @@ fn ints_read_bytes(bytes: &'static [u8]) -> Ints {
 #[library_benchmark]
 #[bench::rows_1000(read_bytes::<Rows>(rows_bytes()).unwrap())]
 fn rows_iterate(rows: Rows) -> usize {
-    black_box(rows.rows.iter().count())
+    black_box(rows.rows.iter().flatten().count())
 }
 
 library_benchmark_group!(name = stream_forms; benchmarks = rows_read_bytes, ints_read_bytes, rows_iterate);

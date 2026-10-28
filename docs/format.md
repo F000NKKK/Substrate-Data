@@ -347,10 +347,23 @@ reused, the string index inside the call is not.
 ## Streams
 
 `Stream<T>` is a list kept in the binary form: items written as they come,
-checked when the stream is decoded (an item that cannot be read rejects it,
-naming its index) and read back one at a time when asked, with its own string table, so it
-can be cut out of a document whole. For the big ones: a table's rows, a
-picture's pixels, a recording, a log.
+read back one at a time when asked, with its own string table, so it can be
+cut out of a document whole. For the big
+ones: a table's rows, a picture's pixels, a recording, a log.
+
+Decoding a stream checks its framing, not its items: the `u32` byte length
+must fit the document, and the item count (the varint at the start of the
+body) must fit the bytes of the body, one byte at least per item, so a
+hostile count allocates nothing. An item is read when it is asked for:
+`Stream::iter` yields `Result<T, ItemError>`, and an item that cannot be
+read (a newer item type, a corrupt byte, a cut) is an `ItemError` with its
+`index` and the `offset` of its first byte from the first item; the
+iterator ends there. After the last counted item, bytes that are left are an
+`ItemError` with `index` equal to the count. The wire format is the same as
+in 0.3; only when the items are checked changed. The text form and frames
+have no lazy path and read every item (an item that cannot be read rejects
+the document, naming `items[i]`). Two streams are equal when their count and
+their bytes are.
 
 ---
 

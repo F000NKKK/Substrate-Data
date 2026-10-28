@@ -219,9 +219,14 @@ fn streams(c: &mut Criterion) {
     let s: Stream<u32> = (0..n).collect();
     g.bench_function("from_iter", |b| b.iter(|| (0..n).collect::<Stream<u32>>()));
     g.bench_function("iter", |b| {
-        b.iter(|| black_box(&s).iter().map(u64::from).sum::<u64>());
+        b.iter(|| {
+            black_box(&s)
+                .iter()
+                .map(|x| u64::from(x.unwrap()))
+                .sum::<u64>()
+        });
     });
-    g.bench_function("to_vec", |b| b.iter(|| black_box(&s).to_vec()));
+    g.bench_function("to_vec", |b| b.iter(|| black_box(&s).to_vec().unwrap()));
     g.bench_function("len_bytes_len", |b| {
         b.iter(|| black_box(&s).len() + s.bytes_len());
     });

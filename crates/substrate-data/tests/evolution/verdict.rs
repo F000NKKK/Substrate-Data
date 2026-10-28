@@ -15,6 +15,9 @@ pub(crate) enum Verdict {
     Rejects,
     /// The reader got a value, and not the one the writer meant.
     Garbage,
+    /// The reader got a `Stream`, whose framing was sound and whose items fail
+    /// when they are read.
+    Lazy,
 }
 
 impl Verdict {
@@ -24,6 +27,7 @@ impl Verdict {
             Verdict::Reads => "reads",
             Verdict::Rejects => "rejects",
             Verdict::Garbage => "**garbage**",
+            Verdict::Lazy => "fails when iterated",
         }
     }
 }

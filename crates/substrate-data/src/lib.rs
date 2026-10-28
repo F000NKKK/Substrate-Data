@@ -39,7 +39,10 @@ pub use model::value::{KindName, Map, Path, Ref, RefKey, Seg, Value, ValueKind};
 pub use model::{atom, typed};
 pub use schema::with;
 pub use text::{Doc, LineCol, Span, Spans, SyntaxError};
-pub use wire::stream::{Stream, StreamWriter};
+pub use wire::item_error::ItemError;
+pub use wire::items::Items;
+pub use wire::stream::Stream;
+pub use wire::stream_writer::StreamWriter;
 pub use wire::{binary, frame, io};
 pub mod schema;
 

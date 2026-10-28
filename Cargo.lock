@@ -578,7 +578,7 @@ checksum = "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
 
 [[package]]
 name = "substrate-data"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "base64",
  "bincode 2.0.1",
@@ -602,7 +602,7 @@ dependencies = [
 
 [[package]]
 name = "substrate-data-derive"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",

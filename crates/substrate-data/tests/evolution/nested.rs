@@ -6,14 +6,15 @@ use substrate_data::{Schema, Stream};
 
 use crate::base::{Doc, Grown, In, base, grown};
 use crate::verdict::Group::Nested;
-use crate::verdict::{Row, row};
+use crate::verdict::{Row, Verdict, row};
 
 /// Every row of this group.
 pub(crate) const ROWS: &[fn() -> Row] = &[
     in_field, in_option, in_box, in_array, in_vec, in_tuple, in_stream,
 ];
 
-/// A stream, equal when its items are (its bytes may differ with the item type).
+/// A stream, equal when its items are (its bytes may differ with the item type)
+/// and read: a stream with an unreadable item is equal to none.
 #[derive(Schema, Debug)]
 struct Items<T: Schema> {
     items: Stream<T>,
@@ -21,7 +22,7 @@ struct Items<T: Schema> {
 
 impl<T: Schema + PartialEq> PartialEq for Items<T> {
     fn eq(&self, other: &Self) -> bool {
-        self.items.to_vec() == other.items.to_vec()
+        matches!((self.items.to_vec(), other.items.to_vec()), (Ok(a), Ok(b)) if a == b)
     }
 }
 
@@ -76,7 +77,7 @@ fn in_tuple() -> Row {
 }
 
 fn in_stream() -> Row {
-    grows(
+    let mut row = grows(
         "records in a `Stream`",
         |b| Items {
             items: Stream::from(vec![b]),
@@ -84,5 +85,10 @@ fn in_stream() -> Row {
         |g| Items {
             items: Stream::from(vec![g]),
         },
-    )
+    );
+    // The binary form decodes the older reader's stream (its framing is
+    // sound) and fails on the item: not garbage, and not a decode error.
+    assert_eq!(row.old_reads_new.binary, Verdict::Garbage);
+    row.old_reads_new.binary = Verdict::Lazy;
+    row
 }

@@ -31,6 +31,12 @@ final class BinaryEncoder {
         return encoder.out.toByteArray();
     }
 
+    static byte[] body(Value value) {
+        BinaryEncoder encoder = new BinaryEncoder();
+        encoder.value(value);
+        return encoder.out.toByteArray();
+    }
+
     private void value(Value value) {
         if (value instanceof Null) {
             out.write(Tag.NULL);

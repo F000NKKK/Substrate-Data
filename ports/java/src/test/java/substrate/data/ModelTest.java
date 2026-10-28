@@ -53,4 +53,16 @@ class ModelTest {
             assertEquals(new Float(d), Text.parse(Text.write(new Float(d))));
         }
     }
+
+    @Test
+    void aBodyRoundTripsWithoutAHeader() throws DecodeException {
+        Value doc = MapValue.of(
+                new MapValue.Entry("name", new Str("Release")),
+                new MapValue.Entry("ids", ListValue.of(new Int(1), new Int(2))),
+                new MapValue.Entry("owner", new Ref("user", "42")));
+        byte[] body = Binary.encodeBody(doc);
+        assertEquals(doc, Binary.decodeBody(body));
+        byte[] whole = Binary.encode(doc);
+        assertEquals(whole.length, body.length + Binary.MAGIC.length + 1, "the header is all a document adds");
+    }
 }

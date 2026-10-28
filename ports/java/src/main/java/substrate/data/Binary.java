@@ -40,6 +40,11 @@ public final class Binary {
         return BinaryDecoder.body(bytes);
     }
 
+    /** {@code value} without a header, with a string table of its own: what {@link #decodeBody} reads. */
+    public static byte[] encodeBody(Value value) {
+        return BinaryEncoder.body(value);
+    }
+
     /** {@code value} as a whole document, version 2: reading a version 1 document and writing it upgrades it. */
     public static byte[] encode(Value value) {
         return BinaryEncoder.document(value);

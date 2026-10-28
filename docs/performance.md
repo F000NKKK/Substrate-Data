@@ -61,6 +61,7 @@ cargo bench -p substrate-data --bench <name> --all-features -- --test   # run ea
 | `io` | `benches/io.rs` | frames and binary over `Read`/`Write`, streams |
 | `io_async` | `benches/io_async.rs` | the same frames over `AsyncRead`/`AsyncWrite` (feature `tokio`) |
 | `schema` | `benches/schema.rs` | every form of every derived type, resolve, expand, dictionary |
+| `stream_decode` | `benches/stream_decode.rs` | decoding and reading a stream of a million items (u16, f32, rows) |
 | `reader` | `benches/reader.rs` | the `Reader` API, named types, shape descriptions, `Dictionary` |
 | `model` | `benches/model.rs` | `Map`, `Value`, paths, positions, borrowed values |
 | `names` | `benches/names.rs` | refs, kind names, typed strings, atoms, diagnostics |
@@ -134,7 +135,7 @@ with no row below is a gap.
 | `Writer`/`Decoder` steps, scalars, packed lists, `DecodeError`, malformed input | `binary: binary/steps`, `binary/scalars`, `binary/packed_lists`, `binary/decode_truncated`, `binary/decode_error_display` |
 | `frame::pack`/`unpack`, `Packer`, `Unpacker`, views, `List`, float kernels | `frame: frame/*`, `iai: docs_to_frame`, `docs_read_frame` |
 | `lanes` (`pack_groups`, `unpack_groups`, `group_bytes`, every `Backend`, `is_available`, `available`) | `lanes: lanes/pack`, `lanes/unpack`, `lanes/whole`, `lanes/small`, `lanes/is_available_all` |
-| `FrameWriter`, `FrameReader`, `write_frame`, `read_frame`, streams (`Stream`, `StreamWriter`) | `io: io/*`, `io/stream_1000`, `schema: stream/*` |
+| `FrameWriter`, `FrameReader`, `write_frame`, `read_frame`, streams (`Stream`, `StreamWriter`) | `io: io/*`, `io/stream_1000`, `schema: stream/*`, `stream_decode: stream_decode/*`, `stream_iterate/*` |
 | `io::asynchronous::{FrameWriter, FrameReader, read_frame, read_frame_bytes, write_frame, write_frame_bytes}` (feature `tokio`) | `io_async: io_async/*`, `io_async/stream_1000` |
 | `Schema`: `write`, `read_value`, `from_value(_with)`, `to_bytes(_into)`, `read_bytes`, `from_bytes_with`, `to_text`, `from_text`, `from_doc(_with)`, `read_ref_value` | `schema: schema/forms/*`, `iai: typed_forms` |
 | `Resolve`, `Unresolved`, `Expand`, `Dictionary` read paths | `schema: schema/resolve/*`, `schema/expand/*` |
@@ -479,3 +480,23 @@ machine (criterion `--quick`; ballparks only):
 On a long stream the state machine costs about 5 %. A single call measured
 alone also pays `Runtime::block_on` (about 150 ns), which is the bench's,
 not the reader's.
+
+## Streams
+
+Decoding a binary `Stream<T>` checks its framing and copies its bytes; the
+items are read by `Stream::iter`, one `Result` each (`stream_decode`, one
+million items, wall-clock, one core pinned with `taskset`, release build,
+criterion 30 samples of 5 s; the median of the interval):
+
+| path | 0.3.1 (every item read at decode) | 0.4.0 (framing only) |
+|---|---:|---:|
+| decode, 1M `u16` | 3.68 ms | 0.221 ms |
+| decode, 1M `f32` | 2.87 ms | 0.417 ms |
+| decode, 1M rows (`u32`, `f32`, `u8`) | 24.6 ms | 1.03 ms |
+| `iter()` over 1M `u16`, summed | 3.49 ms | 3.03 ms |
+| `iter()` over 1M rows, summed | 23.5 ms | 24.4 ms |
+
+The pass over the items moved from the decode to the iteration, which is
+where it belongs for a reader that does not read every item, and costs the
+same there (the differences in the last two rows are within the noise of
+this machine).

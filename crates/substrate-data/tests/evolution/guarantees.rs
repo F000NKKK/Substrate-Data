@@ -120,7 +120,7 @@ fn a_frame_read_by_shape_leaves_out_the_fields_it_does_not_have() {
 }
 
 #[test]
-fn a_stream_checks_its_items_when_it_is_read() {
+fn a_stream_checks_its_items_when_they_are_read() {
     #[derive(Schema, Debug, PartialEq)]
     struct Items<T: Schema> {
         items: Stream<T>,
@@ -128,18 +128,21 @@ fn a_stream_checks_its_items_when_it_is_read() {
     let newer = Items {
         items: Stream::from(vec![grown(&["a"]), grown(&["b"])]),
     };
-    let errors = read_bytes::<Items<Doc>>(&to_bytes(&newer)).unwrap_err();
-    assert!(
-        !errors.is_empty(),
-        "an item it cannot read rejects the stream"
-    );
-    let at_index = errors.iter().any(|e| e.to_string().contains("items[0]"));
-    assert!(at_index, "the error names the item: {errors:?}");
+    // Decoding checks the framing: the older reader has the stream, and the
+    // item it cannot read is an error when asked for, at its index and byte.
+    let older = read_bytes::<Items<Doc>>(&to_bytes(&newer)).unwrap();
+    assert_eq!(older.items.len(), 2);
+    let error = older.items.to_vec().unwrap_err();
+    assert_eq!((error.index, error.offset), (0, 0));
+    assert!(older.items.validate().is_err());
+    // The text form has no lazy path: it rejects, naming the item.
+    let errors = from_text::<Items<Doc>>(&to_text(&newer)).unwrap_err();
+    assert!(errors.0.iter().any(|e| e.to_string().contains("items[0]")));
     let oldest = Items {
         items: Stream::from(vec![base()]),
     };
     let regrown = read_bytes::<Items<Grown>>(&to_bytes(&oldest)).unwrap();
-    assert_eq!(regrown.items.to_vec(), [grown(&[])]);
+    assert_eq!(regrown.items.to_vec(), Ok(vec![grown(&[])]));
 }
 
 #[derive(Schema, Debug, PartialEq)]

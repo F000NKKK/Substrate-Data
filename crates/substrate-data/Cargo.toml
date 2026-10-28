@@ -92,6 +92,10 @@ name = "schema"
 harness = false
 
 [[bench]]
+name = "stream_decode"
+harness = false
+
+[[bench]]
 name = "model"
 harness = false
 

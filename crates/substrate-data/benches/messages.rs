@@ -321,7 +321,7 @@ fn bench(c: &mut Criterion) {
     });
     c.bench_function("entries_vec_10k/build from items", |b| b.iter(entries));
     c.bench_function("entries_stream_10k/read all items", |b| {
-        b.iter(|| black_box(&stream).items.iter().count());
+        b.iter(|| black_box(&stream).items.iter().flatten().count());
     });
     case(c, "strings_unique", &strings(MANY), None);
     case(c, "strings_repeated", &strings(FEW_KINDS), None);

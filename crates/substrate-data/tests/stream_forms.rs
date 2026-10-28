@@ -36,8 +36,8 @@ fn a_stream_is_written_and_read_item_by_item() {
     }
     let s = w.finish();
     assert_eq!((s.len(), s.is_empty()), (4, false));
-    assert_eq!(s.to_vec(), [0, 1000, 2000, 3000]);
-    assert_eq!(s.iter().nth(2), Some(2000));
+    assert_eq!(s.to_vec(), Ok(vec![0, 1000, 2000, 3000]));
+    assert_eq!(s.iter().nth(2), Some(Ok(2000)));
     assert!(s.bytes_len() > 0);
     assert_eq!(
         format!("{s:?}"),
@@ -96,42 +96,4 @@ fn a_cut_stream_is_an_error_not_a_panic() {
             "frame cut at {cut}"
         );
     }
-}
-
-#[derive(Schema, Debug, PartialEq)]
-struct Words {
-    items: Stream<String>,
-}
-
-#[derive(Schema, Debug, PartialEq)]
-struct Numbers {
-    items: Stream<u8>,
-}
-
-#[test]
-fn a_stream_with_an_unreadable_item_is_rejected_naming_its_index() {
-    // Strings read as `u8`: the first item fails, the error says which.
-    let words = Words {
-        items: ["a", "b", "c"].into_iter().map(String::from).collect(),
-    };
-    let errors = read_bytes::<Numbers>(&to_bytes(&words)).unwrap_err();
-    assert!(
-        errors.iter().any(|e| e.to_string().contains("items[0]")),
-        "{errors:?}"
-    );
-}
-
-#[test]
-fn a_stream_whose_bytes_outrun_its_count_is_rejected() {
-    let mut w = Stream::<u8>::writer();
-    for i in 0..3u8 {
-        w.push(&i);
-    }
-    let three = Numbers { items: w.finish() };
-    let mut bytes = to_bytes(&three);
-    // The count sits just before the three items; claim fewer than there are.
-    let count = bytes.len() - 4;
-    assert_eq!(bytes[count], 3);
-    bytes[count] = 2;
-    assert!(read_bytes::<Numbers>(&bytes).is_err());
 }

@@ -96,6 +96,11 @@ impl<'b> Decoder<'b> {
         self.stream_body().ok()
     }
 
+    /// How many bytes were read so far.
+    pub(crate) fn offset(&self) -> usize {
+        self.i
+    }
+
     /// What's left to read.
     pub(crate) fn rest(&self) -> &'b [u8] {
         &self.b[self.i..]

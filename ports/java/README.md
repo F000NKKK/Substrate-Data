@@ -8,7 +8,7 @@ dependencies. It passes every case of the language-neutral
 <dependency>
   <groupId>io.github.f000nkkk</groupId>
   <artifactId>substrate-data</artifactId>
-  <version>0.3.1</version>
+  <version>0.4.0</version>
 </dependency>
 ```
 

@@ -37,10 +37,10 @@ fn streams_go_whole_and_read_lazily() {
     assert_eq!(back, folder);
     assert_eq!(
         back.entries.iter().nth(3),
-        Some(Entry {
+        Some(Ok(Entry {
             id: "docs/faq".into(),
             count: 3
-        })
+        }))
     );
     // The value way reads it as a list; the text way writes and reads it too.
     let value = binary::decode(&bytes).unwrap();

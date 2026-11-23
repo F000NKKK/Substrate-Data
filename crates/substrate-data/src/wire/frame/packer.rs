@@ -82,7 +82,7 @@ impl Packer {
     pub fn put_uints(&mut self, len: usize, items: impl Iterator<Item = u64> + Clone) {
         self.put_u(len as u64);
         let max = items.clone().fold(0, u64::max);
-        let bits = (u64::BITS - max.leading_zeros()).max(1);
+        let bits = max.bit_width().max(1);
         self.out.push(u8::try_from(bits).unwrap_or(u8::MAX));
         lanes::pack(&mut self.out, len, bits, items);
     }

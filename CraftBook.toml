@@ -1,0 +1,14 @@
+version = 2
+project = "Substrate-Data"
+profiles = ["simple"]
+
+[assurance]
+format = true
+clippy = true
+test = true
+docs = true
+
+[constraints]
+no_std = false
+public_api_stable = false
+unsafe_review_required = true

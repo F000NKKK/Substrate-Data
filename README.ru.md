@@ -7,7 +7,7 @@
 ### Одна модель данных, текст, бинарь, кадры и схемы: для файлов, сохранений и сообщений программы
 
 [![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE-MIT)
-[![Rust 1.92+](https://img.shields.io/badge/Rust-1.92%2B-orange.svg)](Cargo.toml)
+[![Rust 1.100+](https://img.shields.io/badge/Rust-1.100%2B-orange.svg)](Cargo.toml)
 [![crates.io](https://img.shields.io/crates/v/substrate-data.svg)](https://crates.io/crates/substrate-data)
 
 🇺🇸 [English](README.md) | 🇷🇺 **Русский**
